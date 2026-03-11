@@ -1,0 +1,49 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { Button } from "@/components/ui/button";
+
+describe("Button", () => {
+  it("renders with text", () => {
+    render(<Button>Click me</Button>);
+    expect(
+      screen.getByRole("button", { name: /click me/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("calls onClick when clicked", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(<Button onClick={onClick}>Click</Button>);
+    await user.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("is disabled when disabled prop is true", () => {
+    render(<Button disabled>Click</Button>);
+    expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("shows loading state", () => {
+    render(<Button loading>Click</Button>);
+    expect(screen.getByRole("button")).toBeDisabled();
+    expect(screen.getByTestId("button-spinner")).toBeInTheDocument();
+  });
+
+  it("applies variant classes", () => {
+    render(<Button variant="outline">Outline</Button>);
+    const btn = screen.getByRole("button");
+    expect(btn.className).toContain("border");
+  });
+
+  it("applies size classes", () => {
+    render(<Button size="sm">Small</Button>);
+    const btn = screen.getByRole("button");
+    expect(btn.className).toContain("px-3");
+  });
+
+  it("renders as a different element with asChild pattern", () => {
+    render(<Button type="submit">Submit</Button>);
+    expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
+  });
+});
