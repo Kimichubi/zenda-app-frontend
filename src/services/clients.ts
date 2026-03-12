@@ -2,15 +2,33 @@ import { api } from "./api";
 import type { Client, ClientFormData, PaginatedResponse } from "@/types";
 
 export const clientsService = {
-    list: (page = 1, limit = 20) =>
-        api.get<PaginatedResponse<Client>>(`/clients?page=${page}&limit=${limit}`),
+    list: async (page = 1, limit = 20) => {
+        const res = await api.get<Client[] | PaginatedResponse<Client>>(`/clients?page=${page}&limit=${limit}`);
+        // Normalize backend responses: some environments return plain Client[]
+        if (Array.isArray(res)) {
+            return {
+                data: res,
+                total: res.length,
+                page,
+                limit,
+            } as PaginatedResponse<Client>;
+        }
+        return res as PaginatedResponse<Client>;
+    },
 
     getById: (id: string) => api.get<Client>(`/clients/${encodeURIComponent(id)}`),
 
-    create: (data: ClientFormData) => api.post<Client>("/clients", data),
+    create: (data: ClientFormData) => {
+        const { notes, ...rest } = data as any;
+        const payload = notes ? { ...rest, notes } : rest;
+        return api.post<Client>("/clients", payload);
+    },
 
-    update: (id: string, data: Partial<ClientFormData>) =>
-        api.put<Client>(`/clients/${encodeURIComponent(id)}`, data),
+    update: (id: string, data: Partial<ClientFormData>) => {
+        const { notes, ...rest } = data as any;
+        const payload = notes ? { ...rest, notes } : rest;
+        return api.patch<Client>(`/clients/${encodeURIComponent(id)}`, payload);
+    },
 
     delete: (id: string) => api.delete<void>(`/clients/${encodeURIComponent(id)}`),
 

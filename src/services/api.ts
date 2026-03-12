@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 class ApiClient {
     private baseUrl: string;
@@ -27,6 +27,14 @@ class ApiClient {
             ...options,
             headers,
         });
+
+        // Debug: indicate whether a token was present for this request (no token value logged)
+        try {
+            // eslint-disable-next-line no-console
+            console.debug("api.request", endpoint, { hasToken: !!token, method: options.method ?? "GET" });
+        } catch (e) {
+            /* ignore */
+        }
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({

@@ -15,7 +15,7 @@ export const authService = {
     forgotPassword: (email: string) =>
         api.post<{ message: string }>("/auth/forgot-password", { email }),
 
-    me: () => api.get<AuthResponse["user"]>("/auth/me"),
+    me: () => api.get<AuthResponse["user"]>("/users/me"),
 
     logout: () => {
         if (typeof window !== "undefined") {

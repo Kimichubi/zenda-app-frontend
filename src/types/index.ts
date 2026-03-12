@@ -28,7 +28,8 @@ export interface SignupData {
 
 export interface AuthResponse {
     user: User;
-    token: string;
+    accessToken: string;
+    refreshToken?: string;
 }
 
 // --- Client ---

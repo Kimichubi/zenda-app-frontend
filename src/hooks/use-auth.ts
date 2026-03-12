@@ -20,7 +20,7 @@ export function useLogin() {
     return useMutation({
         mutationFn: (data: LoginCredentials) => authService.login(data),
         onSuccess: (response) => {
-            localStorage.setItem("zenda_token", response.token);
+            localStorage.setItem("zenda_token", response.accessToken);
             queryClient.setQueryData(["user"], response.user);
             router.push("/dashboard");
         },
@@ -34,7 +34,7 @@ export function useSignup() {
     return useMutation({
         mutationFn: (data: SignupData) => authService.signup(data),
         onSuccess: (response) => {
-            localStorage.setItem("zenda_token", response.token);
+            localStorage.setItem("zenda_token", response.accessToken);
             queryClient.setQueryData(["user"], response.user);
             router.push("/dashboard");
         },

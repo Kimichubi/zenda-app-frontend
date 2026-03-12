@@ -5,7 +5,7 @@ import { formatTime, getStatusLabel } from "@/utils";
 import type { Appointment } from "@/types";
 
 interface AppointmentListProps {
-  appointments: Appointment[];
+  appointments?: Appointment[];
   title: string;
 }
 
@@ -20,7 +20,10 @@ const statusVariant: Record<
   no_show: "warning",
 };
 
-export function AppointmentList({ appointments, title }: AppointmentListProps) {
+export function AppointmentList({
+  appointments = [],
+  title,
+}: AppointmentListProps) {
   return (
     <Card title={title}>
       {appointments.length === 0 ? (

@@ -2,5 +2,5 @@ import { api } from "./api";
 import type { DashboardData } from "@/types";
 
 export const dashboardService = {
-    getData: () => api.get<DashboardData>("/dashboard"),
+    getData: () => api.get<DashboardData>("/dashboard/summary"),
 };

@@ -27,12 +27,23 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
 
-      <DashboardCards
-        todayRevenue={data.todayRevenue}
-        todayAppointmentsCount={data.todayAppointments.length}
-        upcomingCount={data.upcomingAppointments.length}
-        noShowCount={data.noShowClients.length}
-      />
+      {(() => {
+        const {
+          todayRevenue = 0,
+          todayAppointments = [],
+          upcomingAppointments = [],
+          noShowClients = [],
+        } = data as any;
+
+        return (
+          <DashboardCards
+            todayRevenue={todayRevenue}
+            todayAppointmentsCount={todayAppointments.length}
+            upcomingCount={upcomingAppointments.length}
+            noShowCount={noShowClients.length}
+          />
+        );
+      })()}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AppointmentList

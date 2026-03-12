@@ -24,7 +24,7 @@ export function LoginForm() {
     try {
       setError("");
       const response = await authService.login(data);
-      localStorage.setItem("zenda_token", response.token);
+      localStorage.setItem("zenda_token", response.accessToken);
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login");
