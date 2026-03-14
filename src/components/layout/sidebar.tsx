@@ -10,9 +10,11 @@ import {
   LogOut,
   Zap,
   Scissors,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
+import { useUser } from "@/hooks";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -24,6 +26,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: user } = useUser();
 
   return (
     <aside className="relative hidden md:flex h-screen w-[300px] flex-col bg-card border-r border-border/50 transition-all duration-500 z-40">
@@ -65,6 +68,27 @@ export function Sidebar() {
               </Link>
             );
           })}
+
+          {/* Admin Link - Only visible to ADMIN */}
+          {user?.role === "ADMIN" && (
+            <div className="pt-6 mt-6 border-t border-border/50 space-y-3">
+              <div className="text-[10px] font-black text-purple-500 uppercase tracking-[0.3em] px-4 opacity-70">
+                Administration
+              </div>
+              <Link
+                href="/admin"
+                className={cn(
+                  "group flex items-center gap-4 rounded-2xl px-5 py-4 text-sm font-bold transition-all duration-300",
+                  pathname === "/admin"
+                    ? "bg-purple-500 text-white shadow-xl shadow-purple-500/20 scale-[1.02]"
+                    : "text-muted-foreground hover:bg-purple-500/5 hover:text-purple-600",
+                )}
+              >
+                <ShieldCheck className={cn("h-5 w-5 transition-all duration-300", pathname === "/admin" ? "scale-110" : "group-hover:scale-110")} />
+                <span className="tracking-tight">Backoffice</span>
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
 

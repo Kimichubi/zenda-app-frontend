@@ -10,6 +10,8 @@ export interface User {
     phone: string;
     businessName: string;
     slug: string;
+    role: "USER" | "ADMIN";
+    plan: "FREE" | "PRO" | "ENTERPRISE";
     createdAt: string;
 }
 

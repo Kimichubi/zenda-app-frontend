@@ -4,4 +4,5 @@ export { useAppointments, useWeekAppointments, useCreateAppointment, useUpdateAp
 export { usePayments, useGeneratePix, useMarkPaid, useCancelPayment } from "./use-payments";
 export { useDashboard } from "./use-dashboard";
 export { useServices, useCreateService, useUpdateService, useDeleteService } from "./use-services";
+export { useAdminUsers, useAdminStats, useUpdateUserPlan } from "./use-admin";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
