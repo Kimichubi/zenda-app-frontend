@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui";
-import { Calendar, DollarSign, Clock, UserX, LucideIcon } from "lucide-react";
+import { Calendar, DollarSign, Clock, UserX, LucideIcon, TrendingUp } from "lucide-react";
 import { formatCurrency, cn } from "@/utils";
 
 interface DashboardCardsProps {
@@ -22,14 +22,14 @@ interface CardConfig {
 const cards: CardConfig[] = [
   {
     key: "revenue",
-    label: "Faturamento do dia",
+    label: "Faturamento",
     icon: DollarSign,
     variant: "emerald",
     format: (v: number) => formatCurrency(v),
   },
   {
     key: "appointments",
-    label: "Atendimentos hoje",
+    label: "Atendimentos",
     icon: Calendar,
     variant: "blue",
     format: (v: number) => String(v),
@@ -43,7 +43,7 @@ const cards: CardConfig[] = [
   },
   {
     key: "noShow",
-    label: "Faltas",
+    label: "Ausências",
     icon: UserX,
     variant: "rose",
     format: (v: number) => String(v),
@@ -71,25 +71,40 @@ export function DashboardCards({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.key} className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-md hover:border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
+          <Card key={card.key} className="group relative overflow-hidden border-none bg-card/40 backdrop-blur-xl shadow-2xl shadow-black/5 hover:bg-card transition-all duration-500 rounded-[2rem]">
+            <CardContent className="p-8">
+              <div className="flex flex-col gap-6">
                 <div className={cn(
-                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1",
+                  "flex h-14 w-14 items-center justify-center rounded-2xl ring-1 shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3",
                   variantStyles[card.variant]
                 )}>
-                  <Icon className="h-6 w-6" strokeWidth={2.5} />
+                  <Icon className="h-7 w-7" strokeWidth={2.5} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{card.label}</p>
-                  <p className="mt-1 text-2xl font-bold tracking-tight">
-                    {card.format(values[card.key])}
-                  </p>
+                
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{card.label}</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-3xl font-black tracking-tighter">
+                      {card.format(values[card.key])}
+                    </p>
+                    <div className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-500">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>+12%</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Decorative background element */}
+              <div className={cn(
+                "absolute -right-4 -bottom-4 h-24 w-24 opacity-[0.03] transition-transform duration-700 group-hover:scale-150",
+                variantStyles[card.variant]
+              )}>
+                <Icon className="h-full w-full" />
               </div>
             </CardContent>
           </Card>

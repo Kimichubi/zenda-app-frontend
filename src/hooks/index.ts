@@ -1,7 +1,7 @@
 export { useUser, useUpdateProfile, useForgotPassword, useLogout } from "./use-auth";
 export { useClients, useClient, useSearchClients, useCreateClient, useUpdateClient, useDeleteClient } from "./use-clients";
 export { useAppointments, useWeekAppointments, useCreateAppointment, useUpdateAppointmentStatus, useCancelAppointment } from "./use-appointments";
-export { usePayments, useGeneratePix, useMarkPaid } from "./use-payments";
+export { usePayments, useGeneratePix, useMarkPaid, useCancelPayment } from "./use-payments";
 export { useDashboard } from "./use-dashboard";
 export { useServices, useCreateService, useUpdateService, useDeleteService } from "./use-services";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";

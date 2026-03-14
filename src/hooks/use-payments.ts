@@ -31,3 +31,14 @@ export function useMarkPaid() {
         },
     });
 }
+
+export function useCancelPayment() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => paymentsService.cancel(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["payments"] });
+        },
+    });
+}

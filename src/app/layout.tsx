@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zenda - Gestão para Profissionais Autônomos",
-  description: "Gerencie sua agenda, clientes e pagamentos com facilidade.",
+  title: "Zenda - Gestão de Agendamentos",
+  description: "A plataforma inteligente para profissionais autônomos",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -6,7 +6,7 @@ import { WeekCalendar } from "@/features/agenda/week-calendar";
 import { AppointmentForm } from "@/features/agenda/appointment-form";
 import { useWeekAppointments, useUpdateAppointmentStatus, useCreateAppointment } from "@/hooks";
 import { useToast, Button, Modal } from "@/components/ui";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus, Sparkles } from "lucide-react";
 import type { AppointmentFormData } from "@/types";
 
 export default function AgendaPage() {
@@ -59,47 +59,57 @@ export default function AgendaPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Agenda</h1>
-          <p className="text-muted-foreground font-medium flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4" />
-            Gerencie seus atendimentos semanais
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+            <CalendarIcon className="h-3 w-3" />
+            Time Management
+          </div>
+          <h1 className="text-5xl font-black tracking-tighter uppercase italic">Agenda</h1>
+          <p className="text-muted-foreground font-medium text-lg">
+            Organize sua semana com <span className="text-foreground font-bold italic underline decoration-primary decoration-2 underline-offset-4">precisão absoluta</span>.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button onClick={() => setIsModalOpen(true)} className="gap-2 shadow-lg shadow-primary/20">
-            <Plus className="h-4 w-4" />
-            Novo Agendamento
-          </Button>
-          <div className="h-8 w-px bg-border mx-1" />
-          <Button variant="outline" onClick={handleToday} className="font-semibold">Hoje</Button>
-          <div className="flex items-center bg-card border rounded-lg p-1 shadow-sm">
+        
+        <div className="flex items-center gap-4">
+          <div className="flex items-center bg-muted/50 border border-border/50 rounded-2xl p-1.5 shadow-inner">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => handleNavigate("prev")}
-              className="h-8 w-8 rounded-md"
+              className="h-10 w-10 rounded-xl hover:bg-background hover:shadow-sm transition-all"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={handleToday} 
+              className="px-6 font-bold text-xs uppercase tracking-widest hover:bg-background hover:shadow-sm transition-all rounded-xl"
+            >
+              Hoje
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => handleNavigate("next")}
-              className="h-8 w-8 rounded-md"
+              className="h-10 w-10 rounded-xl hover:bg-background hover:shadow-sm transition-all"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </div>
+          
+          <Button onClick={() => setIsModalOpen(true)} className="h-14 px-8 gap-3 rounded-2xl shadow-xl shadow-primary/20 text-sm font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]">
+            <Plus className="h-5 w-5" />
+            Novo Agendamento
+          </Button>
         </div>
       </header>
 
       {isLoading ? (
         <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm font-medium text-muted-foreground animate-pulse">Carregando sua agenda...</p>
+          <p className="text-sm font-bold tracking-tight text-muted-foreground animate-pulse">Carregando sua agenda...</p>
         </div>
       ) : (
         <WeekCalendar
@@ -114,12 +124,15 @@ export default function AgendaPage() {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Novo Agendamento"
+        className="max-w-md"
       >
-        <AppointmentForm 
-          onSubmit={handleCreateAppointment}
-          isLoading={createAppointment.isPending}
-          initialDate={currentDate}
-        />
+        <div className="p-2">
+          <AppointmentForm 
+            onSubmit={handleCreateAppointment}
+            isLoading={createAppointment.isPending}
+            initialDate={currentDate}
+          />
+        </div>
       </Modal>
     </div>
   );

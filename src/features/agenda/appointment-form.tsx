@@ -21,8 +21,8 @@ interface AppointmentFormProps {
 }
 
 export function AppointmentForm({ onSubmit, isLoading, initialDate }: AppointmentFormProps) {
-  const { data: clientsData, isLoading: isLoadingClients } = useClients(1, 100);
-  const { data: services, isLoading: isLoadingServices } = useServices();
+  const { data: clientsData } = useClients(1, 100);
+  const { data: services } = useServices();
 
   const {
     register,
@@ -35,63 +35,79 @@ export function AppointmentForm({ onSubmit, isLoading, initialDate }: Appointmen
     },
   });
 
+  const handleLocalSubmit = (data: AppointmentFormData) => {
+    // Garantir que a data enviada use o meio-dia para evitar problemas de timezone
+    // transformando "2026-03-14" em "2026-03-14T12:00:00" antes do backend processar
+    const normalizedData = {
+      ...data,
+      date: `${data.date}T12:00:00`
+    };
+    onSubmit(normalizedData);
+  };
+
   const clients = clientsData?.data || [];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleLocalSubmit)} className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium leading-none">Cliente</label>
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Cliente</label>
         <select
           {...register("clientId")}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-12 w-full rounded-2xl border border-input bg-background px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none cursor-pointer hover:border-primary/50 transition-all"
         >
           <option value="">Selecione um cliente</option>
           {clients.map((client) => (
             <option key={client.id} value={client.id}>
-              {client.name} ({client.phone})
+              {client.name}
             </option>
           ))}
         </select>
         {errors.clientId && (
-          <p className="text-sm font-medium text-destructive">{errors.clientId.message}</p>
+          <p className="text-xs font-bold text-destructive ml-1">{errors.clientId.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium leading-none">Serviço</label>
+        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Serviço</label>
         <select
           {...register("serviceId")}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-12 w-full rounded-2xl border border-input bg-background px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 appearance-none cursor-pointer hover:border-primary/50 transition-all"
         >
           <option value="">Selecione um serviço</option>
           {services?.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} - {service.duration}min
+              {service.name} — {service.duration}min
             </option>
           ))}
         </select>
         {errors.serviceId && (
-          <p className="text-sm font-medium text-destructive">{errors.serviceId.message}</p>
+          <p className="text-xs font-bold text-destructive ml-1">{errors.serviceId.message}</p>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          type="date"
-          label="Data"
-          {...register("date")}
-          error={errors.date?.message}
-        />
-        <Input
-          type="time"
-          label="Horário"
-          {...register("startTime")}
-          error={errors.startTime?.message}
-        />
+        <div className="space-y-2">
+          <Input
+            type="date"
+            label="Data"
+            {...register("date")}
+            error={errors.date?.message}
+            className="rounded-2xl h-12"
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            type="time"
+            label="Horário"
+            {...register("startTime")}
+            error={errors.startTime?.message}
+            className="rounded-2xl h-12"
+          />
+        </div>
       </div>
 
-      <Button type="submit" className="w-full" loading={isLoading}>
-        Agendar e Notificar por WhatsApp
+      <Button type="submit" className="w-full h-14 rounded-2xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-xs gap-3 mt-4" loading={isLoading}>
+        Finalizar Agendamento
       </Button>
     </form>
   );

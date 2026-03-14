@@ -3,12 +3,13 @@
 import { Badge, Button, Table } from "@/components/ui";
 import { formatCurrency, getStatusLabel, formatDate } from "@/utils";
 import type { Payment } from "@/types";
-import { DollarSign, CheckCircle2, QrCode, Clock } from "lucide-react";
+import { DollarSign, CheckCircle2, QrCode, Clock, XCircle, Info } from "lucide-react";
 
 interface PaymentTableProps {
   payments: Payment[];
   onGeneratePix: (appointmentId: string) => void;
   onMarkPaid: (paymentId: string) => void;
+  onCancel?: (paymentId: string) => void;
 }
 
 const statusVariant: Record<
@@ -19,25 +20,38 @@ const statusVariant: Record<
   paid: "success",
   overdue: "destructive",
   cancelled: "secondary",
+  failed: "destructive",
 };
 
 export function PaymentTable({
   payments,
   onGeneratePix,
   onMarkPaid,
+  onCancel,
 }: PaymentTableProps) {
   const columns = [
     {
       key: "clientName" as const,
       label: "Cliente",
-      render: (value: string) => (
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs">
-            {value.charAt(0).toUpperCase()}
+      render: (value: string | undefined, payment: Payment) => {
+        const safeValue = value || "Cliente";
+        return (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs">
+                {safeValue.charAt(0).toUpperCase()}
+              </div>
+              <span className="font-bold">{safeValue}</span>
+            </div>
+            {payment.reason && (
+              <div className="flex items-center gap-1.5 ml-11 text-[10px] text-muted-foreground italic">
+                <Info className="h-3 w-3" />
+                {payment.reason}
+              </div>
+            )}
           </div>
-          <span className="font-bold">{value}</span>
-        </div>
-      ),
+        );
+      },
     },
     {
       key: "amount" as const,
@@ -91,6 +105,17 @@ export function PaymentTable({
             >
               <CheckCircle2 className="h-3.5 w-3.5" />
               Confirmar
+            </Button>
+          )}
+          {payment.status.toLowerCase() === "pending" && onCancel && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onCancel(payment.id)}
+              className="h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              aria-label="Cancelar cobrança"
+            >
+              <XCircle className="h-4 w-4" />
             </Button>
           )}
         </div>

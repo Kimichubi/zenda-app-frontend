@@ -95,6 +95,7 @@ export interface Payment {
     amount: number;
     status: PaymentStatus;
     pixCode: string | null;
+    reason: string | null;
     paidAt: string | null;
     createdAt: string;
 }

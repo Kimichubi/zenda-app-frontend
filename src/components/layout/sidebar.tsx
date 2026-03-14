@@ -26,21 +26,23 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="relative flex h-screen w-72 flex-col bg-card border-r border-border transition-all duration-300">
-      <div className="flex h-16 items-center px-8 border-b border-border">
-        <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-            <Zap className="w-6 h-6 text-primary-foreground fill-primary-foreground/10" />
+    <aside className="relative hidden md:flex h-screen w-[300px] flex-col bg-card border-r border-border/50 transition-all duration-500 z-40">
+      {/* Branding Area */}
+      <div className="flex h-20 items-center px-10 border-b border-border/50">
+        <Link href="/dashboard" className="flex items-center gap-4 group">
+          <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center shadow-xl shadow-primary/20 group-hover:scale-105 group-hover:rotate-3 transition-all duration-500">
+            <Zap className="w-6 h-6 text-white fill-white/10" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">Zenda</h1>
+          <h1 className="text-2xl font-black tracking-tighter text-foreground uppercase italic">Zenda</h1>
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-8 px-4 scrollbar-none">
-        <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-6 px-4">
-          Navegação
+      {/* Navigation Area */}
+      <div className="flex-1 overflow-y-auto py-10 px-6 scrollbar-none">
+        <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-8 px-4 opacity-50">
+          Main Menu
         </div>
-        <nav className="space-y-2">
+        <nav className="space-y-3">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -49,31 +51,36 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200",
+                  "group flex items-center gap-4 rounded-2xl px-5 py-4 text-sm font-bold transition-all duration-300",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/10"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    ? "bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground")} />
-                {item.label}
+                <Icon className={cn("h-5 w-5 transition-all duration-300", isActive ? "scale-110" : "group-hover:scale-110")} />
+                <span className="tracking-tight">{item.label}</span>
+                {isActive && (
+                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                )}
               </Link>
             );
           })}
         </nav>
       </div>
 
-      <div className="p-4 border-t border-border bg-card/50">
+      {/* Footer Area */}
+      <div className="p-6 mt-auto border-t border-border/50 bg-muted/20">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 rounded-xl h-12 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          className="w-full justify-start gap-4 rounded-2xl h-14 text-muted-foreground hover:bg-destructive/10 hover:text-destructive font-bold transition-all duration-300"
           onClick={() => {
             localStorage.removeItem("zenda_token");
+            localStorage.removeItem("zenda_refresh_token");
             window.location.href = "/login";
           }}
         >
           <LogOut className="h-5 w-5" />
-          <span className="font-semibold">Sair do sistema</span>
+          <span className="tracking-tight">Sair do Sistema</span>
         </Button>
       </div>
     </aside>
