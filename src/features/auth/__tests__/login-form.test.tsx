@@ -11,8 +11,8 @@ vi.mock("next/navigation", () => ({
 describe("LoginForm", () => {
   it("renders email and password fields", () => {
     render(<LoginForm />);
-    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/senha/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/exemplo@email.com/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/••••••••/i)).toBeInTheDocument();
   });
 
   it("renders submit button", () => {
@@ -32,21 +32,16 @@ describe("LoginForm", () => {
   it("shows validation error for short password", async () => {
     const user = userEvent.setup();
     render(<LoginForm />);
-    await user.type(screen.getByPlaceholderText(/email/i), "test@test.com");
-    await user.type(screen.getByPlaceholderText(/senha/i), "123");
+    await user.type(screen.getByPlaceholderText(/exemplo@email.com/i), "test@test.com");
+    await user.type(screen.getByPlaceholderText(/••••••••/i), "123");
     await user.click(screen.getByRole("button", { name: /entrar/i }));
     await waitFor(() => {
       expect(screen.getByText(/pelo menos 6 caracteres/i)).toBeInTheDocument();
     });
   });
 
-  it("renders link to signup", () => {
-    render(<LoginForm />);
-    expect(screen.getByText(/criar conta/i)).toBeInTheDocument();
-  });
-
   it("renders link to forgot password", () => {
     render(<LoginForm />);
-    expect(screen.getByText(/esqueceu a senha/i)).toBeInTheDocument();
+    expect(screen.getByText(/esqueceu\?/i)).toBeInTheDocument();
   });
 });

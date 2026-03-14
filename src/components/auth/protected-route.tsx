@@ -1,0 +1,52 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { authService } from "@/services/auth";
+import { Loader2 } from "lucide-react";
+
+export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function validate() {
+      setIsLoading(true);
+      const token = localStorage.getItem("zenda_token");
+      
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
+      try {
+        await authService.validateToken();
+        setIsAuthorized(true);
+      } catch (err) {
+        // Interceptor in api.ts will try to refresh the token.
+        // If it fails, it will redirect to /login.
+        // If we reach here, it means validation failed.
+        console.error("Token validation failed", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    validate();
+  }, [pathname, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center bg-background gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm font-bold tracking-tight text-muted-foreground animate-pulse">
+          Validando seu acesso...
+        </p>
+      </div>
+    );
+  }
+
+  return isAuthorized ? <>{children}</> : null;
+}

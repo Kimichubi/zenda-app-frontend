@@ -2,8 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { authService } from "@/services/auth";
-import type { LoginCredentials, SignupData } from "@/types";
+import { authService, type UpdateProfileData } from "@/services/auth";
 
 export function useUser() {
     return useQuery({
@@ -13,30 +12,13 @@ export function useUser() {
     });
 }
 
-export function useLogin() {
-    const router = useRouter();
+export function useUpdateProfile() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: LoginCredentials) => authService.login(data),
-        onSuccess: (response) => {
-            localStorage.setItem("zenda_token", response.accessToken);
-            queryClient.setQueryData(["user"], response.user);
-            router.push("/dashboard");
-        },
-    });
-}
-
-export function useSignup() {
-    const router = useRouter();
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: (data: SignupData) => authService.signup(data),
-        onSuccess: (response) => {
-            localStorage.setItem("zenda_token", response.accessToken);
-            queryClient.setQueryData(["user"], response.user);
-            router.push("/dashboard");
+        mutationFn: (data: UpdateProfileData) => authService.updateProfile(data),
+        onSuccess: (updatedUser) => {
+            queryClient.setQueryData(["user"], updatedUser);
         },
     });
 }

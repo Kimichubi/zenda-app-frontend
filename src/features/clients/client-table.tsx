@@ -1,8 +1,9 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Mail, Phone, User } from "lucide-react";
 import { formatPhone } from "@/utils";
 import type { Client } from "@/types";
+import { Table, Button } from "@/components/ui";
 
 interface ClientTableProps {
   clients: Client[];
@@ -11,65 +12,78 @@ interface ClientTableProps {
 }
 
 export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
-  if (clients.length === 0) {
-    return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
-        Nenhum cliente cadastrado
-      </div>
-    );
-  }
+  const columns = [
+    {
+      key: "name" as const,
+      label: "Cliente",
+      render: (value: string, client: Client) => (
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs">
+            {value.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-foreground">{value}</span>
+            {client.notes && (
+              <span className="text-[10px] text-muted-foreground line-clamp-1 max-w-[200px]">
+                {client.notes}
+              </span>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "phone" as const,
+      label: "Contato",
+      render: (value: string, client: Client) => (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Phone className="h-3 w-3" />
+            <span className="text-xs font-medium">{formatPhone(value)}</span>
+          </div>
+          {client.email && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Mail className="h-3 w-3" />
+              <span className="text-xs">{client.email}</span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "id" as const, // Use id for actions column
+      label: "Ações",
+      render: (_: string, client: Client) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onEdit(client)}
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+            aria-label="Editar"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(client.id)}
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            aria-label="Excluir"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Nome
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Telefone
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Email
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Ações
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {clients.map((client) => (
-            <tr key={client.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                {client.name}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                {formatPhone(client.phone)}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                {client.email}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right">
-                <button
-                  onClick={() => onEdit(client)}
-                  className="mr-2 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                  aria-label="Editar"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => onDelete(client.id)}
-                  className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
-                  aria-label="Excluir"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      columns={columns}
+      data={clients}
+      emptyMessage="Nenhum cliente encontrado no seu cadastro."
+      className="border-none shadow-none"
+    />
   );
 }

@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Input } from "@/components/ui";
 import { signupSchema, type SignupFormData } from "@/utils/validations";
 import { authService } from "@/services/auth";
+import { AlertCircle } from "lucide-react";
 
 export function SignupForm() {
   const router = useRouter();
@@ -25,6 +25,7 @@ export function SignupForm() {
       setError("");
       const response = await authService.signup(data);
       localStorage.setItem("zenda_token", response.accessToken);
+      localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao criar conta");
@@ -32,69 +33,69 @@ export function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Criar conta</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Comece a gerenciar seus atendimentos
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        {error && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-            {error}
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
+            <span className="font-medium">{error}</span>
           </div>
-        )}
+        </div>
+      )}
 
+      <div className="space-y-4">
         <Input
           {...register("name")}
-          placeholder="Nome completo"
-          label="Nome"
+          placeholder="Seu nome completo"
+          label="Nome Completo"
           error={errors.name?.message}
+          className="h-11 transition-all duration-200"
         />
 
         <Input
           {...register("email")}
           type="email"
-          placeholder="Email"
-          label="Email"
+          placeholder="exemplo@email.com"
+          label="Email Profissional"
           error={errors.email?.message}
+          className="h-11 transition-all duration-200"
         />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            {...register("phone")}
+            placeholder="(11) 99999-9999"
+            label="Telefone"
+            error={errors.phone?.message}
+            className="h-11 transition-all duration-200"
+          />
+
+          <Input
+            {...register("businessName")}
+            placeholder="Nome da sua empresa"
+            label="Nome do negócio"
+            error={errors.businessName?.message}
+            className="h-11 transition-all duration-200"
+          />
+        </div>
 
         <Input
           {...register("password")}
           type="password"
-          placeholder="Senha"
-          label="Senha"
+          placeholder="••••••••"
+          label="Crie uma senha forte"
           error={errors.password?.message}
+          className="h-11 transition-all duration-200"
         />
+      </div>
 
-        <Input
-          {...register("phone")}
-          placeholder="Telefone"
-          label="Telefone"
-          error={errors.phone?.message}
-        />
-
-        <Input
-          {...register("businessName")}
-          placeholder="Nome do negócio"
-          label="Nome do negócio"
-          error={errors.businessName?.message}
-        />
-
-        <Button type="submit" className="w-full" loading={isSubmitting}>
-          Criar conta
-        </Button>
-      </form>
-
-      <p className="text-center text-sm text-gray-600">
-        Já tem conta?{" "}
-        <Link href="/login" className="text-indigo-600 hover:text-indigo-500">
-          Entrar
-        </Link>
-      </p>
-    </div>
+      <Button 
+        type="submit" 
+        className="w-full h-11 text-sm font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 mt-4"
+        loading={isSubmitting}
+      >
+        Criar minha conta gratuita
+      </Button>
+    </form>
   );
 }

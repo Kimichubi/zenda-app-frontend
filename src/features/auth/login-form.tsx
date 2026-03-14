@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button, Input } from "@/components/ui";
 import { loginSchema, type LoginFormData } from "@/utils/validations";
 import { authService } from "@/services/auth";
+import { AlertCircle, Lock, Mail } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export function LoginForm() {
       setError("");
       const response = await authService.login(data);
       localStorage.setItem("zenda_token", response.accessToken);
+      localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login");
@@ -32,59 +34,57 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Entrar no Zenda</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Gerencie sua agenda e clientes
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        {error && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
-            {error}
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="h-4 w-4" />
+            <span className="font-medium">{error}</span>
           </div>
-        )}
+        </div>
+      )}
 
-        <Input
-          {...register("email")}
-          type="email"
-          placeholder="Email"
-          label="Email"
-          error={errors.email?.message}
-        />
+      <div className="space-y-4">
+        <div className="relative group">
+          <Input
+            {...register("email")}
+            type="email"
+            placeholder="exemplo@email.com"
+            label="Email"
+            error={errors.email?.message}
+            className="h-11 transition-all duration-200"
+          />
+        </div>
 
-        <Input
-          {...register("password")}
-          type="password"
-          placeholder="Senha"
-          label="Senha"
-          error={errors.password?.message}
-        />
-
-        <Button type="submit" className="w-full" loading={isSubmitting}>
-          Entrar
-        </Button>
-      </form>
-
-      <div className="space-y-2 text-center text-sm">
-        <Link
-          href="/forgot-password"
-          className="text-indigo-600 hover:text-indigo-500"
-        >
-          Esqueceu a senha?
-        </Link>
-        <p className="text-gray-600">
-          Não tem conta?{" "}
-          <Link
-            href="/signup"
-            className="text-indigo-600 hover:text-indigo-500"
-          >
-            Criar conta
-          </Link>
-        </p>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Senha
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-xs font-semibold text-primary hover:underline transition-all"
+            >
+              Esqueceu sua senha?
+            </Link>
+          </div>
+          <Input
+            {...register("password")}
+            type="password"
+            placeholder="••••••••"
+            error={errors.password?.message}
+            className="h-11 transition-all duration-200"
+          />
+        </div>
       </div>
-    </div>
+
+      <Button 
+        type="submit" 
+        className="w-full h-11 text-sm font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+        loading={isSubmitting}
+      >
+        Entrar na conta
+      </Button>
+    </form>
   );
 }

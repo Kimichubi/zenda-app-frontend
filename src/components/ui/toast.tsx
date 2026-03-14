@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { X } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from "lucide-react";
 import { cn } from "@/utils";
 
 type ToastType = "success" | "error" | "info" | "warning";
@@ -30,33 +30,36 @@ export function useToast() {
   return ctx;
 }
 
-// Standalone Toast component
-export interface ToastProps {
-  message: string;
-  type: ToastType;
-  onClose: () => void;
-}
-
 const typeClasses: Record<ToastType, string> = {
-  success: "bg-green-50 border-green-200 text-green-800",
-  error: "bg-red-50 border-red-200 text-red-800",
-  info: "bg-blue-50 border-blue-200 text-blue-800",
-  warning: "bg-yellow-50 border-yellow-200 text-yellow-800",
+  success: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  error: "border-destructive/20 bg-destructive/10 text-destructive",
+  info: "border-primary/20 bg-primary/10 text-primary",
+  warning: "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400",
 };
 
-export function Toast({ message, type, onClose }: ToastProps) {
+const IconMap = {
+  success: CheckCircle2,
+  error: AlertCircle,
+  info: Info,
+  warning: AlertTriangle,
+};
+
+export function Toast({ message, type, onClose }: { message: string; type: ToastType; onClose: () => void }) {
+  const Icon = IconMap[type];
+  
   return (
     <div
       role="alert"
       className={cn(
-        "flex items-center justify-between rounded-lg border px-4 py-3 shadow-sm",
+        "flex items-center gap-3 rounded-xl border p-4 shadow-lg backdrop-blur-md animate-in slide-in-from-right-full duration-300",
         typeClasses[type],
       )}
     >
-      <span className="text-sm font-medium">{message}</span>
+      <Icon className="h-5 w-5 shrink-0" />
+      <span className="text-sm font-bold tracking-tight">{message}</span>
       <button
         onClick={onClose}
-        className="ml-3 rounded p-1 hover:opacity-70"
+        className="ml-2 rounded-full p-1 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
         aria-label="Fechar"
       >
         <X className="h-4 w-4" />
@@ -65,16 +68,15 @@ export function Toast({ message, type, onClose }: ToastProps) {
   );
 }
 
-// Provider
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = useCallback((message: string, type: ToastType = "info") => {
-    const id = crypto.randomUUID();
+    const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 5000);
   }, []);
 
   const removeToast = useCallback((id: string) => {
@@ -84,7 +86,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+      <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-w-md w-full sm:w-auto">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}

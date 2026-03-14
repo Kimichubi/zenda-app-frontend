@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/utils";
+import * as React from "react";
 
 export interface Column<T> {
   key: keyof T & string;
@@ -22,42 +23,40 @@ export function Table<T extends { id: string }>({
   className,
 }: TableProps<T>) {
   return (
-    <div
-      className={cn(
-        "overflow-x-auto rounded-lg border border-gray-200",
-        className,
-      )}
-    >
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
+    <div className={cn("relative w-full overflow-auto", className)}>
+      <table className="w-full caption-bottom text-sm">
+        <thead className="bg-muted/50 border-y border-border/50">
+          <tr className="transition-colors hover:bg-muted/50">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                className="h-12 px-6 text-left align-middle font-bold text-muted-foreground uppercase tracking-wider text-[10px]"
               >
                 {col.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="[&_tr:last-child]:border-0">
           {data.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-6 py-8 text-center text-sm text-gray-500"
+                className="p-16 text-center align-middle text-sm text-muted-foreground italic"
               >
                 {emptyMessage}
               </td>
             </tr>
           ) : (
             data.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50">
+              <tr 
+                key={item.id} 
+                className="border-b border-border/40 transition-colors hover:bg-muted/30"
+              >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className="whitespace-nowrap px-6 py-4 text-sm text-gray-900"
+                    className="px-6 py-4 align-middle font-medium"
                   >
                     {col.render
                       ? col.render(item[col.key], item)

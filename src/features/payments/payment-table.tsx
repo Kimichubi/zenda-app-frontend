@@ -1,8 +1,9 @@
 "use client";
 
-import { Badge, Button } from "@/components/ui";
+import { Badge, Button, Table } from "@/components/ui";
 import { formatCurrency, getStatusLabel, formatDate } from "@/utils";
 import type { Payment } from "@/types";
+import { DollarSign, CheckCircle2, QrCode, Clock } from "lucide-react";
 
 interface PaymentTableProps {
   payments: Payment[];
@@ -12,12 +13,12 @@ interface PaymentTableProps {
 
 const statusVariant: Record<
   string,
-  "default" | "success" | "danger" | "warning" | "info"
+  "default" | "secondary" | "destructive" | "outline" | "success" | "warning"
 > = {
   pending: "warning",
   paid: "success",
-  overdue: "danger",
-  cancelled: "default",
+  overdue: "destructive",
+  cancelled: "secondary",
 };
 
 export function PaymentTable({
@@ -25,75 +26,84 @@ export function PaymentTable({
   onGeneratePix,
   onMarkPaid,
 }: PaymentTableProps) {
-  if (payments.length === 0) {
-    return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
-        Nenhum pagamento encontrado
-      </div>
-    );
-  }
+  const columns = [
+    {
+      key: "clientName" as const,
+      label: "Cliente",
+      render: (value: string) => (
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground font-bold text-xs">
+            {value.charAt(0).toUpperCase()}
+          </div>
+          <span className="font-bold">{value}</span>
+        </div>
+      ),
+    },
+    {
+      key: "amount" as const,
+      label: "Valor",
+      render: (value: number) => (
+        <span className="font-mono font-bold text-primary">
+          {formatCurrency(value)}
+        </span>
+      ),
+    },
+    {
+      key: "status" as const,
+      label: "Status",
+      render: (value: string) => (
+        <Badge variant={statusVariant[value.toLowerCase()] || "default"} className="font-bold">
+          {getStatusLabel(value)}
+        </Badge>
+      ),
+    },
+    {
+      key: "createdAt" as const,
+      label: "Data",
+      render: (value: string) => (
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Clock className="h-3 w-3" />
+          <span className="text-xs font-medium">{formatDate(value)}</span>
+        </div>
+      ),
+    },
+    {
+      key: "id" as const,
+      label: "Ações",
+      render: (_: string, payment: Payment) => (
+        <div className="flex justify-end gap-2">
+          {payment.status.toLowerCase() === "pending" && !payment.pixCode && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onGeneratePix(payment.appointmentId)}
+              className="h-8 gap-1.5 text-[11px] font-bold"
+            >
+              <QrCode className="h-3.5 w-3.5" />
+              Gerar Pix
+            </Button>
+          )}
+          {payment.status.toLowerCase() === "pending" && (
+            <Button 
+              size="sm" 
+              onClick={() => onMarkPaid(payment.id)}
+              className="h-8 gap-1.5 text-[11px] font-bold shadow-sm"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Confirmar
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Cliente
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Valor
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Status
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Data
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Ações
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {payments.map((payment) => (
-            <tr key={payment.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                {payment.clientName}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                {formatCurrency(payment.amount)}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4">
-                <Badge variant={statusVariant[payment.status] || "default"}>
-                  {getStatusLabel(payment.status)}
-                </Badge>
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                {formatDate(payment.createdAt)}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 text-right">
-                <div className="flex justify-end gap-2">
-                  {payment.status === "pending" && !payment.pixCode && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onGeneratePix(payment.appointmentId)}
-                    >
-                      Gerar Pix
-                    </Button>
-                  )}
-                  {payment.status === "pending" && (
-                    <Button size="sm" onClick={() => onMarkPaid(payment.id)}>
-                      Marcar pago
-                    </Button>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      columns={columns}
+      data={payments}
+      emptyMessage="Nenhum pagamento registrado até o momento."
+      className="border-none shadow-none"
+    />
   );
 }

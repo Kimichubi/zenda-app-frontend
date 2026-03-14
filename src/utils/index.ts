@@ -38,7 +38,7 @@ export function getStatusLabel(status: string): string {
         paid: "Pago",
         overdue: "Atrasado",
     };
-    return labels[status] || status;
+    return labels[status.toLowerCase()] || status;
 }
 
 export function getStatusColor(status: string): string {
@@ -52,5 +52,5 @@ export function getStatusColor(status: string): string {
         paid: "bg-green-100 text-green-800",
         overdue: "bg-red-100 text-red-800",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status.toLowerCase()] || "bg-gray-100 text-gray-800";
 }

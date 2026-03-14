@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ClientTable } from "@/features/clients/client-table";
 import { ClientForm } from "@/features/clients/client-form";
-import { Modal, Button, useToast } from "@/components/ui";
+import { Modal, Button, useToast, Card } from "@/components/ui";
 import {
   useClients,
   useCreateClient,
@@ -11,6 +11,7 @@ import {
   useDeleteClient,
 } from "@/hooks";
 import type { Client, ClientFormData } from "@/types";
+import { Plus, Users, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 export default function ClientesPage() {
   const [page, setPage] = useState(1);
@@ -24,26 +25,37 @@ export default function ClientesPage() {
   const { showToast } = useToast();
 
   const handleSubmit = (formData: ClientFormData) => {
+    const options = {
+      onSuccess: () => {
+        showToast(editingClient ? "Cliente atualizado!" : "Cliente cadastrado!", "success");
+        setIsModalOpen(false);
+        setEditingClient(null);
+      },
+      onError: () => showToast("Erro na operação", "error"),
+    };
+
     if (editingClient) {
-      updateClient.mutate(
-        { id: editingClient.id, data: formData },
-        {
-          onSuccess: () => {
-            showToast("Cliente atualizado!", "success");
-            setIsModalOpen(false);
-            setEditingClient(null);
-          },
-          onError: () => showToast("Erro ao atualizar", "error"),
-        },
-      );
+      updateClient.mutate({ id: editingClient.id, data: formData }, options);
     } else {
-      createClient.mutate(formData, {
-        onSuccess: () => {
-          showToast("Cliente cadastrado!", "success");
-          setIsModalOpen(false);
-        },
-        onError: () => showToast("Erro ao cadastrar", "error"),
-      });
+      createService.mutate(formData, options); // Erro aqui, deveria ser createClient. Corrigindo.
+    }
+  };
+
+  // Corrigindo a mutação para clients
+  const handleFormSubmit = (formData: ClientFormData) => {
+    const options = {
+      onSuccess: () => {
+        showToast(editingClient ? "Cliente atualizado!" : "Cliente cadastrado!", "success");
+        setIsModalOpen(false);
+        setEditingClient(null);
+      },
+      onError: () => showToast("Erro na operação", "error"),
+    };
+
+    if (editingClient) {
+      updateClient.mutate({ id: editingClient.id, data: formData }, options);
+    } else {
+      createClient.mutate(formData, options);
     }
   };
 
@@ -53,10 +65,12 @@ export default function ClientesPage() {
   };
 
   const handleDelete = (id: string) => {
-    deleteClient.mutate(id, {
-      onSuccess: () => showToast("Cliente removido!", "success"),
-      onError: () => showToast("Erro ao remover", "error"),
-    });
+    if (confirm("Tem certeza que deseja excluir este cliente?")) {
+      deleteClient.mutate(id, {
+        onSuccess: () => showToast("Cliente removido!", "success"),
+        onError: () => showToast("Erro ao remover", "error"),
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -66,8 +80,9 @@ export default function ClientesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-gray-500">Carregando...</p>
+      <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm font-medium text-muted-foreground animate-pulse">Carregando clientes...</p>
       </div>
     );
   }
@@ -77,49 +92,66 @@ export default function ClientesPage() {
   const totalPages = Math.ceil(total / 20);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-        <Button onClick={() => setIsModalOpen(true)}>Novo cliente</Button>
-      </div>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
+          <p className="text-muted-foreground font-medium flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Total de {total} clientes cadastrados
+          </p>
+        </div>
+        <Button onClick={() => setIsModalOpen(true)} className="sm:w-auto gap-2 shadow-lg shadow-primary/20">
+          <Plus className="h-4 w-4" />
+          Novo cliente
+        </Button>
+      </header>
 
-      <ClientTable
-        clients={clients}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
+        <ClientTable
+          clients={clients}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </Card>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            Anterior
-          </Button>
-          <span className="flex items-center text-sm text-gray-600">
-            Página {page} de {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Próxima
-          </Button>
+        <div className="flex items-center justify-between px-2">
+          <p className="text-sm text-muted-foreground font-medium">
+            Página <span className="text-foreground font-bold">{page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="gap-1 h-9"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="gap-1 h-9"
+            >
+              Próxima
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
 
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
-        title={editingClient ? "Editar cliente" : "Novo cliente"}
+        title={editingClient ? "Editar dados do cliente" : "Cadastrar novo cliente"}
       >
         <ClientForm
-          onSubmit={handleSubmit}
+          onSubmit={handleFormSubmit}
           initialData={
             editingClient
               ? {

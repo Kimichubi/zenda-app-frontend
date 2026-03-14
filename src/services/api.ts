@@ -2,6 +2,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 class ApiClient {
     private baseUrl: string;
+    private isRefreshing = false;
+    private refreshSubscribers: ((token: string) => void)[] = [];
 
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
@@ -10,6 +12,11 @@ class ApiClient {
     private getToken(): string | null {
         if (typeof window === "undefined") return null;
         return localStorage.getItem("zenda_token");
+    }
+
+    private getRefreshToken(): string | null {
+        if (typeof window === "undefined") return null;
+        return localStorage.getItem("zenda_refresh_token");
     }
 
     private async request<T>(
@@ -28,12 +35,8 @@ class ApiClient {
             headers,
         });
 
-        // Debug: indicate whether a token was present for this request (no token value logged)
-        try {
-            // eslint-disable-next-line no-console
-            console.debug("api.request", endpoint, { hasToken: !!token, method: options.method ?? "GET" });
-        } catch (e) {
-            /* ignore */
+        if (response.status === 401 && !endpoint.includes("/auth/login") && !endpoint.includes("/auth/refresh")) {
+            return this.handle401<T>(endpoint, options);
         }
 
         if (!response.ok) {
@@ -44,6 +47,71 @@ class ApiClient {
         }
 
         return response.json();
+    }
+
+    private async handle401<T>(endpoint: string, options: RequestInit): Promise<T> {
+        if (!this.isRefreshing) {
+            this.isRefreshing = true;
+            const refreshToken = this.getRefreshToken();
+
+            if (!refreshToken) {
+                this.logout();
+                throw new Error("Sessão expirada");
+            }
+
+            try {
+                const res = await fetch(`${this.baseUrl}/auth/refresh`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${refreshToken}`,
+                    },
+                });
+
+                if (!res.ok) throw new Error("Falha ao renovar token");
+
+                const data = await res.json();
+                localStorage.setItem("zenda_token", data.accessToken);
+                localStorage.setItem("zenda_refresh_token", data.refreshToken);
+
+                this.isRefreshing = false;
+                this.onTokenRefreshed(data.accessToken);
+                return this.request<T>(endpoint, options);
+            } catch (err) {
+                this.isRefreshing = false;
+                this.logout();
+                throw err;
+            }
+        }
+
+        return new Promise<T>((resolve) => {
+            this.subscribeTokenRefresh((token) => {
+                resolve(this.request<T>(endpoint, {
+                    ...options,
+                    headers: {
+                        ...options.headers,
+                        Authorization: `Bearer ${token}`,
+                    },
+                }));
+            });
+        });
+    }
+
+    private subscribeTokenRefresh(cb: (token: string) => void) {
+        this.refreshSubscribers.push(cb);
+    }
+
+    private onTokenRefreshed(token: string) {
+        this.refreshSubscribers.forEach((cb) => cb(token));
+        this.refreshSubscribers = [];
+    }
+
+    private logout() {
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("zenda_token");
+            localStorage.removeItem("zenda_refresh_token");
+            window.location.href = "/login";
+        }
     }
 
     async get<T>(endpoint: string): Promise<T> {

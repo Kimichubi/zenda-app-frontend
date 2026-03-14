@@ -2,9 +2,9 @@
 
 import { addDays, format, startOfWeek, isSameDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
-import { Button, Badge } from "@/components/ui";
-import { formatTime, getStatusLabel } from "@/utils";
+import { Check, User, Clock } from "lucide-react";
+import { Button, Badge, Card, CardContent } from "@/components/ui";
+import { formatTime, getStatusLabel, cn } from "@/utils";
 import type { Appointment } from "@/types";
 
 interface WeekCalendarProps {
@@ -16,12 +16,12 @@ interface WeekCalendarProps {
 
 const statusVariant: Record<
   string,
-  "default" | "success" | "danger" | "warning" | "info"
+  "default" | "secondary" | "destructive" | "outline" | "success" | "warning"
 > = {
-  scheduled: "info",
+  scheduled: "secondary",
   confirmed: "success",
   completed: "default",
-  cancelled: "danger",
+  cancelled: "destructive",
   no_show: "warning",
 };
 
@@ -29,7 +29,6 @@ export function WeekCalendar({
   appointments,
   currentDate,
   onConfirm,
-  onNavigate,
 }: WeekCalendarProps) {
   const current = parseISO(currentDate);
   const weekStart = startOfWeek(current, { weekStartsOn: 1 });
@@ -39,85 +38,103 @@ export function WeekCalendar({
     appointments.filter((apt) => isSameDay(parseISO(apt.date), day));
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
-          {format(weekStart, "dd 'de' MMMM", { locale: ptBR })} -{" "}
-          {format(addDays(weekStart, 6), "dd 'de' MMMM, yyyy", {
-            locale: ptBR,
-          })}
-        </h2>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNavigate("prev")}
-            aria-label="Semana anterior"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNavigate("next")}
-            aria-label="Próxima semana"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Card className="border-none bg-transparent shadow-none">
+        <CardContent className="p-0">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold tracking-tight capitalize">
+              {format(weekStart, "MMMM yyyy", { locale: ptBR })}
+            </h2>
+          </div>
 
-      <div className="grid grid-cols-7 gap-2">
-        {days.map((day) => (
-          <div
-            key={day.toISOString()}
-            className="min-h-[200px] rounded-lg border border-gray-200 bg-white p-2"
-          >
-            <div className="mb-2 text-center">
-              <p className="text-xs font-medium uppercase text-gray-500">
-                {format(day, "EEE", { locale: ptBR })}
-              </p>
-              <p
-                className={`text-sm font-bold ${
-                  isSameDay(day, new Date())
-                    ? "text-indigo-600"
-                    : "text-gray-900"
-                }`}
-              >
-                {format(day, "dd")}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              {getAppointmentsForDay(day).map((apt) => (
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+            {days.map((day) => {
+              const isToday = isSameDay(day, new Date());
+              const dayAppointments = getAppointmentsForDay(day);
+              
+              return (
                 <div
-                  key={apt.id}
-                  className="rounded border border-gray-100 bg-gray-50 p-1.5 text-xs"
+                  key={day.toISOString()}
+                  className={cn(
+                    "flex flex-col rounded-2xl border transition-all duration-300",
+                    isToday 
+                      ? "border-primary/30 bg-primary/5 shadow-sm" 
+                      : "border-border/50 bg-card/50"
+                  )}
                 >
-                  <p className="font-medium text-gray-900">{apt.clientName}</p>
-                  <p className="text-gray-500">
-                    {formatTime(apt.startTime)} - {apt.serviceName}
-                  </p>
-                  <div className="mt-1 flex items-center justify-between">
-                    <Badge variant={statusVariant[apt.status] || "default"}>
-                      {getStatusLabel(apt.status)}
-                    </Badge>
-                    {apt.status === "scheduled" && (
-                      <button
-                        onClick={() => onConfirm(apt.id)}
-                        className="rounded bg-green-100 p-0.5 text-green-700 hover:bg-green-200"
-                        aria-label="Confirmar presença"
-                      >
-                        <Check className="h-3 w-3" />
-                      </button>
+                  <div className={cn(
+                    "p-3 text-center border-b",
+                    isToday ? "border-primary/20" : "border-border/50"
+                  )}>
+                    <p className={cn(
+                      "text-[10px] font-bold uppercase tracking-widest",
+                      isToday ? "text-primary" : "text-muted-foreground"
+                    )}>
+                      {format(day, "EEE", { locale: ptBR })}
+                    </p>
+                    <p className={cn(
+                      "text-xl font-extrabold mt-1",
+                      isToday ? "text-primary" : "text-foreground"
+                    )}>
+                      {format(day, "dd")}
+                    </p>
+                  </div>
+
+                  <div className="flex-1 p-2 space-y-2 min-h-[200px]">
+                    {dayAppointments.length === 0 ? (
+                      <div className="h-full flex items-center justify-center opacity-20 py-8">
+                        <Clock className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    ) : (
+                      dayAppointments.map((apt) => (
+                        <div
+                          key={apt.id}
+                          className="group relative rounded-xl border border-border/50 bg-card p-3 shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-200"
+                        >
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                                {formatTime(apt.startTime)}
+                              </span>
+                              <Badge 
+                                variant={statusVariant[apt.status.toLowerCase()] || "default"}
+                                className="text-[9px] px-1.5 h-4 font-bold uppercase"
+                              >
+                                {getStatusLabel(apt.status)}
+                              </Badge>
+                            </div>
+                            
+                            <div>
+                              <p className="text-xs font-bold leading-tight group-hover:text-primary transition-colors">
+                                {apt.clientName}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
+                                {apt.serviceName}
+                              </p>
+                            </div>
+
+                            {apt.status.toLowerCase() === "scheduled" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onConfirm(apt.id)}
+                                className="w-full h-7 text-[10px] font-bold gap-1 mt-1 border-primary/20 hover:bg-primary hover:text-primary-foreground"
+                              >
+                                <Check className="h-3 w-3" />
+                                Confirmar
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
