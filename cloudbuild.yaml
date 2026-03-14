@@ -1,0 +1,32 @@
+steps:
+  # 1. Build da imagem Docker (passando a URL da API como argumento de build)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'build'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=$_NEXT_PUBLIC_API_URL'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/zenda-frontend'
+      - '.'
+
+  # 2. Push da imagem
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/zenda-frontend']
+
+  # 3. Deploy para o Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'zenda-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/zenda-frontend'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/zenda-frontend'
