@@ -92,16 +92,19 @@ export default function ClientesPage() {
   const totalPages = Math.ceil(total / 20);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+            <Users className="h-3 w-3" />
+            Base de Clientes
+          </div>
           <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-          <p className="text-muted-foreground font-medium flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Total de {total} clientes cadastrados
+          <p className="text-muted-foreground font-medium text-sm">
+            Total de <span className="text-foreground font-bold">{total}</span> clientes cadastrados
           </p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="sm:w-auto gap-2 shadow-lg shadow-primary/20">
+        <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
           <Plus className="h-4 w-4" />
           Novo cliente
         </Button>

@@ -87,73 +87,58 @@ export default function PagamentosPage() {
   }
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
             <DollarSign className="h-3 w-3" />
-            Financial Overview
+            Gestão Financeira
           </div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase italic">Pagamentos</h1>
-          <p className="text-muted-foreground font-medium text-lg">
-            Acompanhe seu fluxo de caixa em <span className="text-foreground font-bold italic underline decoration-primary decoration-2 underline-offset-4">tempo real</span>.
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Pagamentos</h1>
+          <p className="text-muted-foreground font-medium text-sm">
+            Acompanhe seu fluxo de caixa em <span className="text-primary font-semibold">tempo real</span>.
           </p>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-        <Card className="border-none bg-primary/5 dark:bg-primary/10 rounded-[2rem] overflow-hidden shadow-2xl shadow-primary/5">
-          <CardContent className="p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
-                <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30">
-                  <TrendingUp className="h-6 w-6" />
-                </div>
-                <div className="flex items-center gap-1 text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-3 py-1 rounded-full">
-                  Total <ArrowUpRight className="h-3 w-3" />
-                </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <Card className="border border-border/50 bg-card shadow-sm rounded-xl overflow-hidden">
+          <CardContent className="p-6 flex items-center justify-center !pt-6">
+            <div className="flex items-center gap-4 w-full justify-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
+                <TrendingUp className="h-6 w-6" />
               </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Receita Bruta</p>
-                <p className="text-3xl font-black tracking-tighter text-primary">{formatCurrency(stats.total)}</p>
+              <div className="flex flex-col justify-center">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Receita Bruta</p>
+                <p className="text-2xl font-bold tracking-tight text-foreground">{formatCurrency(stats.total)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="border-none bg-emerald-500/5 dark:bg-emerald-500/10 rounded-[2rem] overflow-hidden shadow-2xl shadow-emerald-500/5">
-          <CardContent className="p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
-                <div className="p-4 bg-emerald-500 text-white rounded-2xl shadow-lg shadow-emerald-500/30">
-                  <CheckCircle2 className="h-6 w-6" />
-                </div>
-                <div className="flex items-center gap-1 text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
-                  Recebido
-                </div>
+        <Card className="border border-border/50 bg-card shadow-sm rounded-xl overflow-hidden">
+          <CardContent className="p-6 flex items-center justify-center !pt-6">
+            <div className="flex items-center gap-4 w-full justify-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                <CheckCircle2 className="h-6 w-6" />
               </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Liquidez Confirmada</p>
-                <p className="text-3xl font-black tracking-tighter text-emerald-600">{formatCurrency(stats.paid)}</p>
+              <div className="flex flex-col justify-center">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Liquidez Confirmada</p>
+                <p className="text-2xl font-bold tracking-tight text-foreground">{formatCurrency(stats.paid)}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none bg-amber-500/5 dark:bg-amber-500/10 rounded-[2rem] overflow-hidden shadow-2xl shadow-amber-500/5">
-          <CardContent className="p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
-                <div className="p-4 bg-amber-500 text-white rounded-2xl shadow-lg shadow-amber-500/30">
-                  <Clock className="h-6 w-6" />
-                </div>
-                <div className="flex items-center gap-1 text-[10px] font-black text-amber-600 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full">
-                  Pendente
-                </div>
+        <Card className="border border-border/50 bg-card shadow-sm rounded-xl overflow-hidden">
+          <CardContent className="p-6 flex items-center justify-center !pt-6">
+            <div className="flex items-center gap-4 w-full justify-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                <Clock className="h-6 w-6" />
               </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Contas a Receber</p>
-                <p className="text-3xl font-black tracking-tighter text-amber-600">{formatCurrency(stats.pending)}</p>
+              <div className="flex flex-col justify-center">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Contas a Receber</p>
+                <p className="text-2xl font-bold tracking-tight text-foreground">{formatCurrency(stats.pending)}</p>
               </div>
             </div>
           </CardContent>
@@ -162,7 +147,7 @@ export default function PagamentosPage() {
 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 bg-muted/50 border border-border/50 p-1.5 rounded-[1.25rem] shadow-inner">
+          <div className="flex items-center gap-1 bg-muted/40 border border-border/40 p-1 rounded-lg">
             {[
               { id: "all", label: "Todos" },
               { id: "paid", label: "Pagos" },
@@ -172,10 +157,10 @@ export default function PagamentosPage() {
                 key={t.id}
                 onClick={() => setFilter(t.id)}
                 className={cn(
-                  "px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all duration-300",
+                  "px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all duration-200",
                   filter === t.id 
-                    ? "bg-background text-foreground shadow-md ring-1 ring-border/50" 
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-background text-foreground shadow-sm border border-border/50" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {t.label}
@@ -184,7 +169,7 @@ export default function PagamentosPage() {
           </div>
         </div>
 
-        <Card className="border-none bg-card/40 backdrop-blur-xl shadow-2xl shadow-black/5 overflow-hidden rounded-[2.5rem]">
+        <Card className="border border-border/50 bg-card shadow-sm rounded-xl overflow-hidden">
           <PaymentTable
             payments={filteredPayments}
             onGeneratePix={handleGeneratePix}

@@ -59,33 +59,33 @@ export default function AgendaPage() {
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
             <CalendarIcon className="h-3 w-3" />
-            Time Management
+            Gestão de Tempo
           </div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase italic">Agenda</h1>
-          <p className="text-muted-foreground font-medium text-lg">
-            Organize sua semana com <span className="text-foreground font-bold italic underline decoration-primary decoration-2 underline-offset-4">precisão absoluta</span>.
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Agenda</h1>
+          <p className="text-muted-foreground font-medium text-sm">
+            Organize sua semana com <span className="text-primary font-semibold">precisão absoluta</span>.
           </p>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-muted/50 border border-border/50 rounded-2xl p-1.5 shadow-inner">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-muted/40 border border-border/40 rounded-lg p-1">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => handleNavigate("prev")}
-              className="h-10 w-10 rounded-xl hover:bg-background hover:shadow-sm transition-all"
+              className="h-8 w-8 rounded-md hover:bg-background hover:shadow-sm transition-all"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button 
               variant="ghost" 
               onClick={handleToday} 
-              className="px-6 font-bold text-xs uppercase tracking-widest hover:bg-background hover:shadow-sm transition-all rounded-xl"
+              className="px-4 h-8 font-bold text-[10px] uppercase tracking-wider hover:bg-background hover:shadow-sm transition-all rounded-md"
             >
               Hoje
             </Button>
@@ -93,14 +93,14 @@ export default function AgendaPage() {
               variant="ghost"
               size="icon"
               onClick={() => handleNavigate("next")}
-              className="h-10 w-10 rounded-xl hover:bg-background hover:shadow-sm transition-all"
+              className="h-8 w-8 rounded-md hover:bg-background hover:shadow-sm transition-all"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
           
-          <Button onClick={() => setIsModalOpen(true)} className="h-14 px-8 gap-3 rounded-2xl shadow-xl shadow-primary/20 text-sm font-black uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98]">
-            <Plus className="h-5 w-5" />
+          <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
+            <Plus className="h-4 w-4" />
             Novo Agendamento
           </Button>
         </div>

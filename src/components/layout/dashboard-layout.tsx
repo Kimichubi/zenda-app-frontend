@@ -17,52 +17,52 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Sidebar />
       
       <div className="flex flex-1 flex-col relative overflow-hidden">
-        {/* Header Superior Refinado */}
-        <header className="flex h-20 shrink-0 items-center justify-between border-b border-border/50 bg-background/80 px-8 md:px-12 backdrop-blur-xl z-30">
-          <div className="flex items-center gap-8 flex-1">
-            <Button variant="ghost" size="icon" className="md:hidden -ml-2">
+        {/* Header Superior Refinado - Mais Profissional */}
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/60 bg-background/95 px-6 md:px-10 backdrop-blur-md z-30">
+          <div className="flex items-center gap-6 flex-1">
+            <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
             
-            {/* Barra de Busca Placeholder para Equilíbrio Visual */}
-            <div className="hidden lg:flex items-center gap-3 bg-muted/50 border border-border/50 px-4 py-2 rounded-2xl w-full max-w-md group focus-within:border-primary/50 transition-all">
+            {/* Barra de Busca Profissional */}
+            <div className="hidden lg:flex items-center gap-2.5 bg-muted/40 border border-border/40 px-3.5 h-9 rounded-lg w-full max-w-sm group focus-within:border-primary/40 focus-within:bg-muted/60 transition-all duration-200">
               <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <input 
                 type="text" 
-                placeholder="Buscar por cliente ou agendamento..." 
-                className="bg-transparent border-none outline-none text-sm w-full placeholder:text-muted-foreground/60"
+                placeholder="Buscar..." 
+                className="bg-transparent border-none outline-none text-sm w-full placeholder:text-muted-foreground/50 h-full"
               />
             </div>
           </div>
           
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-background" />
+          <div className="flex items-center gap-2 md:gap-4 h-full">
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all relative">
+                <Bell className="h-4.5 w-4.5" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-primary rounded-full ring-2 ring-background" />
               </Button>
               <ThemeToggle />
             </div>
             
-            <div className="h-8 w-px bg-border/60" />
+            <div className="h-8 w-px bg-border/60 mx-1" />
             
-            <Link href="/perfil">
-              <Button variant="ghost" className="group flex items-center gap-3 pl-1 pr-4 py-1.5 rounded-2xl hover:bg-muted transition-all duration-300">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
-                  <User className="h-5 w-5" />
+            <Link href="/perfil" className="flex items-center">
+              <Button variant="ghost" className="group flex items-center gap-2.5 px-2 h-10 rounded-lg hover:bg-muted/80 transition-all duration-200">
+                <div className="flex h-7.5 w-7.5 items-center justify-center rounded-md bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-200">
+                  <User className="h-3.5 w-3.5" />
                 </div>
-                <div className="flex flex-col items-start leading-none hidden sm:flex">
-                  <span className="text-sm font-bold tracking-tight">Meu Perfil</span>
-                  <span className="text-[10px] text-muted-foreground font-medium mt-1">Configurações</span>
+                <div className="flex flex-col items-start justify-center leading-none hidden sm:flex text-left">
+                  <span className="text-xs font-semibold tracking-tight">Meu Perfil</span>
+                  <span className="text-[9px] text-muted-foreground font-normal mt-0.5">Configurações</span>
                 </div>
               </Button>
             </Link>
           </div>
         </header>
         
-        {/* Container Principal com Scroll Suave e Padding Centralizado */}
-        <main className="flex-1 overflow-y-auto scroll-smooth bg-[#fdfdfd] dark:bg-background" role="main">
-          <div className="mx-auto max-w-[1400px] w-full p-8 md:p-12 lg:p-16 space-y-12">
+        {/* Container Principal com Scroll Suave e Layout Robusto */}
+        <main className="flex-1 overflow-y-auto scroll-smooth bg-muted/5 dark:bg-background/50" role="main">
+          <div className="mx-auto max-w-7xl w-full p-6 md:p-8 lg:p-10">
             {children}
           </div>
         </main>

@@ -39,16 +39,16 @@ export default function DashboardPage() {
   } = data as any;
 
   return (
-    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <header className="flex items-end justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
             <Sparkles className="h-3 w-3 fill-primary" />
-            Live Insights
+            Insights em Tempo Real
           </div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase italic">Visão Geral</h1>
-          <p className="text-muted-foreground font-medium text-lg">
-            Sua performance de hoje está <span className="text-foreground font-bold italic underline decoration-primary decoration-2 underline-offset-4">acima da média</span>.
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Visão Geral</h1>
+          <p className="text-muted-foreground font-medium text-sm">
+            Sua performance de hoje está <span className="text-primary font-semibold">acima da média</span>.
           </p>
         </div>
       </header>

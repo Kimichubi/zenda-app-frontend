@@ -71,40 +71,32 @@ export function DashboardCards({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.key} className="group relative overflow-hidden border-none bg-card/40 backdrop-blur-xl shadow-2xl shadow-black/5 hover:bg-card transition-all duration-500 rounded-[2rem]">
-            <CardContent className="p-8">
-              <div className="flex flex-col gap-6">
+          <Card key={card.key} className="group relative overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-md transition-all duration-300 rounded-xl">
+            <CardContent className="p-5 flex items-center justify-center h-full min-h-[100px] !pt-5">
+              <div className="flex items-center gap-4 w-full justify-center">
                 <div className={cn(
-                  "flex h-14 w-14 items-center justify-center rounded-2xl ring-1 shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3",
+                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ring-1 transition-all duration-300",
                   variantStyles[card.variant]
                 )}>
-                  <Icon className="h-7 w-7" strokeWidth={2.5} />
+                  <Icon className="h-5 w-5" strokeWidth={2} />
                 </div>
                 
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{card.label}</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-3xl font-black tracking-tighter">
+                <div className="flex flex-col justify-center min-w-0">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest truncate">{card.label}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-xl font-bold tracking-tight text-foreground">
                       {card.format(values[card.key])}
                     </p>
-                    <div className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-500">
-                      <TrendingUp className="h-3 w-3" />
-                      <span>+12%</span>
+                    <div className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded shrink-0">
+                      <TrendingUp className="h-2.5 w-2.5" />
+                      <span>12%</span>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Decorative background element */}
-              <div className={cn(
-                "absolute -right-4 -bottom-4 h-24 w-24 opacity-[0.03] transition-transform duration-700 group-hover:scale-150",
-                variantStyles[card.variant]
-              )}>
-                <Icon className="h-full w-full" />
               </div>
             </CardContent>
           </Card>
