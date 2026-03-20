@@ -11,6 +11,7 @@ import {
   Zap,
   Scissors,
   ShieldCheck,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/clientes", label: "Clientes", icon: Users },
   { href: "/servicos", label: "Serviços", icon: Scissors },
   { href: "/pagamentos", label: "Pagamentos", icon: CreditCard },
+  { href: "/configuracoes/whatsapp", label: "WhatsApp", icon: MessageCircle },
 ];
 
 export function Sidebar() {

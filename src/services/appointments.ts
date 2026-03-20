@@ -22,12 +22,15 @@ export const appointmentsService = {
         api.patch<Appointment>(`/appointments/${encodeURIComponent(id)}`, data),
 
     updateStatus: (id: string, status: string) =>
-        api.patch<Appointment>(`/appointments/${encodeURIComponent(id)}`, {
+        api.put<Appointment>(`/appointments/${encodeURIComponent(id)}`, {
             status,
         }),
 
+    resendNotification: (id: string) =>
+        api.post<void>(`/appointments/${encodeURIComponent(id)}/resend-notification`),
+
     cancel: (id: string) =>
-        api.patch<Appointment>(`/appointments/${encodeURIComponent(id)}`, {
+        api.put<Appointment>(`/appointments/${encodeURIComponent(id)}`, {
             status: "CANCELLED",
         }),
 };

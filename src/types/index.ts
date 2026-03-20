@@ -125,6 +125,42 @@ export interface TimeSlot {
     available: boolean;
 }
 
+// --- Site Settings ---
+export interface SiteSettings {
+    id: string;
+    userId: string;
+    themeColor: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    aboutText: string;
+    logoUrl: string | null;
+    instagramUrl: string | null;
+    facebookUrl: string | null;
+    whatsappUrl: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Schedule {
+    id: string;
+    userId: string;
+    weekday: number;
+    startTime: string;
+    endTime: string;
+}
+
+export interface PublicSiteData {
+    barber: {
+        id: string;
+        name: string;
+        businessName: string;
+        phone: string;
+    };
+    settings: SiteSettings;
+    services: Service[];
+    schedules: Schedule[];
+}
+
 // --- API ---
 export interface ApiError {
     message: string;

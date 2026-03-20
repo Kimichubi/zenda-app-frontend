@@ -2,9 +2,10 @@
 
 import { addDays, format, startOfWeek, isSameDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Check, User, Clock } from "lucide-react";
-import { Button, Badge, Card, CardContent } from "@/components/ui";
+import { Check, Clock, MessageCircle } from "lucide-react";
+import { Button, Badge, Card, CardContent, useToast } from "@/components/ui";
 import { formatTime, getStatusLabel, cn } from "@/utils";
+import { useResendNotification } from "@/hooks";
 import type { Appointment } from "@/types";
 
 interface WeekCalendarProps {
@@ -30,12 +31,21 @@ export function WeekCalendar({
   currentDate,
   onConfirm,
 }: WeekCalendarProps) {
+  const { showToast } = useToast();
+  const resendNotification = useResendNotification();
   const current = parseISO(currentDate);
   const weekStart = startOfWeek(current, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const getAppointmentsForDay = (day: Date) =>
     appointments.filter((apt) => isSameDay(parseISO(apt.date), day));
+
+  const handleResendNotification = (id: string) => {
+    resendNotification.mutate(id, {
+      onSuccess: () => showToast("Lembrete enviado via WhatsApp!", "success"),
+      onError: () => showToast("Erro ao enviar WhatsApp", "error"),
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -113,17 +123,29 @@ export function WeekCalendar({
                               </p>
                             </div>
 
-                            {apt.status.toLowerCase() === "scheduled" && (
+                            <div className="flex gap-1 mt-1">
+                              {apt.status.toLowerCase() === "scheduled" && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => onConfirm(apt.id)}
+                                  className="flex-1 h-7 text-[10px] font-bold gap-1 border-primary/20 hover:bg-primary hover:text-primary-foreground"
+                                >
+                                  <Check className="h-3 w-3" />
+                                  Confirmar
+                                </Button>
+                              )}
                               <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => onConfirm(apt.id)}
-                                className="w-full h-7 text-[10px] font-bold gap-1 mt-1 border-primary/20 hover:bg-primary hover:text-primary-foreground"
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => handleResendNotification(apt.id)}
+                                className="h-7 w-7 text-emerald-600 hover:bg-emerald-50"
+                                title="Reenviar WhatsApp"
+                                disabled={resendNotification.isPending}
                               >
-                                <Check className="h-3 w-3" />
-                                Confirmar
+                                <MessageCircle className="h-3.5 w-3.5" />
                               </Button>
-                            )}
+                            </div>
                           </div>
                         </div>
                       ))

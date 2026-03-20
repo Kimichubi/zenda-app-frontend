@@ -1,8 +1,10 @@
 export { useUser, useUpdateProfile, useForgotPassword, useLogout } from "./use-auth";
 export { useClients, useClient, useSearchClients, useCreateClient, useUpdateClient, useDeleteClient } from "./use-clients";
-export { useAppointments, useWeekAppointments, useCreateAppointment, useUpdateAppointmentStatus, useCancelAppointment } from "./use-appointments";
+export { useAppointments, useWeekAppointments, useCreateAppointment, useUpdateAppointmentStatus, useResendNotification, useCancelAppointment } from "./use-appointments";
 export { usePayments, useGeneratePix, useMarkPaid, useCancelPayment } from "./use-payments";
 export { useDashboard } from "./use-dashboard";
 export { useServices, useCreateService, useUpdateService, useDeleteService } from "./use-services";
 export { useAdminUsers, useAdminStats, useUpdateUserPlan } from "./use-admin";
+export { usePublicSettings, useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
+export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp } from "./use-whatsapp";

@@ -43,6 +43,12 @@ export function useUpdateAppointmentStatus() {
     });
 }
 
+export function useResendNotification() {
+    return useMutation({
+        mutationFn: (id: string) => appointmentsService.resendNotification(id),
+    });
+}
+
 export function useCancelAppointment() {
     const queryClient = useQueryClient();
 
