@@ -10,8 +10,9 @@ export default function WhatsappConfigPage() {
   const logout = useLogoutWhatsapp();
   const { showToast } = useToast();
 
-  const isScanning = statusData?.status === "SCANNING";
-  const isConnected = statusData?.status === "CONNECTED";
+  const isScanning = statusData?.status === "SCANNING" || statusData?.status === "SCAN_QR_CODE";
+  const isConnected = statusData?.status === "CONNECTED" || statusData?.status === "WORKING";
+  const isConnecting = statusData?.status === "STARTING";
   
   const { data: qrData, isLoading: isLoadingQR } = useWhatsappQR(isScanning);
 
@@ -48,16 +49,16 @@ export default function WhatsappConfigPage() {
           <CardHeader className="border-b border-border/40 p-6 bg-muted/5">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30"}`} />
+                <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 animate-pulse" : isScanning || isConnecting ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/30"}`} />
                 Status da Conexão
               </CardTitle>
-              <Badge variant={isConnected ? "success" : "secondary"} className="uppercase text-[9px] font-bold tracking-wider">
-                {isConnected ? "Conectado" : statusData?.status || "Desconectado"}
+              <Badge variant={isConnected ? "success" : isScanning || isConnecting ? "warning" : "secondary"} className="uppercase text-[9px] font-bold tracking-wider">
+                {isConnected ? "Conectado" : isConnecting ? "Iniciando..." : isScanning ? "Aguardando QR Code" : statusData?.status || "Desconectado"}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-10 flex flex-col items-center text-center space-y-8">
-            {!isConnected && !isScanning && (
+            {!isConnected && !isScanning && !isConnecting && (
               <>
                 <div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
                   <MessageCircle className="w-10 h-10" />
@@ -76,6 +77,20 @@ export default function WhatsappConfigPage() {
                   {connect.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                   Gerar QR Code
                 </Button>
+              </>
+            )}
+
+            {isConnecting && (
+              <>
+                <div className="w-20 h-20 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                  <Loader2 className="w-10 h-10 animate-spin" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-amber-600">Iniciando Serviço</h3>
+                  <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                    O servidor do WhatsApp está sendo preparado. Isso pode levar alguns segundos...
+                  </p>
+                </div>
               </>
             )}
 
@@ -135,6 +150,7 @@ export default function WhatsappConfigPage() {
 function Badge({ children, variant, className }: any) {
   const styles = {
     success: "bg-emerald-500/10 text-emerald-600",
+    warning: "bg-amber-500/10 text-amber-600",
     secondary: "bg-muted text-muted-foreground",
   };
   const currentStyle = (styles as any)[variant] || styles.secondary;

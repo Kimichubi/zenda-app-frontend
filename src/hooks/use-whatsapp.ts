@@ -14,7 +14,11 @@ export const useWhatsappQR = (enabled: boolean) => {
     queryKey: ["whatsapp", "qr"],
     queryFn: () => whatsappService.getQR(),
     enabled: enabled,
-    refetchInterval: 10000, // Atualiza o QR a cada 10 segundos se necessário
+    refetchInterval: (query) => {
+      // Se tivermos um QR code, podemos diminuir a frequência ou manter
+      // Se não tivermos (está carregando), mantemos 5s para tentar obter logo
+      return query.state.data?.qr ? 10000 : 5000;
+    },
   });
 };
 
