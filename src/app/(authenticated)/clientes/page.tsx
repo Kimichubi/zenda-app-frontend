@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ClientTable } from "@/features/clients/client-table";
+import { FilterBar } from "@/features/clients/filter-bar";
 import { ClientForm } from "@/features/clients/client-form";
 import { Modal, Button, useToast, Card } from "@/components/ui";
 import {
@@ -10,38 +11,35 @@ import {
   useUpdateClient,
   useDeleteClient,
 } from "@/hooks";
-import type { Client, ClientFormData } from "@/types";
+import type { Client, ClientFormData, ClientFilters } from "@/types";
 import { Plus, Users, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 export default function ClientesPage() {
-  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<ClientFilters>({ page: 1, limit: 10 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
 
-  const { data, isLoading } = useClients(page);
+  const { data, isLoading } = useClients(filters);
   const createClient = useCreateClient();
   const updateClient = useUpdateClient();
   const deleteClient = useDeleteClient();
   const { showToast } = useToast();
 
-  const handleSubmit = (formData: ClientFormData) => {
-    const options = {
-      onSuccess: () => {
-        showToast(editingClient ? "Cliente atualizado!" : "Cliente cadastrado!", "success");
-        setIsModalOpen(false);
-        setEditingClient(null);
-      },
-      onError: () => showToast("Erro na operação", "error"),
-    };
+  const handleFilterChange = useCallback((newFilters: Partial<ClientFilters>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+      page: 1, // Sempre volta para a primeira página ao filtrar
+    }));
+  }, []);
 
-    if (editingClient) {
-      updateClient.mutate({ id: editingClient.id, data: formData }, options);
-    } else {
-      createClient.mutate(formData, options);
-    }
-  };
+  const handlePageChange = useCallback((newPage: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: newPage,
+    }));
+  }, []);
 
-  // Corrigindo a mutação para clients
   const handleFormSubmit = (formData: ClientFormData) => {
     const options = {
       onSuccess: () => {
@@ -89,7 +87,8 @@ export default function ClientesPage() {
 
   const clients = data?.data ?? [];
   const total = data?.total ?? 0;
-  const totalPages = Math.ceil(total / 20);
+  const limit = data?.limit ?? filters.limit ?? 10;
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -110,6 +109,8 @@ export default function ClientesPage() {
         </Button>
       </header>
 
+      <FilterBar onFilterChange={handleFilterChange} />
+
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
         <ClientTable
           clients={clients}
@@ -121,14 +122,14 @@ export default function ClientesPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-2">
           <p className="text-sm text-muted-foreground font-medium">
-            Página <span className="text-foreground font-bold">{page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
+            Página <span className="text-foreground font-bold">{filters.page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => p - 1)}
+              disabled={filters.page! <= 1}
+              onClick={() => handlePageChange(filters.page! - 1)}
               className="gap-1 h-9"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -137,8 +138,8 @@ export default function ClientesPage() {
             <Button
               variant="outline"
               size="sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
+              disabled={filters.page! >= totalPages}
+              onClick={() => handlePageChange(filters.page! + 1)}
               className="gap-1 h-9"
             >
               Próxima

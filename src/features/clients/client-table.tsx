@@ -3,7 +3,7 @@
 import { Pencil, Trash2, Mail, Phone, User, ChevronRight } from "lucide-react";
 import { formatPhone } from "@/utils";
 import type { Client } from "@/types";
-import { Table, Button } from "@/components/ui";
+import { Table, Button, Badge } from "@/components/ui";
 
 interface ClientTableProps {
   clients: Client[];
@@ -48,6 +48,15 @@ export function ClientTable({ clients, onEdit, onDelete }: ClientTableProps) {
             </div>
           )}
         </div>
+      ),
+    },
+    {
+      key: "status" as const,
+      label: "Status",
+      render: (value: string) => (
+        <Badge variant={value === "ACTIVE" ? "success" : "secondary"}>
+          {value === "ACTIVE" ? "Ativo" : "Inativo"}
+        </Badge>
       ),
     },
     {
