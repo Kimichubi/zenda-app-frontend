@@ -1,9 +1,18 @@
 import { api } from "./api";
-import type { Client, ClientFormData, PaginatedResponse } from "@/types";
+import type { Client, ClientFormData, ClientFilters, PaginatedResponse } from "@/types";
 
 export const clientsService = {
-    list: async (page = 1, limit = 20) => {
-        const res = await api.get<Client[] | PaginatedResponse<Client>>(`/clients?page=${page}&limit=${limit}`);
+    list: async (filters: ClientFilters = {}) => {
+        const { page = 1, limit = 20, ...rest } = filters;
+        const params = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString(),
+            ...Object.fromEntries(
+                Object.entries(rest).filter(([_, v]) => v !== undefined && v !== "")
+            ),
+        });
+
+        const res = await api.get<Client[] | PaginatedResponse<Client>>(`/clients?${params.toString()}`);
         // Normalize backend responses: some environments return plain Client[]
         if (Array.isArray(res)) {
             return {

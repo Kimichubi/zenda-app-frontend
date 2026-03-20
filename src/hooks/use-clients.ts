@@ -2,12 +2,13 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/services/clients";
-import type { ClientFormData } from "@/types";
+import type { ClientFormData, ClientFilters } from "@/types";
 
-export function useClients(page = 1) {
+export function useClients(filtersOrPage: ClientFilters | number = { page: 1 }) {
+    const filters = typeof filtersOrPage === "number" ? { page: filtersOrPage } : filtersOrPage;
     return useQuery({
-        queryKey: ["clients", page],
-        queryFn: () => clientsService.list(page),
+        queryKey: ["clients", filters],
+        queryFn: () => clientsService.list(filters),
     });
 }
 

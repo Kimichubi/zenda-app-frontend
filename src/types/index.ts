@@ -41,7 +41,17 @@ export interface Client {
     phone: string;
     email: string;
     notes: string;
+    status: "ACTIVE" | "INACTIVE";
     createdAt: string;
+}
+
+export interface ClientFilters {
+    search?: string;
+    status?: "ACTIVE" | "INACTIVE";
+    startDate?: string;
+    endDate?: string;
+    page?: number;
+    limit?: number;
 }
 
 export interface ClientFormData {
