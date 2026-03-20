@@ -16,7 +16,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
     {
       key: "name" as const,
       label: "Serviço",
-      render: (value: string) => (
+      render: (value: any) => (
         <div className="flex flex-col">
           <span className="font-bold text-foreground">{value}</span>
         </div>
@@ -25,7 +25,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
     {
       key: "duration" as const,
       label: "Duração",
-      render: (value: number) => (
+      render: (value: any) => (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="h-4 w-4" />
           <span className="text-sm font-medium">{value} min</span>
@@ -35,7 +35,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
     {
       key: "price" as const,
       label: "Preço",
-      render: (value: number) => (
+      render: (value: any) => (
         <div className="flex items-center gap-1.5 font-bold text-primary">
           <DollarSign className="h-4 w-4 opacity-50" />
           <span>{formatCurrency(value)}</span>
@@ -45,7 +45,7 @@ export function ServiceTable({ services, onEdit, onDelete }: ServiceTableProps) 
     {
       key: "id" as const,
       label: "Ações",
-      render: (_: string, service: Service) => (
+      render: (_: any, service: Service) => (
         <div className="flex justify-end gap-2">
           <Button
             variant="ghost"

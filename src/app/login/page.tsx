@@ -3,7 +3,6 @@
 import { LoginForm } from "@/features/auth/login-form";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { LightningBoltIcon } from "@radix-ui/react-icons"; // Assuming I might want to use icons, but I'll stick to Lucide
 
 import { Zap } from "lucide-react";
 

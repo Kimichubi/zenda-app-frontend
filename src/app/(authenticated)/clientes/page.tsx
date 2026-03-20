@@ -37,7 +37,7 @@ export default function ClientesPage() {
     if (editingClient) {
       updateClient.mutate({ id: editingClient.id, data: formData }, options);
     } else {
-      createService.mutate(formData, options); // Erro aqui, deveria ser createClient. Corrigindo.
+      createClient.mutate(formData, options);
     }
   };
 

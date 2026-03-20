@@ -33,8 +33,8 @@ export function PaymentTable({
     {
       key: "clientName" as const,
       label: "Cliente",
-      render: (value: string | undefined, payment: Payment) => {
-        const safeValue = value || "Cliente";
+      render: (value: any, payment: Payment) => {
+        const safeValue = typeof value === 'string' ? value : "Cliente";
         return (
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export function PaymentTable({
     {
       key: "amount" as const,
       label: "Valor",
-      render: (value: number) => (
+      render: (value: any) => (
         <span className="font-mono font-bold text-primary">
           {formatCurrency(value)}
         </span>
@@ -65,7 +65,7 @@ export function PaymentTable({
     {
       key: "status" as const,
       label: "Status",
-      render: (value: string) => (
+      render: (value: any) => (
         <Badge variant={statusVariant[value.toLowerCase()] || "default"} className="font-bold">
           {getStatusLabel(value)}
         </Badge>
@@ -74,7 +74,7 @@ export function PaymentTable({
     {
       key: "createdAt" as const,
       label: "Data",
-      render: (value: string) => (
+      render: (value: any) => (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="h-3 w-3" />
           <span className="text-xs font-medium">{formatDate(value)}</span>
@@ -84,7 +84,7 @@ export function PaymentTable({
     {
       key: "id" as const,
       label: "Ações",
-      render: (_: string, payment: Payment) => (
+      render: (_: any, payment: Payment) => (
         <div className="flex justify-end gap-2">
           {payment.status.toLowerCase() === "pending" && !payment.pixCode && (
             <Button

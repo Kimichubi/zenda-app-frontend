@@ -1,7 +1,6 @@
 "use client";
 
 import { SignupForm } from "@/features/auth/signup-form";
-import Link from "react-link"; // Wait, it's next/link. Fix it.
 import NextLink from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Zap, Sparkles } from "lucide-react";

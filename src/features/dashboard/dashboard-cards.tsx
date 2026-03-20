@@ -75,28 +75,34 @@ export function DashboardCards({
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.key} className="group relative overflow-hidden border border-border/50 bg-card shadow-sm hover:shadow-md transition-all duration-300 rounded-xl">
-            <CardContent className="p-5 flex items-center justify-center h-full min-h-[100px] !pt-5">
-              <div className="flex items-center gap-4 w-full justify-center">
+          <Card key={card.key} className="group relative overflow-hidden border border-border/40 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-500 rounded-2xl">
+            <div className={cn(
+              "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500",
+              card.variant === "emerald" ? "bg-emerald-500" :
+              card.variant === "blue" ? "bg-blue-500" :
+              card.variant === "purple" ? "bg-purple-500" : "bg-rose-500"
+            )} />
+            
+            <CardContent className="p-6 flex flex-col h-full !pt-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className={cn(
-                  "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ring-1 transition-all duration-300",
+                  "flex h-12 w-12 items-center justify-center rounded-xl ring-1 shadow-inner transition-all duration-500 group-hover:scale-110",
                   variantStyles[card.variant]
                 )}>
-                  <Icon className="h-5 w-5" strokeWidth={2} />
+                  <Icon className="h-6 w-6" strokeWidth={2.5} />
                 </div>
                 
-                <div className="flex flex-col justify-center min-w-0">
-                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest truncate">{card.label}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-xl font-bold tracking-tight text-foreground">
-                      {card.format(values[card.key])}
-                    </p>
-                    <div className="flex items-center gap-0.5 text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded shrink-0">
-                      <TrendingUp className="h-2.5 w-2.5" />
-                      <span>12%</span>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full shrink-0">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>12%</span>
                 </div>
+              </div>
+                
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-muted-foreground/70 uppercase tracking-[0.15em]">{card.label}</p>
+                <p className="text-3xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                  {card.format(values[card.key])}
+                </p>
               </div>
             </CardContent>
           </Card>

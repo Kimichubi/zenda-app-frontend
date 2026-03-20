@@ -21,7 +21,7 @@ interface AppointmentFormProps {
 }
 
 export function AppointmentForm({ onSubmit, isLoading, initialDate }: AppointmentFormProps) {
-  const { data: clientsData } = useClients(1, 100);
+  const { data: clientsData } = useClients(1);
   const { data: services } = useServices();
 
   const {

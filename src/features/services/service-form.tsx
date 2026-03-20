@@ -8,8 +8,8 @@ import type { ServiceFormData } from "@/services/services";
 
 const serviceSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
-  duration: z.coerce.number().min(1, "A duração deve ser maior que 0"),
-  price: z.coerce.number().min(0, "O preço não pode ser negativo"),
+  duration: z.number().min(1, "A duração deve ser maior que 0"),
+  price: z.number().min(0, "O preço não pode ser negativo"),
 });
 
 interface ServiceFormProps {
@@ -42,7 +42,7 @@ export function ServiceForm({ onSubmit, initialData, isLoading }: ServiceFormPro
           label="Duração (minutos)"
           type="number"
           placeholder="30"
-          {...register("duration")}
+          {...register("duration", { valueAsNumber: true })}
           error={errors.duration?.message}
         />
         
@@ -51,7 +51,7 @@ export function ServiceForm({ onSubmit, initialData, isLoading }: ServiceFormPro
           type="number"
           step="0.01"
           placeholder="50.00"
-          {...register("price")}
+          {...register("price", { valueAsNumber: true })}
           error={errors.price?.message}
         />
       </div>
