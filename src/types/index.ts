@@ -107,18 +107,30 @@ export interface AppointmentFormData {
 }
 
 // --- Payment ---
-export type PaymentStatus = "pending" | "paid" | "overdue" | "cancelled";
+export type PaymentStatus = "pending" | "paid" | "overdue" | "cancelled" | "failed";
 
 export interface Payment {
     id: string;
     appointmentId: string;
     clientName: string;
+    serviceName?: string;
     amount: number;
     status: PaymentStatus;
     pixCode: string | null;
     reason: string | null;
     paidAt: string | null;
     createdAt: string;
+}
+
+export interface PaymentFilters {
+    search?: string;
+    status?: PaymentStatus | "all";
+    startDate?: string;
+    endDate?: string;
+    minAmount?: number;
+    maxAmount?: number;
+    page?: number;
+    limit?: number;
 }
 
 // --- Dashboard ---

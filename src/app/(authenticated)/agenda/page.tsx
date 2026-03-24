@@ -11,7 +11,7 @@ import {
   useUpdateAppointment
 } from "@/hooks";
 import { useToast, Button, Modal } from "@/components/ui";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus, Download } from "lucide-react";
 import type { Appointment, AppointmentFormData } from "@/types";
 
 export default function AgendaPage() {
@@ -64,6 +64,12 @@ export default function AgendaPage() {
     } else {
       createAppointment.mutate(data, options);
     }
+  };
+
+  const handleExport = () => {
+    const token = localStorage.getItem("zenda_token");
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    window.open(`${baseUrl}/reports/appointments/export?token=${token}`, "_blank");
   };
 
   const handleNavigate = (direction: "prev" | "next") => {
@@ -123,10 +129,21 @@ export default function AgendaPage() {
             </Button>
           </div>
           
-          <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
-            <Plus className="h-4 w-4" />
-            Novo Agendamento
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleExport} 
+              className="h-10 px-4 gap-2 rounded-lg text-xs font-black uppercase tracking-wider border-primary/20 bg-transparent text-primary hover:bg-primary hover:text-white hover:border-primary transition-all shadow-none"
+            >
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+            
+            <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
+              <Plus className="h-4 w-4" />
+              Novo Agendamento
+            </Button>
+          </div>
         </div>
       </header>
 

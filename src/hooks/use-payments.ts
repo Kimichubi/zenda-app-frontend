@@ -2,11 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { paymentsService } from "@/services/payments";
+import type { PaymentFilters } from "@/types";
 
-export function usePayments() {
+export function usePayments(filters: PaymentFilters = { page: 1, limit: 10 }) {
     return useQuery({
-        queryKey: ["payments"],
-        queryFn: () => paymentsService.list(),
+        queryKey: ["payments", filters],
+        queryFn: () => paymentsService.list(filters),
     });
 }
 
