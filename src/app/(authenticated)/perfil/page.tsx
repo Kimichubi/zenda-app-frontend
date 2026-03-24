@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, useToast } from "@/components/ui";
-import { Loader2, User, Building, Phone, Globe, Save } from "lucide-react";
+import { Loader2, User, Building, Phone, Globe, Save, CreditCard, MapPin } from "lucide-react";
 import { useEffect } from "react";
 
 const profileSchema = z.object({
@@ -14,6 +14,11 @@ const profileSchema = z.object({
   businessName: z.string().min(1, "O nome do negócio é obrigatório"),
   slug: z.string().min(1, "O link da agenda é obrigatório")
     .regex(/^[a-z0-9-]+$/, "O link deve conter apenas letras minúsculas, números e hífens"),
+  // Pix Config
+  pixKeyType: z.string().optional(),
+  pixKey: z.string().optional(),
+  pixName: z.string().optional(),
+  pixCity: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -39,6 +44,10 @@ export default function PerfilPage() {
         phone: user.phone,
         businessName: user.businessName,
         slug: user.slug,
+        pixKeyType: (user as any).pixKeyType || "cpf",
+        pixKey: (user as any).pixKey || "",
+        pixName: (user as any).pixName || "",
+        pixCity: (user as any).pixCity || "",
       });
     }
   }, [user, reset]);
@@ -72,19 +81,19 @@ export default function PerfilPage() {
         </p>
       </header>
 
-      <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
-        <CardHeader className="border-b border-border/50 bg-muted/20 pb-6">
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <User className="h-5 w-5 text-primary" />
-            Informações da Conta
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
+          <CardHeader className="border-b border-border/50 bg-muted/20 pb-6">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <User className="h-5 w-5 text-primary" />
+              Informações da Conta
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider">
-                  <User className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-2">
+                  <User className="h-3 w-3" />
                   Dados Pessoais
                 </div>
                 <Input
@@ -102,8 +111,8 @@ export default function PerfilPage() {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider">
-                  <Building className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-2">
+                  <Building className="h-3 w-3" />
                   O Negócio
                 </div>
                 <Input
@@ -129,24 +138,77 @@ export default function PerfilPage() {
                   {errors.slug && (
                     <p className="text-sm font-medium text-destructive">{errors.slug.message}</p>
                   )}
-                  <p className="text-[10px] text-muted-foreground italic mt-1">
-                    Este é o link que você enviará para seus clientes agendarem online.
-                  </p>
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="pt-6 border-t border-border/50 flex justify-end">
-              <Button type="submit" className="gap-2 px-8 h-11" loading={updateProfile.isPending}>
-                <Save className="h-4 w-4" />
-                Salvar Alterações
-              </Button>
+        {/* Pix Configuration Card */}
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
+          <CardHeader className="border-b border-border/50 bg-muted/20 pb-6">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <CreditCard className="h-5 w-5 text-primary" />
+              Configuração Pix para Recebimento
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <p className="text-sm text-muted-foreground mb-8">
+              Configure sua chave Pix para que os clientes possam pagar seus agendamentos via QR Code.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Tipo de Chave</label>
+                  <select
+                    {...register("pixKeyType")}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="cpf">CPF</option>
+                    <option value="cnpj">CNPJ</option>
+                    <option value="email">E-mail</option>
+                    <option value="phone">Telefone (com +55)</option>
+                    <option value="random">Chave Aleatória</option>
+                  </select>
+                </div>
+                <Input
+                  label="Chave Pix"
+                  placeholder="Sua chave aqui"
+                  {...register("pixKey")}
+                />
+              </div>
+
+              <div className="space-y-4">
+                <Input
+                  label="Nome do Titular (sem acentos)"
+                  placeholder="Ex: FULANO DE TAL"
+                  {...register("pixName")}
+                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none flex items-center gap-2">
+                    <MapPin className="h-3.5 w-3.5" />
+                    Cidade (sem acentos)
+                  </label>
+                  <Input
+                    placeholder="Ex: SAO PAULO"
+                    {...register("pixCity")}
+                  />
+                </div>
+              </div>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <Card className="border-border/50 bg-destructive/5 backdrop-blur-sm overflow-hidden rounded-2xl border-dashed">
+        <div className="flex justify-end pt-4">
+          <Button type="submit" className="gap-2 px-12 h-14 rounded-2xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-xs" loading={updateProfile.isPending}>
+            <Save className="h-4 w-4" />
+            Salvar Todas as Configurações
+          </Button>
+        </div>
+      </form>
+
+      <Card className="border-border/50 bg-destructive/5 backdrop-blur-sm overflow-hidden rounded-2xl border-dashed mt-12">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
