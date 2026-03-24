@@ -30,6 +30,19 @@ export function useCreateAppointment() {
     });
 }
 
+export function useUpdateAppointment() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: Partial<AppointmentFormData> & { status?: string } }) =>
+            appointmentsService.update(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        },
+    });
+}
+
 export function useUpdateAppointmentStatus() {
     const queryClient = useQueryClient();
 

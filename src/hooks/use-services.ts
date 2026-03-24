@@ -2,11 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { servicesService, type ServiceFormData } from "@/services/services";
+import type { ServiceFilters } from "@/types";
 
-export function useServices() {
+export function useServices(filters: ServiceFilters = { page: 1, limit: 10 }) {
     return useQuery({
-        queryKey: ["services"],
-        queryFn: () => servicesService.list(),
+        queryKey: ["services", filters],
+        queryFn: () => servicesService.list(filters),
     });
 }
 

@@ -1,19 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { format, startOfWeek, addDays, parseISO } from "date-fns";
+import { format, startOfWeek, addDays } from "date-fns";
 import { WeekCalendar } from "@/features/agenda/week-calendar";
 import { AppointmentForm } from "@/features/agenda/appointment-form";
-import { useWeekAppointments, useUpdateAppointmentStatus, useCreateAppointment } from "@/hooks";
+import { 
+  useWeekAppointments, 
+  useUpdateAppointmentStatus, 
+  useCreateAppointment,
+  useUpdateAppointment
+} from "@/hooks";
 import { useToast, Button, Modal } from "@/components/ui";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus, Sparkles } from "lucide-react";
-import type { AppointmentFormData } from "@/types";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus } from "lucide-react";
+import type { Appointment, AppointmentFormData } from "@/types";
 
 export default function AgendaPage() {
   const [currentDate, setCurrentDate] = useState(
     format(new Date(), "yyyy-MM-dd"),
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
   const weekStart = format(
     startOfWeek(new Date(currentDate + "T00:00:00"), { weekStartsOn: 1 }),
@@ -23,6 +29,7 @@ export default function AgendaPage() {
   const { data: appointments = [], isLoading } = useWeekAppointments(weekStart);
   const updateStatus = useUpdateAppointmentStatus();
   const createAppointment = useCreateAppointment();
+  const updateAppointment = useUpdateAppointment();
   const { showToast } = useToast();
 
   const handleConfirm = (appointmentId: string) => {
@@ -35,16 +42,28 @@ export default function AgendaPage() {
     );
   };
 
-  const handleCreateAppointment = (data: AppointmentFormData) => {
-    createAppointment.mutate(data, {
+  const handleEdit = (appointment: Appointment) => {
+    setEditingAppointment(appointment);
+    setIsModalOpen(true);
+  };
+
+  const handleFormSubmit = (data: AppointmentFormData) => {
+    const options = {
       onSuccess: () => {
-        showToast("Agendamento criado e cliente notificado!", "success");
+        showToast(editingAppointment ? "Agendamento atualizado!" : "Agendamento criado e cliente notificado!", "success");
         setIsModalOpen(false);
+        setEditingAppointment(null);
       },
-      onError: (err) => {
-        showToast(err instanceof Error ? err.message : "Erro ao criar agendamento", "error");
+      onError: (err: any) => {
+        showToast(err?.response?.data?.message || err.message || "Erro na operação", "error");
       },
-    });
+    };
+
+    if (editingAppointment) {
+      updateAppointment.mutate({ id: editingAppointment.id, data }, options);
+    } else {
+      createAppointment.mutate(data, options);
+    }
   };
 
   const handleNavigate = (direction: "prev" | "next") => {
@@ -56,6 +75,11 @@ export default function AgendaPage() {
 
   const handleToday = () => {
     setCurrentDate(format(new Date(), "yyyy-MM-dd"));
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingAppointment(null);
   };
 
   return (
@@ -116,21 +140,28 @@ export default function AgendaPage() {
           appointments={appointments}
           currentDate={currentDate}
           onConfirm={handleConfirm}
+          onEdit={handleEdit}
           onNavigate={handleNavigate}
         />
       )}
 
       <Modal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Novo Agendamento"
+        onClose={handleCloseModal}
+        title={editingAppointment ? "Editar Agendamento" : "Novo Agendamento"}
         className="max-w-md"
       >
         <div className="p-2">
           <AppointmentForm 
-            onSubmit={handleCreateAppointment}
-            isLoading={createAppointment.isPending}
+            onSubmit={handleFormSubmit}
+            isLoading={createAppointment.isPending || updateAppointment.isPending}
             initialDate={currentDate}
+            initialData={editingAppointment ? {
+              clientId: editingAppointment.clientId,
+              serviceId: editingAppointment.serviceId,
+              date: typeof editingAppointment.date === 'string' ? editingAppointment.date.split("T")[0] : format(editingAppointment.date, "yyyy-MM-dd"),
+              startTime: editingAppointment.startTime,
+            } : undefined}
           />
         </div>
       </Modal>

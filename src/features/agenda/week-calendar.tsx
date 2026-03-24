@@ -2,8 +2,8 @@
 
 import { addDays, format, startOfWeek, isSameDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Check, Clock, MessageCircle } from "lucide-react";
-import { Button, Badge, Card, CardContent, useToast } from "@/components/ui";
+import { Edit2, Check, Clock, MessageCircle, Calendar as CalendarIcon } from "lucide-react";
+import { Button, useToast } from "@/components/ui";
 import { formatTime, getStatusLabel, cn } from "@/utils";
 import { useResendNotification } from "@/hooks";
 import type { Appointment } from "@/types";
@@ -12,24 +12,26 @@ interface WeekCalendarProps {
   appointments: Appointment[];
   currentDate: string;
   onConfirm: (appointmentId: string) => void;
+  onEdit: (appointment: Appointment) => void;
   onNavigate: (direction: "prev" | "next") => void;
 }
 
-const statusVariant: Record<
+const statusConfig: Record<
   string,
-  "default" | "secondary" | "destructive" | "outline" | "success" | "warning"
+  { label: string; color: string; indicator: string; bg: string }
 > = {
-  scheduled: "secondary",
-  confirmed: "success",
-  completed: "default",
-  cancelled: "destructive",
-  no_show: "warning",
+  scheduled: { label: "Agendado", color: "text-blue-600", indicator: "bg-blue-500", bg: "bg-blue-50" },
+  confirmed: { label: "Confirmado", color: "text-emerald-600", indicator: "bg-emerald-500", bg: "bg-emerald-50" },
+  completed: { label: "Finalizado", color: "text-slate-500", indicator: "bg-slate-400", bg: "bg-slate-50" },
+  cancelled: { label: "Cancelado", color: "text-rose-600", indicator: "bg-rose-500", bg: "bg-rose-50" },
+  no_show: { label: "Faltou", color: "text-amber-600", indicator: "bg-amber-500", bg: "bg-amber-50" },
 };
 
 export function WeekCalendar({
   appointments,
   currentDate,
   onConfirm,
+  onEdit,
 }: WeekCalendarProps) {
   const { showToast } = useToast();
   const resendNotification = useResendNotification();
@@ -48,115 +50,127 @@ export function WeekCalendar({
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="border-none bg-transparent shadow-none">
-        <CardContent className="p-0">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold tracking-tight capitalize">
-              {format(weekStart, "MMMM yyyy", { locale: ptBR })}
-            </h2>
-          </div>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-black tracking-tighter uppercase italic text-slate-900">
+          {format(weekStart, "MMMM yyyy", { locale: ptBR })}
+        </h2>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-            {days.map((day) => {
-              const isToday = isSameDay(day, new Date());
-              const dayAppointments = getAppointmentsForDay(day);
-              
-              return (
-                <div
-                  key={day.toISOString()}
-                  className={cn(
-                    "flex flex-col rounded-2xl border transition-all duration-300",
-                    isToday 
-                      ? "border-primary/30 bg-primary/5 shadow-sm" 
-                      : "border-border/50 bg-card/50"
-                  )}
-                >
-                  <div className={cn(
-                    "p-3 text-center border-b",
-                    isToday ? "border-primary/20" : "border-border/50"
-                  )}>
-                    <p className={cn(
-                      "text-[10px] font-bold uppercase tracking-widest",
-                      isToday ? "text-primary" : "text-muted-foreground"
-                    )}>
-                      {format(day, "EEE", { locale: ptBR })}
-                    </p>
-                    <p className={cn(
-                      "text-xl font-extrabold mt-1",
-                      isToday ? "text-primary" : "text-foreground"
-                    )}>
-                      {format(day, "dd")}
-                    </p>
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-px bg-border/20 rounded-[2.5rem] overflow-hidden border border-border/20">
+        {days.map((day) => {
+          const isToday = isSameDay(day, new Date());
+          const dayAppointments = getAppointmentsForDay(day);
+          
+          return (
+            <div
+              key={day.toISOString()}
+              className={cn(
+                "flex flex-col min-w-0 min-h-[500px] transition-colors",
+                isToday ? "bg-primary/[0.02]" : "bg-transparent"
+              )}
+            >
+              {/* Day Header */}
+              <div className={cn(
+                "p-5 text-center border-b flex flex-col items-center gap-1",
+                isToday ? "border-primary/20" : "border-border/10"
+              )}>
+                <p className={cn(
+                  "text-[10px] font-black uppercase tracking-[0.2em]",
+                  isToday ? "text-primary" : "text-slate-400"
+                )}>
+                  {format(day, "EEE", { locale: ptBR })}
+                </p>
+                <p className={cn(
+                  "text-2xl font-black tracking-tighter",
+                  isToday ? "text-primary" : "text-slate-900"
+                )}>
+                  {format(day, "dd")}
+                </p>
+                {isToday && <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />}
+              </div>
+
+              {/* Day Content */}
+              <div className="flex-1 p-3 space-y-3">
+                {dayAppointments.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center opacity-5 py-12">
+                    <CalendarIcon className="h-8 w-8 text-slate-900" />
                   </div>
+                ) : (
+                  dayAppointments.sort((a,b) => (a.startTime || "").localeCompare(b.startTime || "")).map((apt) => {
+                    const status = statusConfig[apt.status.toLowerCase()] || statusConfig.scheduled;
+                    
+                    return (
+                      <div
+                        key={apt.id}
+                        className="relative rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-300 w-full overflow-hidden"
+                      >
+                        {/* Status Indicator Bar */}
+                        <div className={cn("absolute left-0 top-0 bottom-0 w-1.5", status.indicator)} />
+                        
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-black text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5 text-primary" />
+                              {formatTime(apt.startTime)}
+                            </span>
+                            <span className={cn("text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full", status.bg, status.color)}>
+                              {status.label}
+                            </span>
+                          </div>
+                          
+                          <div>
+                            <p className="text-sm font-black tracking-tight text-slate-900 truncate">
+                              {apt.clientName}
+                            </p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate mt-0.5">
+                              {apt.serviceName}
+                            </p>
+                          </div>
 
-                  <div className="flex-1 p-2 space-y-2 min-h-[200px]">
-                    {dayAppointments.length === 0 ? (
-                      <div className="h-full flex items-center justify-center opacity-20 py-8">
-                        <Clock className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                    ) : (
-                      dayAppointments.map((apt) => (
-                        <div
-                          key={apt.id}
-                          className="group relative rounded-xl border border-border/50 bg-card p-3 shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-200"
-                        >
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
-                                {formatTime(apt.startTime)}
-                              </span>
-                              <Badge 
-                                variant={statusVariant[apt.status.toLowerCase()] || "default"}
-                                className="text-[9px] px-1.5 h-4 font-bold uppercase"
-                              >
-                                {getStatusLabel(apt.status)}
-                              </Badge>
-                            </div>
-                            
-                            <div>
-                              <p className="text-xs font-bold leading-tight group-hover:text-primary transition-colors">
-                                {apt.clientName}
-                              </p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                                {apt.serviceName}
-                              </p>
-                            </div>
-
-                            <div className="flex gap-1 mt-1">
-                              {apt.status.toLowerCase() === "scheduled" && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => onConfirm(apt.id)}
-                                  className="flex-1 h-7 text-[10px] font-bold gap-1 border-primary/20 hover:bg-primary hover:text-primary-foreground"
-                                >
-                                  <Check className="h-3 w-3" />
-                                  Confirmar
-                                </Button>
-                              )}
+                          {/* Action Buttons - Always Visible */}
+                          <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
+                            {apt.status.toLowerCase() === "scheduled" && (
                               <Button
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => handleResendNotification(apt.id)}
-                                className="h-7 w-7 text-emerald-600 hover:bg-emerald-50"
-                                title="Reenviar WhatsApp"
-                                disabled={resendNotification.isPending}
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onConfirm(apt.id)}
+                                className="flex-1 h-8 rounded-xl text-[9px] font-black uppercase tracking-wider gap-1.5 border-slate-100 bg-slate-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all"
                               >
-                                <MessageCircle className="h-3.5 w-3.5" />
+                                <Check className="h-3 w-3" />
+                                Ok
                               </Button>
-                            </div>
+                            )}
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => onEdit(apt)}
+                              className="h-8 w-8 rounded-xl bg-slate-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all"
+                              title="Editar"
+                            >
+                              <Edit2 className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => handleResendNotification(apt.id)}
+                              className="h-8 w-8 rounded-xl bg-slate-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all"
+                              title="WhatsApp"
+                              disabled={resendNotification.isPending}
+                            >
+                              <MessageCircle className="h-3.5 w-3.5" />
+                            </Button>
                           </div>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

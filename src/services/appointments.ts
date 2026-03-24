@@ -19,7 +19,7 @@ export const appointmentsService = {
         api.post<Appointment>("/appointments", data),
 
     update: (id: string, data: Partial<AppointmentFormData>) =>
-        api.patch<Appointment>(`/appointments/${encodeURIComponent(id)}`, data),
+        api.put<Appointment>(`/appointments/${encodeURIComponent(id)}`, data),
 
     updateStatus: (id: string, status: string) =>
         api.put<Appointment>(`/appointments/${encodeURIComponent(id)}`, {

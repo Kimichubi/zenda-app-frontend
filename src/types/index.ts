@@ -67,6 +67,15 @@ export interface Service {
     name: string;
     duration: number; // in minutes
     price: number;
+    createdAt?: string;
+}
+
+export interface ServiceFilters {
+    search?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    limit?: number;
 }
 
 // --- Appointment ---

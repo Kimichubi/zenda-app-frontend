@@ -1,6 +1,13 @@
 export { useUser, useUpdateProfile } from "./use-auth";
 export { useClients, useCreateClient, useUpdateClient, useDeleteClient } from "./use-clients";
-export { useAppointments, useWeekAppointments, useCreateAppointment, useUpdateAppointmentStatus, useResendNotification } from "./use-appointments";
+export { 
+    useAppointments, 
+    useWeekAppointments, 
+    useCreateAppointment, 
+    useUpdateAppointment,
+    useUpdateAppointmentStatus, 
+    useResendNotification 
+} from "./use-appointments";
 export { usePayments, useGeneratePix, useMarkPaid, useCancelPayment } from "./use-payments";
 export { useDashboard } from "./use-dashboard";
 export { useServices, useCreateService, useUpdateService, useDeleteService } from "./use-services";

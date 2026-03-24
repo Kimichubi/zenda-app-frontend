@@ -36,9 +36,9 @@ describe("ClientTable", () => {
     render(
       <ClientTable clients={mockClients} onEdit={vi.fn()} onDelete={vi.fn()} />,
     );
-    expect(screen.getByText("Nome")).toBeInTheDocument();
-    expect(screen.getByText("Telefone")).toBeInTheDocument();
-    expect(screen.getByText("Email")).toBeInTheDocument();
+    expect(screen.getByText("Identificação")).toBeInTheDocument();
+    expect(screen.getByText("Contato")).toBeInTheDocument();
+    expect(screen.getByText("Status")).toBeInTheDocument();
   });
 
   it("shows empty message when no clients", () => {

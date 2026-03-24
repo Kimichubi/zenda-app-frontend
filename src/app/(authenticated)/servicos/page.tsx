@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ServiceTable } from "@/features/services/service-table";
 import { ServiceForm } from "@/features/services/service-form";
+import { FilterBar } from "@/features/services/filter-bar";
 import { Modal, Button, useToast, Card } from "@/components/ui";
 import {
   useServices,
@@ -10,19 +11,35 @@ import {
   useUpdateService,
   useDeleteService,
 } from "@/hooks";
-import type { Service } from "@/types";
+import type { Service, ServiceFilters } from "@/types";
 import { ServiceFormData } from "@/services/services";
-import { Plus, Scissors, Loader2 } from "lucide-react";
+import { Plus, Scissors, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function ServicosPage() {
+  const [filters, setFilters] = useState<ServiceFilters>({ page: 1, limit: 10 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
 
-  const { data: services = [], isLoading } = useServices();
+  const { data, isLoading } = useServices(filters);
   const createService = useCreateService();
   const updateService = useUpdateService();
   const deleteService = useDeleteService();
   const { showToast } = useToast();
+
+  const handleFilterChange = useCallback((newFilters: Partial<ServiceFilters>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+      page: 1,
+    }));
+  }, []);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: newPage,
+    }));
+  }, []);
 
   const handleSubmit = (formData: ServiceFormData) => {
     const options = {
@@ -69,21 +86,31 @@ export default function ServicosPage() {
     );
   }
 
+  const services = data?.data ?? [];
+  const total = data?.total ?? 0;
+  const limit = data?.limit ?? filters.limit ?? 10;
+  const totalPages = Math.ceil(total / limit);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+            <Scissors className="h-3 w-3" />
+            Catálogo de Serviços
+          </div>
           <h1 className="text-3xl font-bold tracking-tight">Serviços</h1>
-          <p className="text-muted-foreground font-medium flex items-center gap-2">
-            <Scissors className="h-4 w-4" />
-            Configure o menu de serviços oferecidos
+          <p className="text-muted-foreground font-medium text-sm">
+            Configure o menu de serviços oferecidos (<span className="text-foreground font-bold">{total}</span> cadastrados)
           </p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="sm:w-auto gap-2 shadow-lg shadow-primary/20">
+        <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
           <Plus className="h-4 w-4" />
           Novo serviço
         </Button>
       </header>
+
+      <FilterBar onFilterChange={handleFilterChange} />
 
       <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
         <ServiceTable
@@ -92,6 +119,36 @@ export default function ServicosPage() {
           onDelete={handleDelete}
         />
       </Card>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-2">
+          <p className="text-sm text-muted-foreground font-medium">
+            Página <span className="text-foreground font-bold">{filters.page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={filters.page! <= 1}
+              onClick={() => handlePageChange(filters.page! - 1)}
+              className="gap-1 h-9"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={filters.page! >= totalPages}
+              onClick={() => handlePageChange(filters.page! + 1)}
+              className="gap-1 h-9"
+            >
+              Próxima
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Modal
         open={isModalOpen}
