@@ -14,7 +14,7 @@ export { useServices, useCreateService, useUpdateService, useDeleteService } fro
 export { useAdminUsers, useAdminStats, useUpdateUserPlan } from "./use-admin";
 export { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
-export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp } from "./use-whatsapp";
+export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp, useChatSessions, useChatLogs, useChatStats, useResetChatSession } from "./use-whatsapp";
 export { 
     useStaff, 
     useAddStaff,
@@ -31,7 +31,11 @@ export {
     useDeleteCategory,
     useCommissions,
     usePayCommissions,
-    useCheckout, 
+    useCheckout,
+    useCheckoutAppointment,
+    useTipSuggestions,
+    useAddClientCredit,
+    useClientCredit,
     useRedeemPoints,
     useUpdateLoyalty,
 } from "./use-enterprise";

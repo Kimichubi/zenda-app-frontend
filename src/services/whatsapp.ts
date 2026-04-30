@@ -5,4 +5,16 @@ export const whatsappService = {
   connect: () => api.post<{ status: string }>("/whatsapp/connect"),
   getQR: () => api.get<{ qr: string }>("/whatsapp/qr"),
   logout: () => api.delete<{ success: boolean }>("/whatsapp/logout"),
+
+  listChatSessions: (limit?: number) =>
+    api.get<any[]>("/whatsapp/chat/sessions" + (limit ? `?limit=${limit}` : "")),
+
+  getChatLogs: (sessionId: string) =>
+    api.get<any[]>(`/whatsapp/chat/sessions/${sessionId}/logs`),
+
+  resetChatSession: (sessionId: string) =>
+    api.post<void>(`/whatsapp/chat/sessions/${sessionId}/reset`),
+
+  getChatStats: () =>
+    api.get<{ totalSessions: number; totalMessages: number; intents: Record<string, number> }>("/whatsapp/chat/stats"),
 };

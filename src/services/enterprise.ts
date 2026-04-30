@@ -52,6 +52,23 @@ export const enterpriseService = {
     checkout: (data: { customerId?: string; items: { productId: string; quantity: number }[]; paymentMethod: string }) =>
         api.post<Sale>("/enterprise/checkout", data),
 
+    checkoutAppointment: (appointmentId: string, data: {
+        tipAmount?: number;
+        tipPercentage?: number;
+        paymentMethod: string;
+        useInternalCredit?: boolean;
+        splitEnabled?: boolean;
+    }) => api.post<any>(`/enterprise/checkout/appointment/${appointmentId}`, data),
+
+    getTipSuggestions: (appointmentId: string) =>
+        api.get<any>(`/enterprise/checkout/appointment/${appointmentId}/tips`),
+
+    addClientCredit: (clientId: string, data: { amount: number; description: string }) =>
+        api.post<any>(`/enterprise/clients/${clientId}/credit`, data),
+
+    getClientCredit: (clientId: string) =>
+        api.get<any>(`/enterprise/clients/${clientId}/credit`),
+
     // --- Commissions ---
     listCommissions: (startDate?: string, endDate?: string) => {
         const params = new URLSearchParams();

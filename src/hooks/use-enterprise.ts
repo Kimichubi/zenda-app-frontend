@@ -149,6 +149,46 @@ export function useCheckout() {
     });
 }
 
+export function useCheckoutAppointment() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ appointmentId, data }: { appointmentId: string; data: Parameters<typeof enterpriseService.checkoutAppointment>[1] }) =>
+            enterpriseService.checkoutAppointment(appointmentId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+            queryClient.invalidateQueries({ queryKey: ["payments"] });
+        },
+    });
+}
+
+export function useTipSuggestions(appointmentId: string) {
+    return useQuery({
+        queryKey: ["tips", appointmentId],
+        queryFn: () => enterpriseService.getTipSuggestions(appointmentId),
+        enabled: !!appointmentId,
+    });
+}
+
+export function useAddClientCredit() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ clientId, data }: { clientId: string; data: { amount: number; description: string } }) =>
+            enterpriseService.addClientCredit(clientId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["client-credit"] });
+        },
+    });
+}
+
+export function useClientCredit(clientId: string) {
+    return useQuery({
+        queryKey: ["client-credit", clientId],
+        queryFn: () => enterpriseService.getClientCredit(clientId),
+        enabled: !!clientId,
+    });
+}
+
 export function useRedeemPoints() {
     const queryClient = useQueryClient();
     return useMutation({
