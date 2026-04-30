@@ -17,10 +17,21 @@ export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-b
 export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp } from "./use-whatsapp";
 export { 
     useStaff, 
-    useAddStaff, 
-    useCommissions, 
-    useCheckout, 
-    useRedeemPoints, 
+    useAddStaff,
+    useRemoveStaff,
     useProducts, 
-    useCreateProduct 
+    useCreateProduct,
+    useUpdateProduct,
+    useDeleteProduct,
+    useLowStockProducts,
+    useInventoryMovements,
+    useRestock,
+    useCategories,
+    useCreateCategory,
+    useDeleteCategory,
+    useCommissions,
+    usePayCommissions,
+    useCheckout, 
+    useRedeemPoints,
+    useUpdateLoyalty,
 } from "./use-enterprise";

@@ -13,7 +13,7 @@ export interface Business {
     createdAt: string;
 }
 
-export interface StaffMember extends Partial<User> {
+export interface StaffMember {
     id: string;
     name: string;
     email: string;

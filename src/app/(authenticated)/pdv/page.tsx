@@ -5,6 +5,7 @@ import { useCheckout, useClients, useProducts } from "@/hooks";
 import { Button, Card, CardContent, Input, useToast, Modal } from "@/components/ui";
 import { Loader2, ShoppingCart, Search, Plus, Minus, Trash2, CreditCard, DollarSign, User, Package } from "lucide-react";
 import { formatCurrency, cn } from "@/utils";
+import { Badge } from "@/components/ui";
 
 export default function PdvPage() {
   const [cart, setCart] = useState<{ id: string; name: string; price: number; quantity: number }[]>([]);
@@ -231,5 +232,3 @@ export default function PdvPage() {
     </div>
   );
 }
-
-import { Badge } from "@/components/ui/badge";

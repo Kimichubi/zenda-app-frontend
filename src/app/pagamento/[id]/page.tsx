@@ -6,7 +6,6 @@ import { QRCodeSVG } from "qrcode.react";
 import { CheckCircle2, Copy, CreditCard, Loader2, Landmark, User, Scissors, DollarSign } from "lucide-react";
 import { Button, Card, CardContent, useToast } from "@/components/ui";
 import { formatCurrency } from "@/utils";
-import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -21,8 +20,10 @@ export default function PublicPaymentPage() {
   useEffect(() => {
     const fetchPayment = async () => {
       try {
-        const response = await axios.get(`${API_URL}/public/payments/${id}`);
-        setPayment(response.data);
+        const response = await fetch(`${API_URL}/public/payments/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch payment");
+        const data = await response.json();
+        setPayment(data);
       } catch (err) {
         console.error(err);
         setError(true);

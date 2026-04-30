@@ -1,8 +1,9 @@
 "use client";
 
 import { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp } from "@/hooks";
-import { Button, Card, CardContent, CardHeader, CardTitle, useToast } from "@/components/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Badge, useToast } from "@/components/ui";
 import { Loader2, MessageCircle, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function WhatsappConfigPage() {
   const { data: statusData, isLoading: isLoadingStatus } = useWhatsappStatus();
@@ -13,7 +14,7 @@ export default function WhatsappConfigPage() {
   const isScanning = statusData?.status === "SCANNING" || statusData?.status === "SCAN_QR_CODE";
   const isConnected = statusData?.status === "CONNECTED" || statusData?.status === "WORKING";
   const isConnecting = statusData?.status === "STARTING";
-  
+
   const { data: qrData, isLoading: isLoadingQR } = useWhatsappQR(isScanning);
 
   const handleConnect = () => {
@@ -34,7 +35,7 @@ export default function WhatsappConfigPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <header className="space-y-1">
-        <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
+        <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest">
           <MessageCircle className="h-3 w-3" />
           Integrações
         </div>
@@ -45,7 +46,7 @@ export default function WhatsappConfigPage() {
       </header>
 
       <div className="max-w-2xl">
-        <Card className="border border-border/50 bg-card shadow-sm rounded-xl overflow-hidden">
+        <Card className="border border-border/50 bg-card shadow-sm rounded-2xl overflow-hidden">
           <CardHeader className="border-b border-border/40 p-6 bg-muted/5">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
@@ -69,8 +70,8 @@ export default function WhatsappConfigPage() {
                     Ao conectar seu número, o Zenda enviará automaticamente confirmações para seus clientes.
                   </p>
                 </div>
-                <Button 
-                  onClick={handleConnect} 
+                <Button
+                  onClick={handleConnect}
                   className="h-12 px-8 font-bold rounded-xl gap-2 shadow-lg shadow-primary/20"
                   disabled={connect.isPending}
                 >
@@ -102,10 +103,13 @@ export default function WhatsappConfigPage() {
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
                   ) : (
-                    <img 
-                      src={`data:image/png;base64,${qrData.qr}`} 
-                      alt="WhatsApp QR Code" 
+                    <QRCodeSVG
+                      value={qrData.qr}
+                      size={192}
                       className="w-48 h-48"
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                      level="M"
                     />
                   )}
                 </div>
@@ -129,9 +133,9 @@ export default function WhatsappConfigPage() {
                     Seu sistema está operando com sucesso. As notificações automáticas estão habilitadas.
                   </p>
                 </div>
-                <Button 
+                <Button
                   variant="outline"
-                  onClick={handleLogout} 
+                  onClick={handleLogout}
                   className="h-12 px-8 font-bold rounded-xl gap-2 border-destructive/20 text-destructive hover:bg-destructive/5"
                   disabled={logout.isPending}
                 >
@@ -144,19 +148,5 @@ export default function WhatsappConfigPage() {
         </Card>
       </div>
     </div>
-  );
-}
-
-function Badge({ children, variant, className }: any) {
-  const styles = {
-    success: "bg-emerald-500/10 text-emerald-600",
-    warning: "bg-amber-500/10 text-amber-600",
-    secondary: "bg-muted text-muted-foreground",
-  };
-  const currentStyle = (styles as any)[variant] || styles.secondary;
-  return (
-    <span className={`px-2.5 py-0.5 rounded-md ${currentStyle} ${className}`}>
-      {children}
-    </span>
   );
 }

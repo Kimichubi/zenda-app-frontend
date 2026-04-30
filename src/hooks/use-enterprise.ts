@@ -20,6 +20,16 @@ export function useAddStaff() {
     });
 }
 
+export function useRemoveStaff() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.removeStaff,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+        },
+    });
+}
+
 export function useProducts() {
     return useQuery({
         queryKey: ["products"],
@@ -37,10 +47,93 @@ export function useCreateProduct() {
     });
 }
 
-export function useCommissions() {
+export function useUpdateProduct() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: Partial<any> }) =>
+            enterpriseService.updateProduct(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+        },
+    });
+}
+
+export function useDeleteProduct() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.deleteProduct,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+        },
+    });
+}
+
+export function useLowStockProducts() {
     return useQuery({
-        queryKey: ["commissions"],
-        queryFn: () => enterpriseService.listCommissions(),
+        queryKey: ["products", "low-stock"],
+        queryFn: () => enterpriseService.getLowStockProducts(),
+    });
+}
+
+export function useInventoryMovements(productId?: string) {
+    return useQuery({
+        queryKey: ["inventory", "movements", productId],
+        queryFn: () => enterpriseService.getInventoryMovements(productId),
+    });
+}
+
+export function useRestock() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.restock,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            queryClient.invalidateQueries({ queryKey: ["inventory"] });
+        },
+    });
+}
+
+export function useCategories() {
+    return useQuery({
+        queryKey: ["categories"],
+        queryFn: () => enterpriseService.listCategories(),
+    });
+}
+
+export function useCreateCategory() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.createCategory,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+        },
+    });
+}
+
+export function useDeleteCategory() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.deleteCategory,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+        },
+    });
+}
+
+export function useCommissions(startDate?: string, endDate?: string) {
+    return useQuery({
+        queryKey: ["commissions", startDate, endDate],
+        queryFn: () => enterpriseService.listCommissions(startDate, endDate),
+    });
+}
+
+export function usePayCommissions() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.payCommissions,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["commissions"] });
+        },
     });
 }
 
@@ -62,6 +155,16 @@ export function useRedeemPoints() {
         mutationFn: enterpriseService.redeemPoints,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["clients"] });
+        },
+    });
+}
+
+export function useUpdateLoyalty() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: enterpriseService.updateLoyalty,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["business"] });
         },
     });
 }

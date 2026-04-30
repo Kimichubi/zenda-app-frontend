@@ -2,16 +2,22 @@
 
 import { useState } from "react";
 import { format, startOfWeek, addDays } from "date-fns";
-import { WeekCalendar } from "@/features/agenda/week-calendar";
+import { ptBR } from "date-fns/locale";
+import { AgendaCalendar } from "@/features/agenda/agenda-calendar";
 import { AppointmentForm } from "@/features/agenda/appointment-form";
-import { 
-  useWeekAppointments, 
-  useUpdateAppointmentStatus, 
+import {
+  useWeekAppointments,
   useCreateAppointment,
-  useUpdateAppointment
+  useUpdateAppointment,
 } from "@/hooks";
 import { useToast, Button, Modal } from "@/components/ui";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Plus, Download } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Plus,
+} from "lucide-react";
 import type { Appointment, AppointmentFormData } from "@/types";
 
 export default function AgendaPage() {
@@ -19,30 +25,32 @@ export default function AgendaPage() {
     format(new Date(), "yyyy-MM-dd"),
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<{
+    date: string;
+    startTime: string;
+  } | null>(null);
+  const [editingAppointment, setEditingAppointment] =
+    useState<Appointment | null>(null);
 
   const weekStart = format(
     startOfWeek(new Date(currentDate + "T00:00:00"), { weekStartsOn: 1 }),
     "yyyy-MM-dd",
   );
 
-  const { data: appointments = [], isLoading } = useWeekAppointments(weekStart);
-  const updateStatus = useUpdateAppointmentStatus();
+  const { data: appointments = [], isLoading } =
+    useWeekAppointments(weekStart);
   const createAppointment = useCreateAppointment();
   const updateAppointment = useUpdateAppointment();
   const { showToast } = useToast();
 
-  const handleConfirm = (appointmentId: string) => {
-    updateStatus.mutate(
-      { id: appointmentId, status: "CONFIRMED" },
-      {
-        onSuccess: () => showToast("Presença confirmada!", "success"),
-        onError: () => showToast("Erro ao confirmar", "error"),
-      },
-    );
+  const handleSlotClick = (date: string, startTime: string) => {
+    setEditingAppointment(null);
+    setSelectedSlot({ date, startTime });
+    setIsModalOpen(true);
   };
 
-  const handleEdit = (appointment: Appointment) => {
+  const handleAppointmentClick = (appointment: Appointment) => {
+    setSelectedSlot(null);
     setEditingAppointment(appointment);
     setIsModalOpen(true);
   };
@@ -50,26 +58,32 @@ export default function AgendaPage() {
   const handleFormSubmit = (data: AppointmentFormData) => {
     const options = {
       onSuccess: () => {
-        showToast(editingAppointment ? "Agendamento atualizado!" : "Agendamento criado e cliente notificado!", "success");
+        showToast(
+          editingAppointment
+            ? "Agendamento atualizado!"
+            : "Agendamento criado e cliente notificado!",
+          "success",
+        );
         setIsModalOpen(false);
         setEditingAppointment(null);
+        setSelectedSlot(null);
       },
       onError: (err: any) => {
-        showToast(err?.response?.data?.message || err.message || "Erro na operação", "error");
+        showToast(
+          err?.response?.data?.message || err.message || "Erro na operação",
+          "error",
+        );
       },
     };
 
     if (editingAppointment) {
-      updateAppointment.mutate({ id: editingAppointment.id, data }, options);
+      updateAppointment.mutate(
+        { id: editingAppointment.id, data },
+        options,
+      );
     } else {
       createAppointment.mutate(data, options);
     }
-  };
-
-  const handleExport = () => {
-    const token = localStorage.getItem("zenda_token");
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    window.open(`${baseUrl}/reports/appointments/export?token=${token}`, "_blank");
   };
 
   const handleNavigate = (direction: "prev" | "next") => {
@@ -86,7 +100,12 @@ export default function AgendaPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingAppointment(null);
+    setSelectedSlot(null);
   };
+
+  const weekStartDate = new Date(weekStart + "T00:00:00");
+  const weekEndDate = addDays(weekStartDate, 6);
+  const weekLabel = `${format(weekStartDate, "dd MMM", { locale: ptBR })} — ${format(weekEndDate, "dd MMM yyyy", { locale: ptBR })}`;
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -96,12 +115,18 @@ export default function AgendaPage() {
             <CalendarIcon className="h-3 w-3" />
             Gestão de Tempo
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Agenda</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Agenda
+          </h1>
           <p className="text-muted-foreground font-medium text-sm">
-            Organize sua semana com <span className="text-primary font-semibold">precisão absoluta</span>.
+            Organize sua semana com{" "}
+            <span className="text-primary font-semibold">
+              precisão absoluta
+            </span>
+            .
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="flex items-center bg-muted/40 border border-border/40 rounded-lg p-1">
             <Button
@@ -112,9 +137,9 @@ export default function AgendaPage() {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button 
-              variant="ghost" 
-              onClick={handleToday} 
+            <Button
+              variant="ghost"
+              onClick={handleToday}
               className="px-4 h-8 font-bold text-[10px] uppercase tracking-wider hover:bg-background hover:shadow-sm transition-all rounded-md"
             >
               Hoje
@@ -128,37 +153,38 @@ export default function AgendaPage() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={handleExport} 
-              className="h-10 px-4 gap-2 rounded-lg text-xs font-black uppercase tracking-wider border-primary/20 bg-transparent text-primary hover:bg-primary hover:text-white hover:border-primary transition-all shadow-none"
-            >
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
-            
-            <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
-              <Plus className="h-4 w-4" />
-              Novo Agendamento
-            </Button>
-          </div>
+
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden md:inline">
+            {weekLabel}
+          </span>
+
+          <Button
+            onClick={() => {
+              setEditingAppointment(null);
+              setSelectedSlot(null);
+              setIsModalOpen(true);
+            }}
+            className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all"
+          >
+            <Plus className="h-4 w-4" />
+            Novo Agendamento
+          </Button>
         </div>
       </header>
 
       {isLoading ? (
         <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm font-bold tracking-tight text-muted-foreground animate-pulse">Carregando sua agenda...</p>
+          <p className="text-sm font-bold tracking-tight text-muted-foreground animate-pulse">
+            Carregando sua agenda...
+          </p>
         </div>
       ) : (
-        <WeekCalendar
+        <AgendaCalendar
           appointments={appointments}
           currentDate={currentDate}
-          onConfirm={handleConfirm}
-          onEdit={handleEdit}
-          onNavigate={handleNavigate}
+          onSlotClick={handleSlotClick}
+          onAppointmentClick={handleAppointmentClick}
         />
       )}
 
@@ -169,16 +195,37 @@ export default function AgendaPage() {
         className="max-w-md"
       >
         <div className="p-2">
-          <AppointmentForm 
+          <AppointmentForm
             onSubmit={handleFormSubmit}
-            isLoading={createAppointment.isPending || updateAppointment.isPending}
-            initialDate={currentDate}
-            initialData={editingAppointment ? {
-              clientId: editingAppointment.clientId,
-              serviceId: editingAppointment.serviceId,
-              date: typeof editingAppointment.date === 'string' ? editingAppointment.date.split("T")[0] : format(editingAppointment.date, "yyyy-MM-dd"),
-              startTime: editingAppointment.startTime,
-            } : undefined}
+            isLoading={
+              createAppointment.isPending || updateAppointment.isPending
+            }
+            initialDate={
+              selectedSlot?.date ||
+              (editingAppointment
+                ? typeof editingAppointment.date === "string"
+                  ? editingAppointment.date.split("T")[0]
+                  : format(editingAppointment.date, "yyyy-MM-dd")
+                : currentDate)
+            }
+            initialData={
+              editingAppointment
+                ? {
+                    clientId: editingAppointment.clientId,
+                    serviceId: editingAppointment.serviceId,
+                    date:
+                      typeof editingAppointment.date === "string"
+                        ? editingAppointment.date.split("T")[0]
+                        : format(editingAppointment.date, "yyyy-MM-dd"),
+                    startTime: editingAppointment.startTime,
+                  }
+                : selectedSlot
+                  ? {
+                      date: selectedSlot.date,
+                      startTime: selectedSlot.startTime,
+                    }
+                  : undefined
+            }
           />
         </div>
       </Modal>

@@ -4,6 +4,7 @@ import { useDashboard } from "@/hooks";
 import { DashboardCards } from "@/features/dashboard/dashboard-cards";
 import { AppointmentList } from "@/features/dashboard/appointment-list";
 import { AlertCircle, Loader2, Sparkles } from "lucide-react";
+import type { DashboardData } from "@/types";
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useDashboard();
@@ -36,7 +37,7 @@ export default function DashboardPage() {
     todayAppointments = [],
     upcomingAppointments = [],
     noShowClients = [],
-  } = data as any;
+  } = data as DashboardData;
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">

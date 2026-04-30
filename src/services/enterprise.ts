@@ -15,6 +15,18 @@ export const enterpriseService = {
     updateStaffCommission: (id: string, percentage: number) =>
         api.patch<StaffMember>(`/enterprise/staff/${id}/commission`, { percentage }),
 
+    removeStaff: (id: string) =>
+        api.delete<void>(`/enterprise/staff/${id}`),
+
+    // --- Categories ---
+    listCategories: () => api.get<any[]>("/enterprise/categories"),
+    createCategory: (data: { name: string }) =>
+        api.post<any>("/enterprise/categories", data),
+    updateCategory: (id: string, data: { name: string }) =>
+        api.patch<any>(`/enterprise/categories/${id}`, data),
+    deleteCategory: (id: string) =>
+        api.delete<void>(`/enterprise/categories/${id}`),
+
     // --- POS & Inventory ---
     listProducts: () => api.get<Product[]>("/enterprise/products"),
     
@@ -27,11 +39,27 @@ export const enterpriseService = {
     deleteProduct: (id: string) =>
         api.delete<void>(`/enterprise/products/${id}`),
     
+    getInventoryMovements: (productId?: string) => {
+        const params = productId ? `?productId=${productId}` : "";
+        return api.get<any[]>("/enterprise/inventory/movements" + params);
+    },
+
+    getLowStockProducts: () => api.get<Product[]>("/enterprise/inventory/low-stock"),
+
+    restock: (data: { productId: string; quantity: number; reason: string }) =>
+        api.post<any>("/enterprise/inventory/restock", data),
+
     checkout: (data: { customerId?: string; items: { productId: string; quantity: number }[]; paymentMethod: string }) =>
         api.post<Sale>("/enterprise/checkout", data),
 
     // --- Commissions ---
-    listCommissions: () => api.get<Commission[]>("/enterprise/commissions"),
+    listCommissions: (startDate?: string, endDate?: string) => {
+        const params = new URLSearchParams();
+        if (startDate) params.set("startDate", startDate);
+        if (endDate) params.set("endDate", endDate);
+        const qs = params.toString();
+        return api.get<Commission[]>(`/enterprise/commissions${qs ? `?${qs}` : ""}`);
+    },
     
     payCommissions: (commissionIds: string[]) =>
         api.post<void>("/enterprise/commissions/pay", { commissionIds }),
