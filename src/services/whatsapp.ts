@@ -7,10 +7,10 @@ export const whatsappService = {
   logout: () => api.delete<{ success: boolean }>("/whatsapp/logout"),
 
   listChatSessions: (limit?: number) =>
-    api.get<any[]>("/whatsapp/chat/sessions" + (limit ? `?limit=${limit}` : "")),
+    api.get<{ sessions: any[] }>("/whatsapp/chat/sessions" + (limit ? `?limit=${limit}` : "")),
 
   getChatLogs: (sessionId: string) =>
-    api.get<any[]>(`/whatsapp/chat/sessions/${sessionId}/logs`),
+    api.get<{ logs: any[] }>(`/whatsapp/chat/sessions/${sessionId}/logs`),
 
   resetChatSession: (sessionId: string) =>
     api.post<void>(`/whatsapp/chat/sessions/${sessionId}/reset`),

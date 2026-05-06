@@ -1,4 +1,8 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+if (!API_BASE_URL) {
+    throw new Error("NEXT_PUBLIC_API_URL is not defined. Create .env.local with NEXT_PUBLIC_API_URL=http://localhost:3001");
+}
 
 class ApiClient {
     private baseUrl: string;
@@ -6,7 +10,7 @@ class ApiClient {
     private refreshSubscribers: ((token: string) => void)[] = [];
 
     constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl.replace(/\/$/, "");
     }
 
     private getToken(): string | null {

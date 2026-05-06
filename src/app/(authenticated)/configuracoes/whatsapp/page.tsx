@@ -27,7 +27,7 @@ import {
   ChevronUp,
   RotateCcw,
 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+
 import { formatDate, cn } from "@/utils";
 
 export default function WhatsappConfigPage() {
@@ -71,7 +71,7 @@ export default function WhatsappConfigPage() {
     }
   };
 
-  const sessions = sessionsData ?? [];
+  const sessions = sessionsData?.sessions ?? [];
   const stats = statsData;
 
   return (
@@ -141,7 +141,7 @@ export default function WhatsappConfigPage() {
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       </div>
                     ) : (
-                      <QRCodeSVG value={qrData.qr} size={160} className="w-40 h-40" bgColor="#ffffff" fgColor="#000000" level="M" />
+                      <img src={`data:image/png;base64,${qrData.qr}`} alt="QR Code WhatsApp" className="w-40 h-40" />
                     )}
                   </div>
                   <div className="space-y-1">
@@ -202,7 +202,7 @@ export default function WhatsappConfigPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">IA Ativa</p>
-                  <p className="text-xl font-bold">Qwen3</p>
+                  <p className="text-xl font-bold">Gemini</p>
                 </div>
               </CardContent>
             </Card>
@@ -262,11 +262,11 @@ export default function WhatsappConfigPage() {
                                 Resetar Contexto
                               </Button>
                             </div>
-                            {logsData?.length === 0 ? (
+                              {logsData?.logs?.length === 0 ? (
                               <p className="text-xs text-muted-foreground">Sem mensagens.</p>
                             ) : (
                               <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
-                                {logsData?.map((log: any) => (
+                                {logsData?.logs?.map((log: any) => (
                                   <div key={log.id} className="space-y-1">
                                     <div className="flex items-center gap-2">
                                       <Badge variant="outline" className="text-[8px] h-4 px-1.5">
