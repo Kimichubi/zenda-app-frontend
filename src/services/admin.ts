@@ -5,7 +5,7 @@ export interface AdminStats {
     totalUsers: number;
     proUsers: number;
     enterpriseUsers: number;
-    freeUsers: number;
+    onboardingUsers: number;
     totalAppointments: number;
     totalRevenue: number;
     totalClients: number;

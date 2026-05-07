@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -59,6 +59,11 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
   const { data: allUsers = [] } = useAdminUsers();
   const [showSwitchPanel, setShowSwitchPanel] = useState(false);
   const [switchSearch, setSwitchSearch] = useState("");
+  const [isImpersonating, setIsImpersonating] = useState(false);
+
+  useEffect(() => {
+    setIsImpersonating(!!localStorage.getItem("zenda_admin_token"));
+  }, []);
 
   const filteredUsers = useMemo(() => {
     if (!switchSearch) return allUsers.filter(u => u.id !== user?.id);
@@ -70,10 +75,28 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
   }, [allUsers, switchSearch, user?.id]);
 
   const handleImpersonate = async (userId: string) => {
+    // Save admin's original tokens before switching
+    const currentToken = localStorage.getItem("zenda_token");
+    const currentRefresh = localStorage.getItem("zenda_refresh_token");
+    if (currentToken) localStorage.setItem("zenda_admin_token", currentToken);
+    if (currentRefresh) localStorage.setItem("zenda_admin_refresh_token", currentRefresh);
+
     const response = await adminService.impersonate(userId);
     localStorage.setItem("zenda_token", response.accessToken);
     localStorage.setItem("zenda_refresh_token", response.refreshToken);
     window.location.href = "/dashboard";
+  };
+
+  const handleRestoreAdmin = () => {
+    const adminToken = localStorage.getItem("zenda_admin_token");
+    const adminRefresh = localStorage.getItem("zenda_admin_refresh_token");
+    if (adminToken) {
+      localStorage.setItem("zenda_token", adminToken);
+      localStorage.setItem("zenda_refresh_token", adminRefresh || "");
+      localStorage.removeItem("zenda_admin_token");
+      localStorage.removeItem("zenda_admin_refresh_token");
+      window.location.href = "/dashboard";
+    }
   };
 
   const NavLink = ({ item }: { item: NavItem }) => {
@@ -114,7 +137,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
         collapsed ? "justify-center px-2" : "px-4"
       )}>
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <Logo size={32} iconOnly />
+          <Logo height={32} iconOnly={collapsed} />
         </Link>
       </div>
 
@@ -183,7 +206,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
         )}
       </div>
 
-      {/* Admin Account Switcher */}
+      {/* Admin Account Switcher / Impersonation Restore */}
       {user?.role === "ADMIN" && (
         <div className={cn("border-t border-border/60 bg-muted/5", collapsed ? "p-2" : "p-2")}>
           {showSwitchPanel && !collapsed ? (
@@ -238,6 +261,24 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
               {!collapsed && "Trocar de conta"}
             </Button>
           )}
+        </div>
+      )}
+
+      {/* Restore to Admin Account */}
+      {isImpersonating && user?.role !== "ADMIN" && (
+        <div className={cn("border-t border-border/60 bg-amber-500/5", collapsed ? "p-2" : "p-3")}>
+          <Button
+            variant="ghost"
+            className={cn(
+              "text-amber-600 hover:bg-amber-500/10 text-xs font-bold transition-all rounded-lg",
+              collapsed ? "w-full h-10 justify-center p-0" : "w-full justify-start gap-2 h-9"
+            )}
+            onClick={handleRestoreAdmin}
+            title="Voltar para conta admin"
+          >
+            <ArrowLeftRight className="h-4 w-4" />
+            {!collapsed && "Voltar para minha conta"}
+          </Button>
         </div>
       )}
 

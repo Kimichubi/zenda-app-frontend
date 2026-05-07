@@ -21,7 +21,7 @@ export default function LoginPage() {
         <div className="relative z-10 w-full max-w-md text-white space-y-12">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <Logo size={40} iconOnly />
+              <Logo height={40} />
             </div>
             <h1 className="text-4xl font-bold tracking-tight leading-tight">Bem-vindo de volta!</h1>
             <p className="text-lg text-slate-400 leading-relaxed">
@@ -45,7 +45,7 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 xl:px-24">
         <div className="mx-auto w-full max-w-[420px]">
           <div className="lg:hidden mb-10 flex justify-center">
-            <Logo size={48} iconOnly />
+            <Logo height={48} iconOnly />
           </div>
 
           <div className="mb-8 space-y-2">

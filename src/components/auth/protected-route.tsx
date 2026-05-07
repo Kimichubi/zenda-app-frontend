@@ -23,14 +23,19 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
       try {
         const response = await authService.validateToken();
 
-        // If needs onboarding and not already on onboarding, redirect
-        if (response.needsOnboarding && pathname !== "/onboarding") {
-          router.replace("/onboarding");
+        // Onboarding users can ONLY access /onboarding — hard block everything else
+        if (response.needsOnboarding) {
+          if (pathname !== "/onboarding") {
+            router.replace("/onboarding");
+            return;
+          }
+          setIsAuthorized(true);
+          setIsLoading(false);
           return;
         }
 
-        // If onboarding complete and on onboarding page, redirect to dashboard
-        if (!response.needsOnboarding && pathname === "/onboarding") {
+        // Users who are done onboarding can't access /onboarding
+        if (pathname === "/onboarding") {
           router.replace("/dashboard");
           return;
         }

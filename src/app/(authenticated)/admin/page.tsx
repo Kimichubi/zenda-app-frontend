@@ -129,7 +129,7 @@ export default function AdminPage() {
             </div>
             <p className="text-2xl font-black">{stats?.totalUsers ?? 0}</p>
             <p className="text-[10px] font-bold text-muted-foreground mt-1">
-              <span className="text-purple-500">{stats?.freeUsers ?? 0} Free</span>
+              <span className="text-amber-500">{stats?.onboardingUsers ?? 0} Onboarding</span>
               {" · "}
               <span className="text-emerald-500">{stats?.proUsers ?? 0} Pro</span>
               {" · "}
@@ -247,7 +247,7 @@ export default function AdminPage() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 {[
-                  { label: "FREE", count: stats?.freeUsers ?? 0, total: stats?.totalUsers ?? 1, color: "bg-muted-foreground" },
+                  { label: "ONBOARDING", count: stats?.onboardingUsers ?? 0, total: stats?.totalUsers ?? 1, color: "bg-amber-500" },
                   { label: "PRO", count: stats?.proUsers ?? 0, total: stats?.totalUsers ?? 1, color: "bg-emerald-500" },
                   { label: "ENTERPRISE", count: stats?.enterpriseUsers ?? 0, total: stats?.totalUsers ?? 1, color: "bg-purple-500" },
                 ].map((plan) => (
@@ -341,7 +341,7 @@ export default function AdminPage() {
                               "font-bold uppercase text-[9px] tracking-widest",
                               user.plan === "PRO" && "border-emerald-500/20 text-emerald-500",
                               user.plan === "ENTERPRISE" && "border-purple-500/20 text-purple-500",
-                              user.plan === "FREE" && "border-border/40 text-muted-foreground",
+                              user.plan === "ONBOARDING" && "border-border/40 text-muted-foreground",
                             )}
                           >
                             {user.plan}
@@ -368,7 +368,7 @@ export default function AdminPage() {
                               onChange={(e) => handleUpdatePlan(user.id, e.target.value)}
                               className="h-8 rounded-lg border border-border/40 bg-card px-2 text-[10px] font-bold uppercase tracking-wider cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary/30 appearance-none text-center pr-6 bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px] bg-[right_4px_center] bg-no-repeat"
                             >
-                              <option value="FREE">FREE</option>
+                              <option value="ONBOARDING">ONBOARDING</option>
                               <option value="PRO">PRO</option>
                               <option value="ENTERPRISE">ENTERPRISE</option>
                             </select>
@@ -410,7 +410,7 @@ export default function AdminPage() {
                       "text-[9px] font-bold",
                       userDetail.plan === "PRO" && "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
                       userDetail.plan === "ENTERPRISE" && "bg-purple-500/10 text-purple-500 border-purple-500/20",
-                      userDetail.plan === "FREE" && "bg-muted-foreground/10 text-muted-foreground",
+                      userDetail.plan === "ONBOARDING" && "bg-amber-500/10 text-amber-500 border-amber-500/20",
                     )}
                     variant="outline"
                   >

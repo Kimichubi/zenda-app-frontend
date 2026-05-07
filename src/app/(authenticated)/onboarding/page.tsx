@@ -1,33 +1,36 @@
 "use client";
 
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { Button, Card, CardContent, useToast } from "@/components/ui";
 import { api } from "@/services/api";
 import {
-  Check,
   Sparkles,
   Headphones,
   ClipboardList,
-  ArrowRight,
   MessageCircle,
   Clock,
+  Shield,
+  Loader2,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 
 export default function OnboardingPage() {
-  const router = useRouter();
   const { showToast } = useToast();
+  const [acknowledged, setAcknowledged] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleComplete = useCallback(async () => {
+  const handleAcknowledge = useCallback(async () => {
+    setLoading(true);
     try {
       await api.patch("/auth/complete-onboarding");
-      showToast("Onboarding concluído! Bem-vindo à Zenda!", "success");
-      router.push("/dashboard");
+      setAcknowledged(true);
+      showToast("Solicitação registrada!", "success");
     } catch {
-      showToast("Erro ao finalizar. Tente novamente.", "error");
+      showToast("Erro. Tente novamente.", "error");
+    } finally {
+      setLoading(false);
     }
-  }, [router, showToast]);
+  }, [showToast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -40,35 +43,22 @@ export default function OnboardingPage() {
           </div>
           <h1 className="text-3xl font-black tracking-tight">Bem-vindo à Zenda!</h1>
           <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-            Sua conta foi criada com sucesso. Agora nossa equipe vai te ajudar a configurar tudo.
+            Sua conta foi criada. Agora ela precisa ser ativada pela nossa equipe.
           </p>
         </div>
 
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg">
           <CardContent className="p-8 md:p-10 space-y-8">
-            {/* Steps */}
             <div className="space-y-4">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <ClipboardList className="h-5 w-5 text-primary" />
-                Como funciona a configuração
+                Como funciona
               </h2>
               <div className="space-y-3">
                 {[
-                  {
-                    title: "Entre em contato com nosso suporte",
-                    desc: "Nossa equipe vai te atender e configurar seu negócio na plataforma.",
-                    icon: Headphones,
-                  },
-                  {
-                    title: "Cadastro dos seus serviços",
-                    desc: "Vamos cadastrar todos os serviços, preços e horários da sua agenda.",
-                    icon: Sparkles,
-                  },
-                  {
-                    title: "Sua página online no ar",
-                    desc: "Sua página de agendamento ficará disponível para seus clientes.",
-                    icon: ArrowRight,
-                  },
+                  { title: "Entre em contato com o suporte", desc: "Nossa equipe vai atender você e ativar sua conta na plataforma.", icon: Headphones },
+                  { title: "Escolha seu plano", desc: "Você poderá escolher entre os planos Essencial ou Enterprise.", icon: Sparkles },
+                  { title: "Sua conta é ativada", desc: "Após a ativação, você terá acesso completo ao sistema.", icon: Shield },
                 ].map((step, i) => (
                   <div key={step.title} className="flex gap-4 p-4 rounded-xl bg-muted/20 border border-border/30">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -83,7 +73,6 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            {/* Contact Info */}
             <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
               <div className="flex items-center gap-2">
                 <Headphones className="h-5 w-5 text-primary" />
@@ -100,17 +89,28 @@ export default function OnboardingPage() {
                 </p>
               </div>
               <p className="text-xs text-muted-foreground">
-                Após a configuração, você poderá acessar todas as funcionalidades do sistema.
+                Entre em contato para ativar sua conta e escolher o melhor plano para seu negocio.
               </p>
             </div>
 
-            <Button
-              onClick={handleComplete}
-              className="w-full h-14 rounded-xl text-sm font-bold gap-2 shadow-lg shadow-primary/20"
-            >
-              <Logo size={20} iconOnly />
-              Entendi, ir para o Dashboard
-            </Button>
+            {!acknowledged ? (
+              <Button
+                onClick={handleAcknowledge}
+                loading={loading}
+                className="w-full h-14 rounded-xl text-sm font-bold gap-2 shadow-lg shadow-primary/20"
+              >
+                <Logo height={20} iconOnly />
+                Entendi, quero ativar minha conta
+              </Button>
+            ) : (
+              <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-center">
+                <Shield className="h-6 w-6 text-emerald-500 mx-auto mb-2" />
+                <p className="text-sm font-bold text-emerald-600">Solicitacao enviada!</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Nossa equipe entrara em contato em breve para ativar sua conta.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
