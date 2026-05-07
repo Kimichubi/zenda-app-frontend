@@ -54,7 +54,7 @@ export function SignupForm() {
       const response = await authService.signup(data);
       localStorage.setItem("zenda_token", response.accessToken);
       localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao criar conta");
     }

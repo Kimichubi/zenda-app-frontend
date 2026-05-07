@@ -6,6 +6,13 @@ import type {
     User,
 } from "@/types";
 
+export interface ValidateResponse {
+    valid: boolean;
+    userId: string;
+    plan: string;
+    needsOnboarding: boolean;
+}
+
 export interface UpdateProfileData {
     name?: string;
     phone?: string;
@@ -15,7 +22,10 @@ export interface UpdateProfileData {
 
 export const authService = {
     login: (data: LoginCredentials) =>
-        api.post<AuthResponse>("/auth/login", data),
+        api.post<AuthResponse | { requires2FA: boolean; email: string; message: string }>("/auth/login", data),
+
+    verifyLoginCode: (data: { email: string; code: string }) =>
+        api.post<AuthResponse | { valid: boolean; message: string }>("/auth/verify-login-code", data),
 
     signup: (data: SignupData) =>
         api.post<AuthResponse>("/auth/signup", data),
@@ -23,7 +33,7 @@ export const authService = {
     forgotPassword: (email: string) =>
         api.post<{ message: string }>("/auth/forgot-password", { email }),
 
-    validateToken: () => api.get<{ valid: boolean; userId: string }>("/auth/validate"),
+    validateToken: () => api.get<ValidateResponse>("/auth/validate"),
 
     refreshToken: () => api.post<AuthResponse>("/auth/refresh"),
 
@@ -31,6 +41,9 @@ export const authService = {
 
     updateProfile: (data: UpdateProfileData) =>
         api.patch<User>("/users/me", data),
+
+    completeOnboarding: () =>
+        api.patch<{ success: boolean; plan: string }>("/auth/complete-onboarding"),
 
     logout: () => {
         if (typeof window !== "undefined") {

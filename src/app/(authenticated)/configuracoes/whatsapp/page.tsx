@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   useWhatsappStatus,
   useWhatsappQR,
@@ -10,6 +10,8 @@ import {
   useChatLogs,
   useChatStats,
   useResetChatSession,
+  useBotSettings,
+  useUpdateBotSettings,
 } from "@/hooks";
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, useToast } from "@/components/ui";
 import {
@@ -22,14 +24,33 @@ import {
   Users,
   MessageSquare,
   BrainCircuit,
-  CalendarClock,
   ChevronDown,
-  ChevronUp,
   RotateCcw,
   User,
+  Settings,
+  Save,
 } from "lucide-react";
+import { cn, formatDate } from "@/utils";
 
-import { formatDate, cn } from "@/utils";
+const DEFAULT_CONFIRMATION = `Olá *{clientName}*! 🌟
+
+Confirmamos seu agendamento de *{serviceName}*.
+
+📅 *Data:* {date}
+⏰ *Hora:* {time}
+🏢 *Local:* {businessName}
+
+Estamos te esperando!`;
+
+const DEFAULT_REMINDER = `Olá {clientName}, este é um lembrete do seu agendamento de {serviceName} amanhã, dia {date} às {time} com {businessName}. Responda SIM para confirmar ou NAO para cancelar.`;
+
+const TEMPLATE_VARIABLES = [
+  { key: "{clientName}", label: "Nome do cliente" },
+  { key: "{serviceName}", label: "Nome do serviço" },
+  { key: "{date}", label: "Data do agendamento" },
+  { key: "{time}", label: "Horário" },
+  { key: "{businessName}", label: "Nome do negócio" },
+];
 
 export default function WhatsappConfigPage() {
   const { data: statusData, isLoading: isLoadingStatus } = useWhatsappStatus();
@@ -45,9 +66,42 @@ export default function WhatsappConfigPage() {
   const { data: statsData } = useChatStats();
   const { data: sessionsData } = useChatSessions(20);
   const resetSession = useResetChatSession();
+  const { data: botSettings } = useBotSettings();
+  const updateBotSettings = useUpdateBotSettings();
 
   const [expandedSession, setExpandedSession] = useState<string | null>(null);
   const { data: logsData } = useChatLogs(expandedSession ?? "");
+
+  const [confirmationTemplate, setConfirmationTemplate] = useState("");
+  const [reminderTemplate, setReminderTemplate] = useState("");
+  const [templatesLoaded, setTemplatesLoaded] = useState(false);
+  const [savingTemplates, setSavingTemplates] = useState(false);
+
+  if (botSettings && !templatesLoaded) {
+    setConfirmationTemplate(botSettings.appointmentConfirmationTemplate || DEFAULT_CONFIRMATION);
+    setReminderTemplate(botSettings.appointmentReminderTemplate || DEFAULT_REMINDER);
+    setTemplatesLoaded(true);
+  }
+
+  const handleSaveTemplates = useCallback(async () => {
+    setSavingTemplates(true);
+    updateBotSettings.mutate(
+      {
+        appointmentConfirmationTemplate: confirmationTemplate,
+        appointmentReminderTemplate: reminderTemplate,
+      },
+      {
+        onSuccess: () => {
+          showToast("Templates de mensagem salvos!", "success");
+          setSavingTemplates(false);
+        },
+        onError: () => {
+          showToast("Erro ao salvar templates", "error");
+          setSavingTemplates(false);
+        },
+      },
+    );
+  }, [confirmationTemplate, reminderTemplate, updateBotSettings, showToast]);
 
   const handleConnect = () => {
     connect.mutate(undefined, {
@@ -352,6 +406,87 @@ export default function WhatsappConfigPage() {
           </Card>
         </div>
       </div>
+
+      {/* Message Templates */}
+      <Card className="border border-border/50 bg-card/50 rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-border/40 p-6 bg-muted/5">
+          <CardTitle className="text-lg font-bold flex items-center gap-2">
+            <Settings className="h-5 w-5 text-primary" />
+            Templates de Mensagem
+          </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Personalize as mensagens enviadas aos seus clientes via WhatsApp.
+          </p>
+        </CardHeader>
+        <CardContent className="p-6 space-y-8">
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-bold text-sm mb-2">Mensagem de Confirmação</h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                Enviada quando um agendamento é criado ou confirmado.
+              </p>
+              <textarea
+                value={confirmationTemplate}
+                onChange={(e) => setConfirmationTemplate(e.target.value)}
+                rows={8}
+                className="w-full rounded-xl border border-border/40 bg-muted/20 p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-mono"
+              />
+            </div>
+
+            <div>
+              <h3 className="font-bold text-sm mb-2">Mensagem de Lembrete</h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                Enviada 1 dia antes do agendamento como lembrete automático.
+              </p>
+              <textarea
+                value={reminderTemplate}
+                onChange={(e) => setReminderTemplate(e.target.value)}
+                rows={8}
+                className="w-full rounded-xl border border-border/40 bg-muted/20 p-4 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all font-mono"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-muted/30 border border-border/30">
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Variáveis disponíveis</p>
+              <div className="flex flex-wrap gap-2">
+                {TEMPLATE_VARIABLES.map((v) => (
+                  <button
+                    key={v.key}
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(v.key);
+                      showToast(`Copiado: ${v.key}`, "info");
+                    }}
+                    className="h-7 px-2.5 rounded-lg bg-muted border border-border/30 text-[10px] font-bold text-muted-foreground hover:bg-primary hover:text-white transition-all cursor-pointer"
+                    title={`Clique para copiar ${v.key}`}
+                  >
+                    {v.key}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3 mt-2">
+                {TEMPLATE_VARIABLES.map((v) => (
+                  <span key={v.key} className="text-[10px] text-muted-foreground">
+                    <code className="bg-muted px-1 py-0.5 rounded text-[10px] font-bold">{v.key}</code> = {v.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <Button
+              onClick={handleSaveTemplates}
+              className="h-11 px-6 font-bold rounded-xl gap-2 sm:shrink-0"
+              disabled={savingTemplates || updateBotSettings.isPending}
+              loading={savingTemplates || updateBotSettings.isPending}
+            >
+              <Save className="h-4 w-4" />
+              Salvar Templates
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

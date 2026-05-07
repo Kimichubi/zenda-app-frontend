@@ -14,14 +14,27 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function validate() {
       const token = localStorage.getItem("zenda_token");
-      
+
       if (!token) {
         router.replace("/login");
         return;
       }
 
       try {
-        await authService.validateToken();
+        const response = await authService.validateToken();
+
+        // If needs onboarding and not already on onboarding, redirect
+        if (response.needsOnboarding && pathname !== "/onboarding") {
+          router.replace("/onboarding");
+          return;
+        }
+
+        // If onboarding complete and on onboarding page, redirect to dashboard
+        if (!response.needsOnboarding && pathname === "/onboarding") {
+          router.replace("/dashboard");
+          return;
+        }
+
         setIsAuthorized(true);
       } catch (err) {
         console.error("Token validation failed", err);
@@ -31,7 +44,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
 
     validate();
-  }, [router]);
+  }, [pathname, router]);
 
   if (isLoading) {
     return (

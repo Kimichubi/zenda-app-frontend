@@ -207,30 +207,6 @@ export default function PerfilPage() {
           </Button>
         </div>
       </form>
-
-      <Card className="border-border/50 bg-destructive/5 backdrop-blur-sm overflow-hidden rounded-2xl border-dashed mt-12">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h3 className="font-bold text-destructive">Zona de Perigo</h3>
-              <p className="text-xs text-muted-foreground">
-                As ações nesta seção podem ser irreversíveis.
-              </p>
-            </div>
-            <Button 
-              variant="outline" 
-              className="border-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-all"
-              onClick={() => {
-                if (confirm("Tem certeza que deseja excluir sua conta? Esta ação é irreversível.")) {
-                  showToast("Funcionalidade em desenvolvimento", "info");
-                }
-              }}
-            >
-              Excluir minha conta
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

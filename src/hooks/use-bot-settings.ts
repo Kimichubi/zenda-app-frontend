@@ -7,6 +7,11 @@ export interface BotSettings {
   botTone: string;
   botUseEmojis: boolean;
   botMaxSentences: number;
+  aiProvider: string;
+  aiApiKey: string | null;
+  aiModel: string | null;
+  appointmentConfirmationTemplate: string | null;
+  appointmentReminderTemplate: string | null;
 }
 
 export function useBotSettings() {

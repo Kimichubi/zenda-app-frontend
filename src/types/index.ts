@@ -11,7 +11,7 @@ export interface User {
     businessName: string;
     slug: string;
     role: "USER" | "ADMIN";
-    plan: "FREE" | "PRO" | "ENTERPRISE";
+    plan: "ONBOARDING" | "FREE" | "PRO" | "ENTERPRISE";
     createdAt: string;
 }
 

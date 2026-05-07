@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { adminService } from "@/services/admin";
+import { adminService, type UserDetail } from "@/services/admin";
 
-export function useAdminUsers() {
+export function useAdminUsers(search?: string) {
     return useQuery({
-        queryKey: ["admin", "users"],
-        queryFn: () => adminService.listUsers(),
+        queryKey: ["admin", "users", search],
+        queryFn: () => adminService.listUsers(search),
     });
 }
 
@@ -27,5 +28,13 @@ export function useUpdateUserPlan() {
             queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
             queryClient.invalidateQueries({ queryKey: ["admin", "stats"] });
         },
+    });
+}
+
+export function useUserDetail(id: string | null) {
+    return useQuery({
+        queryKey: ["admin", "users", id, "detail"],
+        queryFn: () => adminService.getUserDetail(id!),
+        enabled: !!id,
     });
 }
