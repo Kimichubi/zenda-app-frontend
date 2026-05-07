@@ -18,6 +18,13 @@ export function useAdminStats() {
     });
 }
 
+export function useAdminBusinesses(search?: string, status?: string, plan?: string) {
+    return useQuery({
+        queryKey: ["admin", "businesses", search, status, plan],
+        queryFn: () => adminService.listBusinesses(),
+    });
+}
+
 export function useUpdateUserPlan() {
     const queryClient = useQueryClient();
 
@@ -36,5 +43,12 @@ export function useUserDetail(id: string | null) {
         queryKey: ["admin", "users", id, "detail"],
         queryFn: () => adminService.getUserDetail(id!),
         enabled: !!id,
+    });
+}
+
+export function useAdminMonitoring() {
+    return useQuery({
+        queryKey: ["admin", "monitoring"],
+        queryFn: () => adminService.getMonitoring(),
     });
 }

@@ -71,7 +71,7 @@ export const adminService = {
 
     getBusiness: (id: string) => api.get<BusinessDetail>(`/admin/businesses/${encodeURIComponent(id)}`),
 
-    createBusiness: (data: { name: string; slug: string; ownerId: string; plan?: string }) =>
+    createBusiness: (data: { name: string; slug: string; ownerId: string; plan?: string; activateNow?: boolean }) =>
         api.post<any>("/admin/businesses", data),
 
     updateBusiness: (id: string, data: { name?: string; slug?: string; plan?: string; status?: string; addStaff?: { name: string; email: string; commission?: number } }) =>
@@ -79,4 +79,14 @@ export const adminService = {
 
     linkUserToBusiness: (businessId: string, userId: string) =>
         api.post<any>(`/admin/businesses/${encodeURIComponent(businessId)}/link-user`, { userId }),
+
+    // Monitoring
+    getMonitoring: () => api.get<any>("/admin/monitoring"),
+
+    // Business access / impersonation
+    accessBusiness: (businessId: string) =>
+        api.post<{ accessToken: string; refreshToken: string; user: { id: string; name: string; email: string; role: string } }>(`/admin/businesses/${encodeURIComponent(businessId)}/access`),
+
+    // Onboarding
+    getOnboarding: () => api.get<any[]>("/admin/onboarding"),
 };

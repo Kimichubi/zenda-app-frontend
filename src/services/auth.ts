@@ -10,6 +10,7 @@ export interface ValidateResponse {
     valid: boolean;
     userId: string;
     plan: string;
+    role?: string;
     needsOnboarding: boolean;
     businessId?: string | null;
     businessName?: string | null;
