@@ -11,6 +11,10 @@ export interface ValidateResponse {
     userId: string;
     plan: string;
     needsOnboarding: boolean;
+    businessId?: string | null;
+    businessName?: string | null;
+    businessStatus?: string | null;
+    suspended?: boolean;
 }
 
 export interface UpdateProfileData {

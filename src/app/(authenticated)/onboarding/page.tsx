@@ -1,36 +1,34 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Button, Card, CardContent, useToast } from "@/components/ui";
-import { api } from "@/services/api";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui";
+import { authService } from "@/services/auth";
 import {
   Sparkles,
   Headphones,
-  ClipboardList,
   MessageCircle,
   Clock,
-  Shield,
   Loader2,
 } from "lucide-react";
-import { Logo } from "@/components/layout/logo";
 
 export default function OnboardingPage() {
-  const { showToast } = useToast();
-  const [acknowledged, setAcknowledged] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [businessName, setBusinessName] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleAcknowledge = useCallback(async () => {
-    setLoading(true);
-    try {
-      await api.patch("/auth/complete-onboarding");
-      setAcknowledged(true);
-      showToast("Solicitação registrada!", "success");
-    } catch {
-      showToast("Erro. Tente novamente.", "error");
-    } finally {
+  useEffect(() => {
+    authService.validateToken().then(r => {
+      setBusinessName(r.businessName || null);
       setLoading(false);
-    }
-  }, [showToast]);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -41,9 +39,11 @@ export default function OnboardingPage() {
               <Sparkles className="h-10 w-10 text-primary" />
             </div>
           </div>
-          <h1 className="text-3xl font-black tracking-tight">Bem-vindo à Zenda!</h1>
+          <h1 className="text-3xl font-black tracking-tight">
+            {businessName ? `Bem-vindo, ${businessName}!` : "Bem-vindo a Zenda!"}
+          </h1>
           <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-            Sua conta foi criada. Agora ela precisa ser ativada pela nossa equipe.
+            Sua conta foi criada. Para ativar o acesso ao sistema, entre em contato com nosso suporte.
           </p>
         </div>
 
@@ -51,14 +51,26 @@ export default function OnboardingPage() {
           <CardContent className="p-8 md:p-10 space-y-8">
             <div className="space-y-4">
               <h2 className="text-lg font-bold flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-primary" />
-                Como funciona
+                <Headphones className="h-5 w-5 text-primary" />
+                Proximos passos
               </h2>
               <div className="space-y-3">
                 {[
-                  { title: "Entre em contato com o suporte", desc: "Nossa equipe vai atender você e ativar sua conta na plataforma.", icon: Headphones },
-                  { title: "Escolha seu plano", desc: "Você poderá escolher entre os planos Essencial ou Enterprise.", icon: Sparkles },
-                  { title: "Sua conta é ativada", desc: "Após a ativação, você terá acesso completo ao sistema.", icon: Shield },
+                  {
+                    title: "Entre em contato com o suporte",
+                    desc: "Nossa equipe vai entender seu negocio e ativar sua conta na plataforma.",
+                    icon: MessageCircle,
+                  },
+                  {
+                    title: "Configuracao do seu negocio",
+                    desc: "Cadastramos seus servicos, precos, horarios e profissionais da sua equipe.",
+                    icon: Sparkles,
+                  },
+                  {
+                    title: "Sua conta e ativada",
+                    desc: "Apos a ativacao, voce e sua equipe terao acesso completo ao sistema.",
+                    icon: Sparkles,
+                  },
                 ].map((step, i) => (
                   <div key={step.title} className="flex gap-4 p-4 rounded-xl bg-muted/20 border border-border/30">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -85,32 +97,13 @@ export default function OnboardingPage() {
                 </p>
                 <p className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary" />
-                  Seg a Sex, das 9h às 18h
+                  Seg a Sex, das 9h as 18h
                 </p>
               </div>
               <p className="text-xs text-muted-foreground">
                 Entre em contato para ativar sua conta e escolher o melhor plano para seu negocio.
               </p>
             </div>
-
-            {!acknowledged ? (
-              <Button
-                onClick={handleAcknowledge}
-                loading={loading}
-                className="w-full h-14 rounded-xl text-sm font-bold gap-2 shadow-lg shadow-primary/20"
-              >
-                <Logo height={20} iconOnly />
-                Entendi, quero ativar minha conta
-              </Button>
-            ) : (
-              <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-center">
-                <Shield className="h-6 w-6 text-emerald-500 mx-auto mb-2" />
-                <p className="text-sm font-bold text-emerald-600">Solicitacao enviada!</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Nossa equipe entrara em contato em breve para ativar sua conta.
-                </p>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

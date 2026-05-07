@@ -25,7 +25,7 @@ export interface SignupData {
     email: string;
     password: string;
     phone: string;
-    businessName: string;
+    businessName?: string;
 }
 
 export interface AuthResponse {

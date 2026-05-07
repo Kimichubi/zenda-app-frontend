@@ -36,6 +36,19 @@ export interface UserDetail {
     };
 }
 
+export interface BusinessDetail {
+    id: string;
+    name: string;
+    slug: string;
+    plan: string;
+    status: string;
+    createdAt: string;
+    owner: { id: string; name: string; email: string; phone?: string };
+    staff: { id: string; name: string; email: string; role: string; baseCommission: number }[];
+    products: { id: string; name: string; price: number; stock: number }[];
+    _count?: { staff: number; products: number; reviews: number };
+}
+
 export const adminService = {
     listUsers: (search?: string) => {
         const query = search ? `?search=${encodeURIComponent(search)}` : "";
@@ -52,4 +65,18 @@ export const adminService = {
 
     impersonate: (userId: string) =>
         api.post<{ accessToken: string; refreshToken: string; user: { id: string; name: string; email: string; role: string; plan: string } }>(`/admin/impersonate/${encodeURIComponent(userId)}`),
+
+    // Business management
+    listBusinesses: () => api.get<any[]>("/admin/businesses"),
+
+    getBusiness: (id: string) => api.get<BusinessDetail>(`/admin/businesses/${encodeURIComponent(id)}`),
+
+    createBusiness: (data: { name: string; slug: string; ownerId: string; plan?: string }) =>
+        api.post<any>("/admin/businesses", data),
+
+    updateBusiness: (id: string, data: { name?: string; slug?: string; plan?: string; status?: string; addStaff?: { name: string; email: string; commission?: number } }) =>
+        api.patch<any>(`/admin/businesses/${encodeURIComponent(id)}`, data),
+
+    linkUserToBusiness: (businessId: string, userId: string) =>
+        api.post<any>(`/admin/businesses/${encodeURIComponent(businessId)}/link-user`, { userId }),
 };
