@@ -4,7 +4,7 @@ import { AdminAuthGuard } from "@/components/admin/admin-auth-guard";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminHeader } from "@/components/admin/admin-header";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminAuthGuard>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
