@@ -13,7 +13,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function validate() {
-      setIsLoading(true);
       const token = localStorage.getItem("zenda_token");
       
       if (!token) {
@@ -25,9 +24,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         await authService.validateToken();
         setIsAuthorized(true);
       } catch (err) {
-        // Interceptor in api.ts will try to refresh the token.
-        // If it fails, it will redirect to /login.
-        // If we reach here, it means validation failed.
         console.error("Token validation failed", err);
       } finally {
         setIsLoading(false);
@@ -35,7 +31,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
 
     validate();
-  }, [pathname, router]);
+  }, [router]);
 
   if (isLoading) {
     return (

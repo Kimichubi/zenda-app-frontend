@@ -43,20 +43,20 @@ export default function BookingPage() {
 
   if (loadingServices) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-sm text-gray-500">Carregando...</p>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">Carregando...</p>
       </div>
     );
   }
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="w-full max-w-lg space-y-4 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             Agendamento confirmado!
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Você receberá uma confirmação em breve.
           </p>
         </div>
@@ -65,16 +65,16 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-background py-12">
       <div className="mx-auto max-w-lg px-4">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Agendar horário</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-foreground">Agendar horário</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Escolha o serviço, data e horário desejado
           </p>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <BookingForm
             services={services}
             slots={slots}

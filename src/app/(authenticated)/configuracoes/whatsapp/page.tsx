@@ -26,6 +26,7 @@ import {
   ChevronDown,
   ChevronUp,
   RotateCcw,
+  User,
 } from "lucide-react";
 
 import { formatDate, cn } from "@/utils";
@@ -209,95 +210,142 @@ export default function WhatsappConfigPage() {
           </div>
 
           {/* Sessões Recentes */}
-          <Card className="border border-border/50 bg-card/50 rounded-2xl overflow-hidden">
+          <Card className="border border-border/50 bg-card/50 rounded-2xl overflow-hidden flex flex-col">
             <CardHeader className="border-b border-border/40 p-6">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
                 <Bot className="h-5 w-5 text-primary" />
                 Conversas Recentes
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col">
               {sessions.length === 0 ? (
                 <div className="p-10 text-center text-muted-foreground text-sm">
                   Nenhuma conversa registrada ainda.
                 </div>
               ) : (
-                <div className="divide-y divide-border/40">
-                  {sessions.map((session: any) => (
-                    <div key={session.id}>
+                <div className="flex flex-col md:flex-row min-h-[400px]">
+                  {/* Session List Sidebar */}
+                  <div className={cn(
+                    "border-r border-border/40 bg-muted/5 overflow-y-auto",
+                    expandedSession ? "md:w-72 hidden md:block" : "w-full md:w-72"
+                  )}>
+                    {sessions.map((session: any) => (
                       <button
+                        key={session.id}
                         onClick={() => setExpandedSession(expandedSession === session.id ? null : session.id)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-muted/20 transition-colors text-left"
+                        className={cn(
+                          "w-full flex items-center gap-3 p-4 text-left transition-colors border-b border-border/20",
+                          expandedSession === session.id
+                            ? "bg-primary/5 border-l-2 border-l-primary"
+                            : "hover:bg-muted/20 border-l-2 border-l-transparent"
+                        )}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                            <MessageCircle className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold">{session.phoneNumber}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                          <MessageCircle className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold truncate">{session.phoneNumber}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Badge variant="outline" className="text-[8px] h-4 px-1.5">
                               {session.state}
+                            </Badge>
+                            <span className="text-[10px] text-muted-foreground">
+                              {formatDate(session.lastMessageAt)}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Chat View */}
+                  {expandedSession && (
+                    <div className="flex-1 flex flex-col min-w-0">
+                      {/* Chat Header */}
+                      <div className="flex items-center justify-between p-4 border-b border-border/40 bg-muted/5">
+                        <div className="flex items-center gap-3">
+                          <button
+                            className="md:hidden h-8 w-8 rounded-lg bg-muted flex items-center justify-center"
+                            onClick={() => setExpandedSession(null)}
+                          >
+                            <ChevronDown className="h-4 w-4 rotate-90" />
+                          </button>
+                          <div>
+                            <p className="text-sm font-bold">
+                              {sessions.find((s: any) => s.id === expandedSession)?.phoneNumber}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {logsData?.logs?.length ?? 0} mensagens
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-[10px] text-muted-foreground">
-                            {formatDate(session.lastMessageAt)}
-                          </span>
-                          {expandedSession === session.id ? (
-                            <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </div>
-                      </button>
+                        <Button size="sm" variant="ghost" className="h-8 text-[10px] gap-1" onClick={() => handleReset(expandedSession)}>
+                          <RotateCcw className="h-3 w-3" />
+                          Resetar
+                        </Button>
+                      </div>
 
-                      {expandedSession === session.id && (
-                        <div className="px-4 pb-4">
-                          <div className="bg-muted/30 rounded-xl p-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Histórico</p>
-                              <Button size="sm" variant="ghost" className="h-7 text-[10px] gap-1" onClick={() => handleReset(session.id)}>
-                                <RotateCcw className="h-3 w-3" />
-                                Resetar Contexto
-                              </Button>
-                            </div>
-                              {logsData?.logs?.length === 0 ? (
-                              <p className="text-xs text-muted-foreground">Sem mensagens.</p>
-                            ) : (
-                              <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
-                                {logsData?.logs?.map((log: any) => (
-                                  <div key={log.id} className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <Badge variant="outline" className="text-[8px] h-4 px-1.5">
-                                        {log.intent}
-                                      </Badge>
-                                      <span className="text-[9px] text-muted-foreground">
-                                        {new Date(log.createdAt).toLocaleTimeString("pt-BR")}
-                                      </span>
-                                      <span className="text-[9px] text-muted-foreground ml-auto">
-                                        {(log.confidence * 100).toFixed(0)}%
-                                      </span>
-                                    </div>
-                                    <div className="space-y-1">
-                                      <p className="text-xs bg-primary/5 rounded-lg px-3 py-2 text-foreground">
-                                        <span className="font-bold text-primary mr-1">Cliente:</span>
-                                        {log.incoming}
-                                      </p>
-                                      <p className="text-xs bg-emerald-500/5 rounded-lg px-3 py-2 text-foreground">
-                                        <span className="font-bold text-emerald-600 mr-1">Bot:</span>
-                                        {log.outgoing}
-                                      </p>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                      {/* Messages */}
+                      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        {logsData?.logs?.length === 0 ? (
+                          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                            <MessageSquare className="h-8 w-8 mb-2 opacity-20" />
+                            <p className="text-sm">Sem mensagens nesta conversa.</p>
                           </div>
-                        </div>
-                      )}
+                        ) : (
+                          logsData?.logs?.map((log: any) => (
+                            <div key={log.id} className="space-y-2">
+                              {/* Client Message */}
+                              <div className="flex gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white shrink-0">
+                                  <User className="h-4 w-4" />
+                                </div>
+                                <div className="max-w-[80%]">
+                                  <div className="bg-primary text-white rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm leading-relaxed">
+                                    <p className="whitespace-pre-wrap">{log.incoming}</p>
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {new Date(log.createdAt).toLocaleTimeString("pt-BR")}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Bot Message */}
+                              <div className="flex gap-3 flex-row-reverse">
+                                <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
+                                  <Bot className="h-4 w-4" />
+                                </div>
+                                <div className="max-w-[80%]">
+                                  <div className="bg-muted/50 border border-border/30 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed">
+                                    <p className="whitespace-pre-wrap">{log.outgoing}</p>
+                                  </div>
+                                  <div className="flex items-center justify-end gap-2 mt-1">
+                                    <Badge variant="outline" className="text-[8px] h-4 px-1.5">
+                                      {log.intent}
+                                    </Badge>
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {(log.confidence * 100).toFixed(0)}% confiança
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
                     </div>
-                  ))}
+                  )}
+
+                  {/* Empty State */}
+                  {!expandedSession && (
+                    <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-10">
+                      <MessageSquare className="h-12 w-12 mb-4 opacity-10" />
+                      <p className="text-sm font-medium">Selecione uma conversa para ver o histórico</p>
+                      <p className="text-xs text-muted-foreground mt-1">Clique em um número ao lado</p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

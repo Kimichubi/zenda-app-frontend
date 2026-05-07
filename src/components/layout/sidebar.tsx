@@ -17,6 +17,7 @@ import {
   Users2,
   Wallet,
   Settings,
+  Bot,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
@@ -39,6 +40,7 @@ const enterpriseNavItems = [
 
 const settingsNavItems = [
   { href: "/configuracoes/whatsapp", label: "WhatsApp", icon: MessageCircle },
+  { href: "/configuracoes/ia", label: "Assistente IA", icon: Bot },
   { href: "/perfil", label: "Meu Perfil", icon: Settings },
 ];
 
@@ -59,7 +61,7 @@ export function Sidebar() {
             : "text-muted-foreground hover:bg-muted hover:text-foreground",
         )}
       >
-        <Icon className={cn("h-4.5 w-4.5 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+        <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
         <span className="tracking-tight">{item.label}</span>
         {isActive && (
           <div className="ml-auto w-1 h-1 rounded-full bg-primary" />
@@ -73,7 +75,7 @@ export function Sidebar() {
       <div className="flex h-16 items-center px-6 border-b border-border/60">
         <Link href="/dashboard" className="flex items-center gap-3 group">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-md shadow-primary/10 transition-transform duration-300">
-            <Zap className="w-4.5 h-4.5 text-white fill-white/10" />
+            <Zap className="w-5 h-5 text-white fill-white/10" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Zenda</h1>
         </Link>
@@ -131,7 +133,7 @@ export function Sidebar() {
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
-              <ShieldCheck className={cn("h-4.5 w-4.5 transition-colors", pathname === "/admin" ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+              <ShieldCheck className={cn("h-5 w-5 transition-colors", pathname === "/admin" ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
               <span className="tracking-tight">Backoffice</span>
             </Link>
           </div>
@@ -148,7 +150,7 @@ export function Sidebar() {
             window.location.href = "/login";
           }}
         >
-          <LogOut className="h-4.5 w-4.5" />
+          <LogOut className="h-5 w-5" />
           <span className="tracking-tight">Sair</span>
         </Button>
       </div>

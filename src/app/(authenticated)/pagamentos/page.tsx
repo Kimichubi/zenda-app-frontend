@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { PaymentTable } from "@/features/payments/payment-table";
 import { FilterBar } from "@/features/payments/filter-bar";
 import { usePayments, useGeneratePix, useMarkPaid, useCancelPayment } from "@/hooks";
@@ -18,8 +18,17 @@ import {
   ChevronRight
 } from "lucide-react";
 import { formatCurrency, cn } from "@/utils";
-import type { Payment, PaymentFilters } from "@/types";
+import type { Payment, PaymentFilters, PaymentStatus } from "@/types";
 import { QRCodeSVG } from "qrcode.react";
+
+type StatusFilter = PaymentStatus | "all";
+
+const statusTabs: { id: StatusFilter; label: string }[] = [
+  { id: "all", label: "Todos" },
+  { id: "paid", label: "Pagos" },
+  { id: "pending", label: "Pendentes" },
+  { id: "failed", label: "Falhos" },
+];
 
 export default function PagamentosPage() {
   const [filters, setFilters] = useState<PaymentFilters>({ page: 1, limit: 10, status: "all" });
@@ -47,7 +56,15 @@ export default function PagamentosPage() {
     }));
   }, []);
 
-  const handleGeneratePix = (appointmentId: string) => {
+  const handleStatusFilter = useCallback((status: StatusFilter) => {
+    setFilters((prev) => ({
+      ...prev,
+      status,
+      page: 1,
+    }));
+  }, []);
+
+  const handleGeneratePix = useCallback((appointmentId: string) => {
     generatePix.mutate(appointmentId, {
       onSuccess: (newPayment) => {
         showToast("Pix gerado com sucesso!", "success");
@@ -55,9 +72,9 @@ export default function PagamentosPage() {
       },
       onError: () => showToast("Erro ao gerar Pix", "error"),
     });
-  };
+  }, [generatePix, showToast]);
 
-  const handleMarkPaid = (paymentId: string) => {
+  const handleMarkPaid = useCallback((paymentId: string) => {
     markPaid.mutate(paymentId, {
       onSuccess: () => {
         showToast("Pagamento confirmado!", "success");
@@ -65,39 +82,41 @@ export default function PagamentosPage() {
       },
       onError: () => showToast("Erro ao confirmar pagamento", "error"),
     });
-  };
+  }, [markPaid, showToast, selectedPayment]);
 
-  const handleCancel = (paymentId: string) => {
+  const handleCancel = useCallback((paymentId: string) => {
     if (confirm("Deseja cancelar esta cobrança?")) {
       cancelPayment.mutate(paymentId, {
         onSuccess: () => showToast("Cobrança cancelada", "info"),
         onError: () => showToast("Erro ao cancelar", "error"),
       });
     }
-  };
+  }, [cancelPayment, showToast]);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     const token = localStorage.getItem("zenda_token");
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     window.open(`${baseUrl}/reports/payments/export?token=${token}`, "_blank");
-  };
+  }, []);
 
-  const copyPixCode = () => {
+  const copyPixCode = useCallback(() => {
     if (selectedPayment?.pixCode) {
       navigator.clipboard.writeText(selectedPayment.pixCode);
       showToast("Código Copia e Cola copiado!", "success");
     }
-  };
+  }, [selectedPayment, showToast]);
 
   const payments = data?.data || [];
   const total = data?.total || 0;
   const totalPages = Math.ceil(total / (filters.limit || 10));
 
-  const stats = {
+  const stats = useMemo(() => ({
     total: payments.reduce((acc, p) => acc + p.amount, 0),
     paid: payments.filter(p => p.status.toLowerCase() === "paid").reduce((acc, p) => acc + p.amount, 0),
     pending: payments.filter(p => p.status.toLowerCase() === "pending").reduce((acc, p) => acc + p.amount, 0),
-  };
+  }), [payments]);
+
+  const currentPage = filters.page || 1;
 
   if (isLoading) {
     return (
@@ -132,7 +151,6 @@ export default function PagamentosPage() {
         </Button>
       </header>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <Card className="border border-border/40 bg-card/30 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden">
           <CardContent className="p-6 flex items-center justify-center !pt-6">
@@ -180,19 +198,15 @@ export default function PagamentosPage() {
       <div className="space-y-6">
         <FilterBar onFilterChange={handleFilterChange} />
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 bg-primary/5 border border-primary/10 p-1.5 rounded-2xl backdrop-blur-md">
-            {[
-              { id: "all", label: "Todos" },
-              { id: "paid", label: "Pagos" },
-              { id: "pending", label: "Pendentes" },
-              { id: "failed", label: "Falhos" },
-            ].map((t) => (
+        <div className="flex items-center justify-between overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 bg-primary/5 border border-primary/10 p-1.5 rounded-2xl backdrop-blur-md shrink-0">
+            {statusTabs.map((t) => (
               <button
                 key={t.id}
-                onClick={() => handleFilterChange({ status: t.id as any })}
+                type="button"
+                onClick={() => handleStatusFilter(t.id)}
                 className={cn(
-                  "px-5 py-2 text-[10px] font-black uppercase tracking-[0.15em] rounded-xl transition-all duration-300",
+                  "px-5 py-2 text-[10px] font-black uppercase tracking-[0.15em] rounded-xl transition-all duration-300 shrink-0",
                   filters.status === t.id 
                     ? "bg-primary text-white shadow-lg shadow-primary/20 scale-[1.05]" 
                     : "text-muted-foreground hover:text-primary hover:bg-primary/5"
@@ -216,14 +230,14 @@ export default function PagamentosPage() {
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-2 pt-4">
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-              Página <span className="text-primary">{filters.page}</span> de {totalPages}
+              Página <span className="text-primary">{currentPage}</span> de {totalPages}
             </p>
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                disabled={filters.page! <= 1}
-                onClick={() => handlePageChange(filters.page! - 1)}
+                disabled={currentPage <= 1}
+                onClick={() => handlePageChange(currentPage - 1)}
                 className="h-9 rounded-xl border-primary/10 bg-transparent text-primary hover:bg-primary/5"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -231,8 +245,8 @@ export default function PagamentosPage() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={filters.page! >= totalPages}
-                onClick={() => handlePageChange(filters.page! + 1)}
+                disabled={currentPage >= totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
                 className="h-9 rounded-xl border-primary/10 bg-transparent text-primary hover:bg-primary/5"
               >
                 <ChevronRight className="h-4 w-4" />

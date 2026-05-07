@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { Button, Input } from "@/components/ui";
 import { loginSchema, type LoginFormData } from "@/utils/validations";
 import { authService } from "@/services/auth";
-import { AlertCircle, Lock, Mail } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -34,53 +35,67 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-4 w-4 shrink-0" />
             <span className="font-medium">{error}</span>
           </div>
         </div>
       )}
 
       <div className="space-y-4">
-        <div className="relative group">
-          <Input
-            {...register("email")}
-            type="email"
-            placeholder="exemplo@email.com"
-            label="Email"
-            error={errors.email?.message}
-            className="h-11 transition-all duration-200"
-          />
-        </div>
+        <Input
+          {...register("email")}
+          type="email"
+          placeholder="seu@email.com"
+          label="Email"
+          error={errors.email?.message}
+          className="h-12 rounded-xl"
+          autoComplete="email"
+        />
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label className="text-sm font-medium leading-none">
               Senha
             </label>
             <Link
               href="/forgot-password"
-              className="text-xs font-semibold text-primary hover:underline transition-all"
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
             >
               Esqueceu sua senha?
             </Link>
           </div>
-          <Input
-            {...register("password")}
-            type="password"
-            placeholder="••••••••"
-            error={errors.password?.message}
-            className="h-11 transition-all duration-200"
-          />
+          <div className="relative">
+            <Input
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              error={errors.password?.message}
+              className="h-12 rounded-xl pr-12"
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded-lg"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
-      <Button 
-        type="submit" 
-        className="w-full h-11 text-sm font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+      <Button
+        type="submit"
+        className="w-full h-12 text-sm font-bold rounded-xl shadow-lg shadow-primary/20"
         loading={isSubmitting}
       >
         Entrar na conta

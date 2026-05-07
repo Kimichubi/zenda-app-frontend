@@ -71,16 +71,16 @@ export function AppointmentList({
                 key={apt.id}
                 className="group flex items-center justify-between p-5 h-[84px] transition-all duration-300 hover:bg-primary/[0.02]"
               >
-                <div className="flex items-center gap-5 h-full">
+                <div className="flex items-center gap-5 h-full min-w-0">
                   <div className="flex flex-col items-center justify-center h-12 w-12 shrink-0 rounded-xl bg-background border border-border/60 shadow-sm transition-all duration-300 group-hover:border-primary/30 group-hover:shadow-primary/5">
                     <span className="text-[11px] font-black text-primary uppercase tracking-tighter">{formatTime(apt.startTime)}</span>
                   </div>
-                  <div className="flex flex-col justify-center h-full">
-                    <p className="text-sm font-bold tracking-tight leading-none group-hover:text-primary transition-colors">
+                  <div className="flex flex-col justify-center h-full min-w-0 overflow-hidden">
+                    <p className="text-sm font-bold tracking-tight leading-none group-hover:text-primary transition-colors truncate">
                       {apt.clientName}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <p className="text-[11px] font-bold text-muted-foreground/70 uppercase tracking-widest leading-none">
+                      <p className="text-[11px] font-bold text-muted-foreground/70 uppercase tracking-widest leading-none truncate">
                         {apt.serviceName}
                       </p>
                     </div>
@@ -103,7 +103,7 @@ export function AppointmentList({
                       title="Reenviar WhatsApp"
                       disabled={resendNotification.isPending}
                     >
-                      <MessageCircle className="h-4.5 w-4.5" />
+                      <MessageCircle className="h-5 w-5" />
                     </Button>
                     {apt.status === "scheduled" && (
                       <>
@@ -114,7 +114,7 @@ export function AppointmentList({
                           onClick={() => handleStatusUpdate(apt.id, "confirmed")}
                           title="Confirmar"
                         >
-                          <CheckCircle2 className="h-4.5 w-4.5" />
+                          <CheckCircle2 className="h-5 w-5" />
                         </Button>
                         <Button
                           variant="outline"
@@ -123,7 +123,7 @@ export function AppointmentList({
                           onClick={() => handleStatusUpdate(apt.id, "cancelled")}
                           title="Cancelar"
                         >
-                          <XCircle className="h-4.5 w-4.5" />
+                          <XCircle className="h-5 w-5" />
                         </Button>
                       </>
                     )}

@@ -217,7 +217,15 @@ export default function PerfilPage() {
                 As ações nesta seção podem ser irreversíveis.
               </p>
             </div>
-            <Button variant="outline" className="border-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-all">
+            <Button 
+              variant="outline" 
+              className="border-destructive/20 text-destructive hover:bg-destructive hover:text-white transition-all"
+              onClick={() => {
+                if (confirm("Tem certeza que deseja excluir sua conta? Esta ação é irreversível.")) {
+                  showToast("Funcionalidade em desenvolvimento", "info");
+                }
+              }}
+            >
               Excluir minha conta
             </Button>
           </div>

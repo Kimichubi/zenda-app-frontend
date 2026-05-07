@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAdminUsers, useAdminStats, useUpdateUserPlan, useUser } from "@/hooks";
 import { 
   Card, 
@@ -23,7 +24,7 @@ import {
 } from "lucide-react";
 import { cn, formatDate } from "@/utils";
 import type { User } from "@/types";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const { data: currentUser } = useUser();
@@ -31,11 +32,13 @@ export default function AdminPage() {
   const { data: stats, isLoading: isLoadingStats } = useAdminStats();
   const updatePlan = useUpdateUserPlan();
   const { showToast } = useToast();
+  const router = useRouter();
 
-  // Redirect if not admin (double check on frontend)
-  if (currentUser && currentUser.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "ADMIN") {
+      router.replace("/dashboard");
+    }
+  }, [currentUser, router]);
 
   const handleUpdatePlan = (userId: string, plan: string) => {
     updatePlan.mutate({ id: userId, plan }, {

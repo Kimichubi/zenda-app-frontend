@@ -13,6 +13,7 @@ export { useDashboard } from "./use-dashboard";
 export { useServices, useCreateService, useUpdateService, useDeleteService } from "./use-services";
 export { useAdminUsers, useAdminStats, useUpdateUserPlan } from "./use-admin";
 export { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
+export { useBotSettings, useUpdateBotSettings } from "./use-bot-settings";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
 export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp, useChatSessions, useChatLogs, useChatStats, useResetChatSession } from "./use-whatsapp";
 export { 
