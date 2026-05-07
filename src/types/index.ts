@@ -190,6 +190,17 @@ export interface PublicSiteData {
     settings: SiteSettings;
     services: Service[];
     schedules: Schedule[];
+    staff: {
+        id: string;
+        name: string;
+        role: string;
+    }[];
+    products: {
+        id: string;
+        name: string;
+        price: number;
+        sku?: string;
+    }[];
 }
 
 // --- API ---
