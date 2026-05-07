@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,7 +9,6 @@ import {
   Users,
   CreditCard,
   LogOut,
-  Zap,
   Scissors,
   ShieldCheck,
   MessageCircle,
@@ -17,10 +17,15 @@ import {
   Users2,
   Wallet,
   Settings,
+  ChevronDown,
+  ArrowLeftRight,
+  Search,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
-import { useUser } from "@/hooks";
+import { useUser, useAdminUsers } from "@/hooks";
+import { adminService } from "@/services/admin";
+import { Logo } from "./logo";
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -51,6 +56,25 @@ interface SidebarProps {
 export function Sidebar({ collapsed = false }: SidebarProps) {
   const pathname = usePathname();
   const { data: user } = useUser();
+  const { data: allUsers = [] } = useAdminUsers();
+  const [showSwitchPanel, setShowSwitchPanel] = useState(false);
+  const [switchSearch, setSwitchSearch] = useState("");
+
+  const filteredUsers = useMemo(() => {
+    if (!switchSearch) return allUsers.filter(u => u.id !== user?.id);
+    const q = switchSearch.toLowerCase();
+    return allUsers.filter(u =>
+      u.id !== user?.id &&
+      (u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+    );
+  }, [allUsers, switchSearch, user?.id]);
+
+  const handleImpersonate = async (userId: string) => {
+    const response = await adminService.impersonate(userId);
+    localStorage.setItem("zenda_token", response.accessToken);
+    localStorage.setItem("zenda_refresh_token", response.refreshToken);
+    window.location.href = "/dashboard";
+  };
 
   const NavLink = ({ item }: { item: NavItem }) => {
     const isActive = pathname === item.href;
@@ -87,15 +111,10 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
     )}>
       <div className={cn(
         "flex h-16 items-center border-b border-border/60",
-        collapsed ? "justify-center px-2" : "px-6"
+        collapsed ? "justify-center px-2" : "px-4"
       )}>
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-md shadow-primary/10 transition-transform duration-300 shrink-0">
-            <Zap className="w-5 h-5 text-white fill-white/10" />
-          </div>
-          {!collapsed && (
-            <h1 className="text-xl font-bold tracking-tight text-foreground uppercase">Zenda</h1>
-          )}
+          <Logo size={32} iconOnly />
         </Link>
       </div>
 
@@ -163,6 +182,64 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
           </div>
         )}
       </div>
+
+      {/* Admin Account Switcher */}
+      {user?.role === "ADMIN" && (
+        <div className={cn("border-t border-border/60 bg-muted/5", collapsed ? "p-2" : "p-2")}>
+          {showSwitchPanel && !collapsed ? (
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={switchSearch}
+                  onChange={(e) => setSwitchSearch(e.target.value)}
+                  placeholder="Buscar conta..."
+                  className="w-full h-8 pl-8 pr-2 rounded-lg border border-border/40 bg-background text-xs focus:outline-none focus:ring-1 focus:ring-primary/30"
+                  autoFocus
+                />
+              </div>
+              <div className="max-h-40 overflow-y-auto space-y-0.5">
+                {filteredUsers.slice(0, 20).map((u) => (
+                  <button
+                    key={u.id}
+                    onClick={() => handleImpersonate(u.id)}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs hover:bg-primary/10 text-left transition-colors"
+                  >
+                    <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[9px] font-bold text-primary shrink-0">
+                      {u.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-medium truncate text-foreground">{u.name}</p>
+                      <p className="text-[9px] text-muted-foreground truncate">{u.email}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <Button
+                variant="ghost"
+                className="w-full h-7 text-[10px] text-muted-foreground"
+                onClick={() => setShowSwitchPanel(false)}
+              >
+                Fechar
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              className={cn(
+                "text-muted-foreground hover:text-foreground text-xs transition-all rounded-lg",
+                collapsed ? "w-full h-10 justify-center p-0" : "w-full justify-start gap-2 h-8"
+              )}
+              onClick={() => setShowSwitchPanel(true)}
+              title="Trocar de conta"
+            >
+              <ArrowLeftRight className="h-4 w-4" />
+              {!collapsed && "Trocar de conta"}
+            </Button>
+          )}
+        </div>
+      )}
 
       <div className={cn(
         "border-t border-border/60 bg-muted/5",

@@ -49,4 +49,7 @@ export const adminService = {
         api.patch<User>(`/admin/users/${encodeURIComponent(id)}/plan`, { plan }),
 
     getStats: () => api.get<AdminStats>("/admin/stats"),
+
+    impersonate: (userId: string) =>
+        api.post<{ accessToken: string; refreshToken: string; user: { id: string; name: string; email: string; role: string; plan: string } }>(`/admin/impersonate/${encodeURIComponent(userId)}`),
 };

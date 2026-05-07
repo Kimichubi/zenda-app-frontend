@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { Logo } from "@/components/layout/logo";
 import {
-  Zap,
   Calendar,
   Users,
   CreditCard,
@@ -10,8 +10,6 @@ import {
   ArrowRight,
   BarChart3,
   Smartphone,
-  PaintBucket,
-  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui";
 
@@ -99,10 +97,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Zap className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-lg font-bold tracking-tight">Zenda</span>
+              <Logo size={32} iconOnly />
             </div>
 
             <div className="hidden md:flex items-center gap-8">
@@ -341,10 +336,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Zap className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-lg font-bold tracking-tight">Zenda</span>
+              <Logo size={32} iconOnly />
             </div>
             <div className="flex items-center gap-6">
               <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Recursos</a>

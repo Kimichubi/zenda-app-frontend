@@ -4,6 +4,7 @@ import { LoginForm } from "@/features/auth/login-form";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Zap, Shield, Lock } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 
 export default function LoginPage() {
   return (
@@ -20,10 +21,7 @@ export default function LoginPage() {
         <div className="relative z-10 w-full max-w-md text-white space-y-12">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">Zenda</span>
+              <Logo size={40} iconOnly />
             </div>
             <h1 className="text-4xl font-bold tracking-tight leading-tight">Bem-vindo de volta!</h1>
             <p className="text-lg text-slate-400 leading-relaxed">
@@ -47,9 +45,7 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 xl:px-24">
         <div className="mx-auto w-full max-w-[420px]">
           <div className="lg:hidden mb-10 flex justify-center">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
+            <Logo size={48} iconOnly />
           </div>
 
           <div className="mb-8 space-y-2">

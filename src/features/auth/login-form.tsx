@@ -14,6 +14,7 @@ export function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [step, setStep] = useState<"credentials" | "2fa">("credentials");
   const [maskedEmail, setMaskedEmail] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
@@ -37,7 +38,7 @@ export function LoginForm() {
   const onSubmitCredentials = async (data: LoginFormData) => {
     try {
       setError("");
-      const response = await authService.login(data);
+      const response = await authService.login({ ...data, rememberMe } as any);
 
       if ("requires2FA" in response && response.requires2FA) {
         setMaskedEmail(response.email);
@@ -194,6 +195,19 @@ export function LoginForm() {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="rememberMe"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="h-4 w-4 rounded border-border/40 accent-primary cursor-pointer"
+        />
+        <label htmlFor="rememberMe" className="text-xs text-muted-foreground cursor-pointer select-none">
+          Lembrar de mim por 30 dias
+        </label>
       </div>
 
       <Button

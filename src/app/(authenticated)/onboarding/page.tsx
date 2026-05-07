@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button, Card, CardContent, useToast } from "@/components/ui";
 import { api } from "@/services/api";
 import {
-  Zap,
   Check,
   Sparkles,
   Headphones,
@@ -14,6 +13,7 @@ import {
   MessageCircle,
   Clock,
 } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -108,7 +108,7 @@ export default function OnboardingPage() {
               onClick={handleComplete}
               className="w-full h-14 rounded-xl text-sm font-bold gap-2 shadow-lg shadow-primary/20"
             >
-              <Zap className="h-4 w-4" />
+              <Logo size={20} iconOnly />
               Entendi, ir para o Dashboard
             </Button>
           </CardContent>
