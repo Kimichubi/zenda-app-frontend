@@ -28,6 +28,9 @@ export const authService = {
     login: (data: LoginCredentials) =>
         api.post<AuthResponse | { requires2FA: boolean; email: string; message: string }>("/auth/login", data),
 
+    adminLogin: (data: { email: string; password: string }) =>
+        api.post<AuthResponse>("/auth/admin/login", data),
+
     verifyLoginCode: (data: { email: string; code: string }) =>
         api.post<AuthResponse | { valid: boolean; message: string }>("/auth/verify-login-code", data),
 

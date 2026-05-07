@@ -219,7 +219,7 @@ export default function PublicSitePage() {
                   </div>
                   <p className="font-bold text-sm">{member.name}</p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
-                    {member.role === "ADMIN" ? "Proprietario" : member.role === "MANAGER" ? "Gerente" : "Profissional"}
+                    {member.role === "OWNER" ? "Proprietario" : member.role === "MANAGER" ? "Gerente" : "Profissional"}
                   </p>
                 </div>
               ))}

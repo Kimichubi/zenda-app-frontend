@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zenda - Gestão de Agendamentos",
-  description: "A plataforma inteligente para profissionais autônomos",
+  title: "Zenda — Gestão inteligente para barbearias e salões",
+  description: "Organize agendamentos, clientes, pagamentos e sua equipe em um só lugar. Onboarding personalizado para o seu negócio.",
 };
 
 export default function RootLayout({

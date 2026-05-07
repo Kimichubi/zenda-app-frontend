@@ -10,7 +10,7 @@ export interface User {
     phone: string;
     businessName: string;
     slug: string;
-    role: "USER" | "ADMIN";
+    role: "OWNER" | "MANAGER" | "PROFESSIONAL" | "PLATFORM_ADMIN";
     plan: "ONBOARDING" | "PRO" | "ENTERPRISE";
     createdAt: string;
 }

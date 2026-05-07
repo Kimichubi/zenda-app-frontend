@@ -181,7 +181,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
           </nav>
         </div>
 
-        {user?.role === "ADMIN" && (
+        {user?.role === "PLATFORM_ADMIN" && (
           <div className="pt-4 border-t border-border/60 space-y-1">
             {!collapsed && (
               <div className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] px-3 mb-4">
@@ -207,7 +207,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
       </div>
 
       {/* Admin Account Switcher / Impersonation Restore */}
-      {user?.role === "ADMIN" && (
+      {user?.role === "PLATFORM_ADMIN" && (
         <div className={cn("border-t border-border/60 bg-muted/5", collapsed ? "p-2" : "p-2")}>
           {showSwitchPanel && !collapsed ? (
             <div className="space-y-2">
@@ -265,7 +265,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
       )}
 
       {/* Restore to Admin Account */}
-      {isImpersonating && user?.role !== "ADMIN" && (
+      {isImpersonating && user?.role !== "PLATFORM_ADMIN" && (
         <div className={cn("border-t border-border/60 bg-amber-500/5", collapsed ? "p-2" : "p-3")}>
           <Button
             variant="ghost"

@@ -14,7 +14,7 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (currentUser && currentUser.role !== "ADMIN") {
+    if (currentUser && currentUser.role !== "PLATFORM_ADMIN") {
       router.replace("/dashboard");
     }
   }, [currentUser, router]);
@@ -180,7 +180,7 @@ export default function AdminPage() {
               <tbody>{users.length === 0 ? <tr><td colSpan={5} className="p-12 text-center text-sm text-muted-foreground">{debouncedSearch ? "Nenhum usuario encontrado." : "Nenhum usuario cadastrado."}</td></tr> : users.map((user: User) => (
                 <tr key={user.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3"><div className="flex items-center gap-3 min-w-0"><div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">{user.name.charAt(0).toUpperCase()}</div><div className="min-w-0"><p className="text-sm font-bold truncate">{user.name}</p><p className="text-[10px] text-muted-foreground truncate">{user.email}</p></div></div></td>
-                  <td className="px-4 py-3"><Badge variant={user.role === "ADMIN" ? "default" : "outline"} className={cn("font-bold uppercase text-[9px] tracking-widest", user.role === "ADMIN" ? "bg-purple-500 text-white" : "")}>{user.role}</Badge></td>
+                  <td className="px-4 py-3"><Badge variant={user.role === "PLATFORM_ADMIN" ? "default" : "outline"} className={cn("font-bold uppercase text-[9px] tracking-widest", user.role === "PLATFORM_ADMIN" ? "bg-purple-500 text-white" : "")}>{user.role}</Badge></td>
                   <td className="px-4 py-3"><Badge variant="outline" className={cn("font-bold uppercase text-[9px] tracking-widest", user.plan === "PRO" && "border-emerald-500/20 text-emerald-500", user.plan === "ENTERPRISE" && "border-purple-500/20 text-purple-500", user.plan === "ONBOARDING" && "border-border/40 text-muted-foreground")}>{user.plan}</Badge></td>
                   <td className="px-4 py-3 hidden md:table-cell"><div className="flex items-center gap-2 text-xs text-muted-foreground"><Clock className="h-3 w-3 opacity-50" />{formatDate(user.createdAt)}</div></td>
                   <td className="px-4 py-3 text-right"><div className="flex items-center justify-end gap-1.5"><Button size="sm" variant="ghost" onClick={() => setSelectedUserId(user.id)} className="h-8 w-8 rounded-lg p-0"><BarChart3 className="h-3.5 w-3.5" /></Button>
