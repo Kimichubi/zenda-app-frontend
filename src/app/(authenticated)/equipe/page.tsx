@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useStaff, useAddStaff, useRemoveStaff, useUpdateStaffProfile, useSchedules, useUpsertSchedule } from "@/hooks";
+import { format } from "date-fns";
+import { useStaff, useAddStaff, useRemoveStaff, useUpdateStaffProfile, useSchedules, useUpsertSchedule, useBlockedSlots, useBlockSlot, useUnblockSlot } from "@/hooks";
 import { useFileUpload } from "@/hooks/use-upload";
 import { Button, Input, Card, CardContent, Modal, useToast, Badge } from "@/components/ui";
-import { Loader2, UserPlus, Mail, Percent, User, Trash2, Check, X, ShieldCheck, Users, TrendingUp, Phone, Image, FileText, Pencil, Instagram, Upload, Calendar, Clock } from "lucide-react";
+import { Loader2, UserPlus, Mail, Percent, User, Trash2, Check, X, ShieldCheck, Users, TrendingUp, Phone, Image, FileText, Pencil, Instagram, Upload, Calendar, Clock, Ban } from "lucide-react";
 import { cn, getAvatarUrl } from "@/utils";
 import type { StaffMember } from "@/types/enterprise";
 
@@ -42,7 +43,9 @@ export default function EquipePage() {
 
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [blockedModalOpen, setBlockedModalOpen] = useState(false);
   const [schedulingMember, setSchedulingMember] = useState<StaffMember | null>(null);
+  const [blockingMember, setBlockingMember] = useState<StaffMember | null>(null);
   const [editingMember, setEditingMember] = useState<StaffMember | null>(null);
   const [profileForm, setProfileForm] = useState({ avatarPath: "", bio: "", phone: "", instagramUrl: "" });
 
@@ -330,6 +333,14 @@ export default function EquipePage() {
                     <Button
                       size="icon"
                       variant="ghost"
+                      className="h-10 w-10 rounded-xl hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500 transition-colors"
+                      onClick={() => { setBlockingMember(member); setBlockedModalOpen(true); }}
+                    >
+                      <Ban className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
                       className="h-10 w-10 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
                       onClick={() => openProfileModal(member)}
                     >
@@ -528,6 +539,13 @@ export default function EquipePage() {
         }}
         isLoading={upsertSchedule.isPending}
       />
+
+      {/* Blocked Slots Modal */}
+      <BlockedSlotsModal
+        open={blockedModalOpen}
+        onClose={() => { setBlockedModalOpen(false); setBlockingMember(null); }}
+        member={blockingMember}
+      />
     </div>
   );
 }
@@ -717,6 +735,160 @@ function ScheduleManagerModal({ open, onClose, member, schedules, onSave, isLoad
         >
           Salvar Horário
         </Button>
+      </div>
+    </Modal>
+  );
+}
+
+// Blocked Slots Modal Component
+interface BlockedSlotsModalProps {
+  open: boolean;
+  onClose: () => void;
+  member: StaffMember | null;
+}
+
+function BlockedSlotsModal({ open, onClose, member }: BlockedSlotsModalProps) {
+  const { showToast } = useToast();
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("18:00");
+  const [reason, setReason] = useState("");
+
+  const today = new Date();
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+  const startDateStr = format(today, "yyyy-MM-dd");
+  const endDateStr = format(endOfMonth, "yyyy-MM-dd");
+
+  const { data: blockedSlots = [], isLoading } = useBlockedSlots(
+    member?.id || "",
+    startDateStr,
+    endDateStr
+  );
+  const blockSlot = useBlockSlot();
+  const unblockSlot = useUnblockSlot();
+
+  const handleBlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!member || !date) return;
+    blockSlot.mutate(
+      {
+        professionalId: member.id,
+        date,
+        startTime,
+        endTime,
+        reason: reason || "Bloqueio manual",
+      },
+      {
+        onSuccess: () => {
+          showToast("Bloqueio adicionado!", "success");
+          setDate("");
+          setReason("");
+        },
+        onError: () => showToast("Erro ao bloquear.", "error"),
+      }
+    );
+  };
+
+  const handleUnblock = (id: string) => {
+    if (confirm("Remover este bloqueio?")) {
+      unblockSlot.mutate(id, {
+        onSuccess: () => showToast("Bloqueio removido!", "success"),
+        onError: () => showToast("Erro ao remover bloqueio.", "error"),
+      });
+    }
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Bloqueios — ${member?.name}`}
+      className="max-w-lg rounded-[2.5rem]"
+    >
+      <div className="p-2 space-y-6">
+        <form onSubmit={handleBlock} className="space-y-4">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Data</label>
+              <Input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="h-12 rounded-2xl bg-primary/5 border-border/20"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Início</label>
+              <Input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="h-12 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Fim</label>
+              <Input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="h-12 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Motivo (opcional)</label>
+            <Input
+              placeholder="Ex: Férias, Dia off..."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="h-12 rounded-2xl bg-primary/5 border-border/20"
+            />
+          </div>
+          <Button
+            type="submit"
+            className="w-full h-14 rounded-[1.5rem] shadow-xl shadow-primary/20 font-black uppercase tracking-[0.2em] text-[10px] gap-2"
+            loading={blockSlot.isPending}
+          >
+            <Ban className="h-4 w-4" />
+            Bloquear Período
+          </Button>
+        </form>
+
+        <div className="space-y-2">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Bloqueios ativos</p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            </div>
+          ) : blockedSlots.length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-4">Nenhum bloqueio neste período</p>
+          ) : (
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {blockedSlots.map((slot) => (
+                <div
+                  key={slot.id}
+                  className="flex items-center justify-between p-3 rounded-xl bg-rose-500/5 border border-rose-500/10"
+                >
+                  <div>
+                    <p className="text-xs font-bold">{slot.date}</p>
+                    <p className="text-[10px] text-muted-foreground">{slot.startTime} — {slot.endTime}</p>
+                    {slot.reason && <p className="text-[10px] text-rose-500">{slot.reason}</p>}
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-500"
+                    onClick={() => handleUnblock(slot.id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );

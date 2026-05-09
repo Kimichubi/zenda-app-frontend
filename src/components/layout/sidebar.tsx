@@ -35,6 +35,8 @@ const mainNavItems = [
   { href: "/pagamentos", label: "Pagamentos", icon: CreditCard },
 ];
 
+const professionalNavItem = { href: "/minha-agenda", label: "Minha Agenda", icon: Calendar };
+
 const enterpriseNavItems = [
   { href: "/pdv", label: "PDV (Vendas)", icon: ShoppingCart },
   { href: "/inventario", label: "Inventário", icon: Package },
@@ -152,6 +154,9 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
             {mainNavItems.map((item) => (
               <NavLink key={item.href} item={item} />
             ))}
+            {user?.role === "PROFESSIONAL" && (
+              <NavLink item={professionalNavItem} />
+            )}
           </nav>
         </div>
 
