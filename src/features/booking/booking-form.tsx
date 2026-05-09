@@ -17,7 +17,7 @@ interface StaffMember {
 }
 
 interface BookingFormProps {
-  services: Service[];
+  services: (Service & { professionalPricing?: { professionalId: string; customPrice: number | null; customDuration: number | null }[] })[];
   slots: TimeSlot[];
   staff?: StaffMember[];
   selectedService?: string;
@@ -82,31 +82,38 @@ export function BookingForm({
           Escolha o serviço
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {services.map((service) => (
-            <button
-              key={service.id}
-              type="button"
-              onClick={() => onServiceSelect(service.id)}
-              className="group text-left focus:outline-none"
-            >
-              <Card className={cn(
-                "h-full transition-all duration-200 hover:border-primary/50",
-                selectedService === service.id
-                  ? "border-primary bg-primary/5 ring-1 ring-primary"
-                  : "bg-card hover:bg-accent/50"
-              )}>
-                <CardContent className="p-4">
-                  <p className={cn(
-                    "font-semibold transition-colors",
-                    selectedService === service.id ? "text-primary" : "text-foreground"
-                  )}>{service.name}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {service.duration}min • {formatCurrency(service.price)}
-                  </p>
-                </CardContent>
-              </Card>
-            </button>
-          ))}
+          {services.map((service) => {
+            const pricing = selectedProfessional
+              ? service.professionalPricing?.find((p) => p.professionalId === selectedProfessional)
+              : undefined;
+            const displayPrice = pricing?.customPrice ?? service.price;
+            const displayDuration = pricing?.customDuration ?? service.duration;
+            return (
+              <button
+                key={service.id}
+                type="button"
+                onClick={() => onServiceSelect(service.id)}
+                className="group text-left focus:outline-none"
+              >
+                <Card className={cn(
+                  "h-full transition-all duration-200 hover:border-primary/50",
+                  selectedService === service.id
+                    ? "border-primary bg-primary/5 ring-1 ring-primary"
+                    : "bg-card hover:bg-accent/50"
+                )}>
+                  <CardContent className="p-4">
+                    <p className={cn(
+                      "font-semibold transition-colors",
+                      selectedService === service.id ? "text-primary" : "text-foreground"
+                    )}>{service.name}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {displayDuration}min • {formatCurrency(displayPrice)}
+                    </p>
+                  </CardContent>
+                </Card>
+              </button>
+            );
+          })}
         </div>
       </div>
 

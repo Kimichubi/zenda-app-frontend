@@ -208,6 +208,12 @@ export interface Schedule {
     endTime: string;
 }
 
+export interface ServiceProfessionalPricing {
+    professionalId: string;
+    customPrice: number | null;
+    customDuration: number | null;
+}
+
 export interface PublicSiteData {
     barber: {
         id: string;
@@ -216,7 +222,7 @@ export interface PublicSiteData {
         phone: string;
     };
     settings: SiteSettings;
-    services: Service[];
+    services: (Service & { professionalPricing?: ServiceProfessionalPricing[] })[];
     schedules: Schedule[];
     staff: {
         id: string;
