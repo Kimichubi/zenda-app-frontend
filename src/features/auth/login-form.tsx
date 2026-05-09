@@ -51,7 +51,9 @@ export function LoginForm() {
         localStorage.setItem("zenda_token", response.accessToken);
         localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
 
-        if (response.user.plan === "ONBOARDING") {
+        if (response.user.role === "PLATFORM_ADMIN") {
+          router.push("/admin");
+        } else if (response.user.plan === "ONBOARDING") {
           router.push("/onboarding");
         } else {
           router.push("/dashboard");
@@ -68,6 +70,7 @@ export function LoginForm() {
       const response = await authService.verifyLoginCode({
         email: loginEmail,
         code: data.code,
+        rememberMe,
       });
 
       if ("valid" in response && !response.valid) {
@@ -79,7 +82,9 @@ export function LoginForm() {
         localStorage.setItem("zenda_token", response.accessToken);
         localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
 
-        if (response.user.plan === "ONBOARDING") {
+        if (response.user.role === "PLATFORM_ADMIN") {
+          router.push("/admin");
+        } else if (response.user.plan === "ONBOARDING") {
           router.push("/onboarding");
         } else {
           router.push("/dashboard");

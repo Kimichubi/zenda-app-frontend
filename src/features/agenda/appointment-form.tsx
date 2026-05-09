@@ -22,11 +22,12 @@ interface AppointmentFormProps {
   isLoading?: boolean;
   initialDate?: string;
   initialData?: Partial<AppointmentFormData>;
+  professionalId?: string;
 }
 
 const QUICK_TIMES = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 
-export function AppointmentForm({ onSubmit, isLoading, initialDate, initialData }: AppointmentFormProps) {
+export function AppointmentForm({ onSubmit, isLoading, initialDate, initialData, professionalId }: AppointmentFormProps) {
   const { data: clientsData } = useClients({ page: 1, limit: 100 });
   const { data: servicesData } = useServices({ page: 1, limit: 100 });
   const [searchClient, setSearchClient] = useState("");
@@ -45,6 +46,7 @@ export function AppointmentForm({ onSubmit, isLoading, initialDate, initialData 
       serviceId: initialData?.serviceId || "",
       date: initialData?.date?.split("T")[0] || initialDate || new Date().toISOString().split("T")[0],
       startTime: initialData?.startTime || "",
+      professionalId: professionalId || initialData?.professionalId || "",
     },
   });
 
@@ -87,6 +89,7 @@ export function AppointmentForm({ onSubmit, isLoading, initialDate, initialData 
 
   return (
     <form onSubmit={handleSubmit(handleLocalSubmit)} className="space-y-6 py-2">
+      <input type="hidden" {...register("professionalId")} />
       {/* Client Selection */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 px-1">

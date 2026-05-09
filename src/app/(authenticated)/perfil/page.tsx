@@ -5,8 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, useToast } from "@/components/ui";
-import { Loader2, User, Building, Phone, Globe, Save, CreditCard, MapPin } from "lucide-react";
+import { Loader2, User, Building, Phone, Globe, Save, CreditCard } from "lucide-react";
 import { useEffect } from "react";
+import { maskPhoneInput } from "@/utils";
 
 const profileSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
@@ -14,11 +15,7 @@ const profileSchema = z.object({
   businessName: z.string().min(1, "O nome do negócio é obrigatório"),
   slug: z.string().min(1, "O link da agenda é obrigatório")
     .regex(/^[a-z0-9-]+$/, "O link deve conter apenas letras minúsculas, números e hífens"),
-  // Pix Config
-  pixKeyType: z.string().optional(),
   pixKey: z.string().optional(),
-  pixName: z.string().optional(),
-  pixCity: z.string().optional(),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -42,12 +39,9 @@ export default function PerfilPage() {
       reset({
         name: user.name,
         phone: user.phone,
-        businessName: user.businessName,
-        slug: user.slug,
-        pixKeyType: (user as any).pixKeyType || "cpf",
-        pixKey: (user as any).pixKey || "",
-        pixName: (user as any).pixName || "",
-        pixCity: (user as any).pixCity || "",
+        businessName: user.businessName ?? "",
+        slug: user.slug ?? "",
+        pixKey: user.pixKey ?? "",
       });
     }
   }, [user, reset]);
@@ -104,8 +98,12 @@ export default function PerfilPage() {
                 />
                 <Input
                   label="Telefone"
-                  placeholder="(00) 00000-0000"
-                  {...register("phone")}
+                  placeholder="(11) 98888-8888"
+                  {...register("phone", {
+                    onChange: (e) => {
+                      e.target.value = maskPhoneInput(e.target.value);
+                    },
+                  })}
                   error={errors.phone?.message}
                 />
               </div>
@@ -144,58 +142,23 @@ export default function PerfilPage() {
           </CardContent>
         </Card>
 
-        {/* Pix Configuration Card */}
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden rounded-2xl">
           <CardHeader className="border-b border-border/50 bg-muted/20 pb-6">
             <CardTitle className="flex items-center gap-2 text-xl">
               <CreditCard className="h-5 w-5 text-primary" />
-              Configuração Pix para Recebimento
+              Chave Pix para Recebimento
             </CardTitle>
           </CardHeader>
           <CardContent className="p-8">
-            <p className="text-sm text-muted-foreground mb-8">
-              Configure sua chave Pix para que os clientes possam pagar seus agendamentos via QR Code.
+            <p className="text-sm text-muted-foreground mb-6">
+              Configure sua chave Pix para que os clientes possam pagar seus agendamentos.
             </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Tipo de Chave</label>
-                  <select
-                    {...register("pixKeyType")}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    <option value="cpf">CPF</option>
-                    <option value="cnpj">CNPJ</option>
-                    <option value="email">E-mail</option>
-                    <option value="phone">Telefone (com +55)</option>
-                    <option value="random">Chave Aleatória</option>
-                  </select>
-                </div>
-                <Input
-                  label="Chave Pix"
-                  placeholder="Sua chave aqui"
-                  {...register("pixKey")}
-                />
-              </div>
-
-              <div className="space-y-4">
-                <Input
-                  label="Nome do Titular (sem acentos)"
-                  placeholder="Ex: FULANO DE TAL"
-                  {...register("pixName")}
-                />
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none flex items-center gap-2">
-                    <MapPin className="h-3.5 w-3.5" />
-                    Cidade (sem acentos)
-                  </label>
-                  <Input
-                    placeholder="Ex: SAO PAULO"
-                    {...register("pixCity")}
-                  />
-                </div>
-              </div>
+            <div className="max-w-md">
+              <Input
+                label="Chave Pix"
+                placeholder="Sua chave Pix (CPF, CNPJ, e-mail, telefone ou aleatória)"
+                {...register("pixKey")}
+              />
             </div>
           </CardContent>
         </Card>

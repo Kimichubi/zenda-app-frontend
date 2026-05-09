@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useStaff, useAddStaff, useRemoveStaff } from "@/hooks";
+import { useState, useEffect } from "react";
+import { useStaff, useAddStaff, useRemoveStaff, useUpdateStaffProfile, useSchedules, useUpsertSchedule } from "@/hooks";
+import { useFileUpload } from "@/hooks/use-upload";
 import { Button, Input, Card, CardContent, Modal, useToast, Badge } from "@/components/ui";
-import { Loader2, UserPlus, Mail, Percent, User, Trash2, Check, X, ShieldCheck, Users, TrendingUp } from "lucide-react";
-import { cn } from "@/utils";
+import { Loader2, UserPlus, Mail, Percent, User, Trash2, Check, X, ShieldCheck, Users, TrendingUp, Phone, Image, FileText, Pencil, Instagram, Upload, Calendar, Clock } from "lucide-react";
+import { cn, getAvatarUrl } from "@/utils";
 import type { StaffMember } from "@/types/enterprise";
 
 const roleConfig: Record<StaffMember["role"], { label: string; variant: "default" | "success" | "warning"; className: string }> = {
@@ -29,11 +30,21 @@ export default function EquipePage() {
   const { data: staff = [], isLoading } = useStaff();
   const addStaff = useAddStaff();
   const removeStaff = useRemoveStaff();
+  const updateProfile = useUpdateStaffProfile();
   const { showToast } = useToast();
+  const { uploadAvatar, isUploading: isUploadingAvatar } = useFileUpload();
+  const { data: schedules = [] } = useSchedules();
+  const upsertSchedule = useUpsertSchedule();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCommissionId, setEditingCommissionId] = useState<string | null>(null);
   const [commissionValue, setCommissionValue] = useState<number>(0);
+
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [schedulingMember, setSchedulingMember] = useState<StaffMember | null>(null);
+  const [editingMember, setEditingMember] = useState<StaffMember | null>(null);
+  const [profileForm, setProfileForm] = useState({ avatarPath: "", bio: "", phone: "", instagramUrl: "" });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -100,6 +111,38 @@ export default function EquipePage() {
           setEditingCommissionId(null);
         },
         onError: () => showToast("Erro ao atualizar comissão.", "error"),
+      }
+    );
+  };
+
+  const openProfileModal = (member: StaffMember) => {
+    setEditingMember(member);
+    setProfileForm({
+      avatarPath: member.avatarPath || "",
+      bio: member.bio || "",
+      phone: member.phone || "",
+      instagramUrl: member.instagramUrl || "",
+    });
+    setProfileModalOpen(true);
+  };
+
+  const handleProfileSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMember) return;
+    const payload: Partial<typeof profileForm> = {};
+    if (profileForm.avatarPath) payload.avatarPath = profileForm.avatarPath;
+    if (profileForm.bio) payload.bio = profileForm.bio;
+    if (profileForm.phone) payload.phone = profileForm.phone;
+    if (profileForm.instagramUrl) payload.instagramUrl = profileForm.instagramUrl;
+    updateProfile.mutate(
+      { id: editingMember.id, data: payload },
+      {
+        onSuccess: () => {
+          showToast("Perfil atualizado!", "success");
+          setProfileModalOpen(false);
+          setEditingMember(null);
+        },
+        onError: () => showToast("Erro ao atualizar perfil.", "error"),
       }
     );
   };
@@ -198,9 +241,17 @@ export default function EquipePage() {
               >
                 <CardContent className="p-8 space-y-6">
                   <div className="flex items-start justify-between">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-center">
-                      <User className="h-8 w-8 text-primary" />
-                    </div>
+                    {member.avatarPath ? (
+                      <img
+                        src={getAvatarUrl(member.avatarPath) ?? undefined}
+                        alt={member.name}
+                        className="w-16 h-16 rounded-[1.5rem] object-cover border border-primary/20"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 border border-primary/20 flex items-center justify-center">
+                        <User className="h-8 w-8 text-primary" />
+                      </div>
+                    )}
                     <Badge
                       variant={role?.variant}
                       className={cn("font-black text-[8px] uppercase tracking-[0.2em] px-3", role?.className)}
@@ -215,6 +266,15 @@ export default function EquipePage() {
                       <Mail className="h-3 w-3" />
                       {member.email}
                     </div>
+                    {member.phone && (
+                      <div className="flex items-center gap-2 mt-1 text-muted-foreground font-medium text-xs">
+                        <Phone className="h-3 w-3" />
+                        {member.phone}
+                      </div>
+                    )}
+                    {member.bio && (
+                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{member.bio}</p>
+                    )}
                   </div>
 
                   <div className="pt-4 border-t border-border/20 flex items-center justify-between">
@@ -259,6 +319,22 @@ export default function EquipePage() {
                         </button>
                       )}
                     </div>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-10 w-10 rounded-xl hover:bg-amber-500/10 text-muted-foreground hover:text-amber-500 transition-colors"
+                      onClick={() => { setSchedulingMember(member); setScheduleModalOpen(true); }}
+                    >
+                      <Calendar className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-10 w-10 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                      onClick={() => openProfileModal(member)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button
                       size="icon"
                       variant="ghost"
@@ -336,6 +412,312 @@ export default function EquipePage() {
           </Button>
         </form>
       </Modal>
+
+      <Modal
+        open={profileModalOpen}
+        onClose={() => { setProfileModalOpen(false); setEditingMember(null); }}
+        title={`Editar Perfil — ${editingMember?.name}`}
+        className="max-w-md rounded-[2.5rem]"
+      >
+        <form onSubmit={handleProfileSubmit} className="space-y-6 p-2">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1 flex items-center gap-1.5">
+                <Image className="h-3 w-3" />
+                Foto de Perfil
+              </label>
+              <div className="flex items-center gap-3">
+                {profileForm.avatarPath ? (
+                  <img
+                    src={getAvatarUrl(profileForm.avatarPath) ?? undefined}
+                    alt="Preview"
+                    className="h-14 w-14 rounded-2xl object-cover border border-border"
+                  />
+                ) : (
+                  <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <User className="h-6 w-6 text-primary" />
+                  </div>
+                )}
+                <label className="flex-1 cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const path = await uploadAvatar(file);
+                      if (path) setProfileForm((prev) => ({ ...prev, avatarPath: path }));
+                    }}
+                  />
+                  <div className={cn(
+                    "h-14 rounded-2xl border border-border/20 flex items-center justify-center gap-2 text-sm font-bold transition-colors hover:bg-accent",
+                    isUploadingAvatar && "opacity-50 pointer-events-none"
+                  )}>
+                    {isUploadingAvatar ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4" />
+                        {profileForm.avatarPath ? "Trocar foto" : "Enviar foto"}
+                      </>
+                    )}
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1 flex items-center gap-1.5">
+                <FileText className="h-3 w-3" />
+                Bio / Especialidade
+              </label>
+              <Input
+                placeholder="Ex: Especialista em degradê e barba..."
+                value={profileForm.bio}
+                onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1 flex items-center gap-1.5">
+                <Phone className="h-3 w-3" />
+                Telefone
+              </label>
+              <Input
+                placeholder="(11) 98888-8888"
+                value={profileForm.phone}
+                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1 flex items-center gap-1.5">
+                <Instagram className="h-3 w-3" />
+                Instagram
+              </label>
+              <Input
+                placeholder="https://instagram.com/usuario"
+                value={profileForm.instagramUrl}
+                onChange={(e) => setProfileForm({ ...profileForm, instagramUrl: e.target.value })}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-16 rounded-[1.5rem] shadow-2xl shadow-primary/20 font-black uppercase tracking-[0.2em] text-[10px] gap-3 mt-4"
+            loading={updateProfile.isPending}
+          >
+            Salvar Perfil
+          </Button>
+        </form>
+      </Modal>
+
+      {/* Schedule Management Modal */}
+      <ScheduleManagerModal
+        open={scheduleModalOpen}
+        onClose={() => { setScheduleModalOpen(false); setSchedulingMember(null); }}
+        member={schedulingMember}
+        schedules={schedules}
+        onSave={(data) => {
+          upsertSchedule.mutate({ ...data, professionalId: schedulingMember?.id }, {
+            onSuccess: () => showToast("Horário salvo!", "success"),
+            onError: () => showToast("Erro ao salvar horário.", "error"),
+          });
+        }}
+        isLoading={upsertSchedule.isPending}
+      />
     </div>
+  );
+}
+
+// Schedule Manager Modal Component
+const WEEKDAYS = [
+  { value: 0, label: "Domingo" },
+  { value: 1, label: "Segunda" },
+  { value: 2, label: "Terça" },
+  { value: 3, label: "Quarta" },
+  { value: 4, label: "Quinta" },
+  { value: 5, label: "Sexta" },
+  { value: 6, label: "Sábado" },
+];
+
+interface ScheduleManagerModalProps {
+  open: boolean;
+  onClose: () => void;
+  member: StaffMember | null;
+  schedules: any[];
+  onSave: (data: {
+    weekday: number;
+    startTime: string;
+    endTime: string;
+    slotDuration?: number;
+    isActive?: boolean;
+    breakStart?: string;
+    breakEnd?: string;
+  }) => void;
+  isLoading: boolean;
+}
+
+function ScheduleManagerModal({ open, onClose, member, schedules, onSave, isLoading }: ScheduleManagerModalProps) {
+  const memberSchedules = member
+    ? schedules.filter((s: any) => s.professionalId === member.id)
+    : [];
+
+  const [activeDay, setActiveDay] = useState(1);
+  const existing = memberSchedules.find((s: any) => s.weekday === activeDay);
+
+  const [form, setForm] = useState({
+    startTime: "09:00",
+    endTime: "18:00",
+    slotDuration: 30,
+    isActive: true,
+    breakStart: "",
+    breakEnd: "",
+  });
+
+  // Reset form when day changes or modal opens
+  useEffect(() => {
+    if (existing) {
+      setForm({
+        startTime: existing.startTime,
+        endTime: existing.endTime,
+        slotDuration: existing.slotDuration || 30,
+        isActive: existing.isActive ?? true,
+        breakStart: existing.breakStart || "",
+        breakEnd: existing.breakEnd || "",
+      });
+    } else {
+      setForm({
+        startTime: "09:00",
+        endTime: "18:00",
+        slotDuration: 30,
+        isActive: true,
+        breakStart: "",
+        breakEnd: "",
+      });
+    }
+  }, [activeDay, existing]);
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Agenda — ${member?.name}`}
+      className="max-w-lg rounded-[2.5rem]"
+    >
+      <div className="p-2 space-y-6">
+        {/* Weekday selector */}
+        <div className="flex gap-1 overflow-x-auto pb-2">
+          {WEEKDAYS.map((day) => {
+            const hasSchedule = memberSchedules.some((s: any) => s.weekday === day.value);
+            return (
+              <button
+                key={day.value}
+                onClick={() => setActiveDay(day.value)}
+                className={cn(
+                  "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border",
+                  activeDay === day.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : hasSchedule
+                      ? "bg-primary/5 text-primary border-primary/20"
+                      : "bg-muted/30 text-muted-foreground border-border/30"
+                )}
+              >
+                {day.label}
+                {hasSchedule && <span className="ml-1">•</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Ativo</label>
+            <button
+              onClick={() => setForm((f) => ({ ...f, isActive: !f.isActive }))}
+              className={cn(
+                "h-6 w-11 rounded-full transition-colors relative",
+                form.isActive ? "bg-primary" : "bg-muted"
+              )}
+            >
+              <div className={cn(
+                "h-4 w-4 rounded-full bg-white absolute top-1 transition-all",
+                form.isActive ? "left-6" : "left-1"
+              )} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-1.5">
+                <Clock className="h-3 w-3" />
+                Início
+              </label>
+              <Input
+                type="time"
+                value={form.startTime}
+                onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-1.5">
+                <Clock className="h-3 w-3" />
+                Fim
+              </label>
+              <Input
+                type="time"
+                value={form.endTime}
+                onChange={(e) => setForm((f) => ({ ...f, endTime: e.target.value }))}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Pausa (início)</label>
+              <Input
+                type="time"
+                value={form.breakStart}
+                onChange={(e) => setForm((f) => ({ ...f, breakStart: e.target.value }))}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Pausa (fim)</label>
+              <Input
+                type="time"
+                value={form.breakEnd}
+                onChange={(e) => setForm((f) => ({ ...f, breakEnd: e.target.value }))}
+                className="h-14 rounded-2xl bg-primary/5 border-border/20"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Duração do slot (min)</label>
+            <Input
+              type="number"
+              min={5}
+              max={120}
+              value={form.slotDuration}
+              onChange={(e) => setForm((f) => ({ ...f, slotDuration: Number(e.target.value) }))}
+              className="h-14 rounded-2xl bg-primary/5 border-border/20"
+            />
+          </div>
+        </div>
+
+        <Button
+          onClick={() => onSave({ weekday: activeDay, ...form })}
+          className="w-full h-16 rounded-[1.5rem] shadow-2xl shadow-primary/20 font-black uppercase tracking-[0.2em] text-[10px] gap-3"
+          loading={isLoading}
+        >
+          Salvar Horário
+        </Button>
+      </div>
+    </Modal>
   );
 }

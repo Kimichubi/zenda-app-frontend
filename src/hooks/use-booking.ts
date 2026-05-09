@@ -12,10 +12,10 @@ export function useBookingServices(slug: string) {
     });
 }
 
-export function useAvailableSlots(slug: string, date: string, serviceId: string) {
+export function useAvailableSlots(slug: string, date: string, serviceId: string, professionalId?: string) {
     return useQuery({
-        queryKey: ["booking", slug, "slots", date, serviceId],
-        queryFn: () => bookingService.getAvailableSlots(slug, date, serviceId),
+        queryKey: ["booking", slug, "slots", date, serviceId, professionalId],
+        queryFn: () => bookingService.getAvailableSlots(slug, date, serviceId, professionalId),
         enabled: !!slug && !!date && !!serviceId,
     });
 }

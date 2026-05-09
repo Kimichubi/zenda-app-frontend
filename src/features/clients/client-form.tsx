@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@/components/ui";
 import { clientSchema } from "@/utils/validations";
 import type { ClientFormData } from "@/types";
+import { maskPhoneInput } from "@/utils";
 
 interface ClientFormProps {
   onSubmit: (data: ClientFormData) => void;
@@ -37,7 +38,11 @@ export function ClientForm({
       />
 
       <Input
-        {...register("phone")}
+        {...register("phone", {
+          onChange: (e) => {
+            e.target.value = maskPhoneInput(e.target.value);
+          },
+        })}
         placeholder="Telefone"
         label="Telefone"
         error={errors.phone?.message}

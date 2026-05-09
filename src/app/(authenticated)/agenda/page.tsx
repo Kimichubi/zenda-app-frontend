@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { format, startOfWeek, addDays, isToday, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AgendaCalendar } from "@/features/agenda/agenda-calendar";
@@ -20,6 +21,7 @@ import {
   Users,
   CalendarCheck,
   CalendarDays,
+  LayoutGrid,
 } from "lucide-react";
 import type { Appointment, AppointmentFormData } from "@/types";
 import { cn } from "@/utils";
@@ -181,6 +183,13 @@ export default function AgendaPage() {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
+          <Link
+            href="/agenda/master"
+            className="h-10 px-4 gap-2 rounded-xl border border-border/40 bg-muted/30 text-xs font-bold hover:bg-muted/50 transition-all flex items-center"
+          >
+            <LayoutGrid className="h-4 w-4" />
+            Agenda Master
+          </Link>
           <div className="flex items-center bg-muted/40 border border-border/40 rounded-xl p-1">
             <Button
               variant="ghost"

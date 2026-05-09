@@ -30,6 +30,17 @@ export function useRemoveStaff() {
     });
 }
 
+export function useUpdateStaffProfile() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: { avatarUrl?: string; bio?: string; phone?: string } }) =>
+            enterpriseService.updateStaffProfile(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["staff"] });
+        },
+    });
+}
+
 export function useProducts() {
     return useQuery({
         queryKey: ["products"],

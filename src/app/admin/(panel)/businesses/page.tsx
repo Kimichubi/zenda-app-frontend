@@ -46,6 +46,11 @@ export default function BusinessesPage() {
 
   const handleAccessBusiness = async (businessId: string) => {
     try {
+      const currentToken = localStorage.getItem("zenda_token");
+      const currentRefresh = localStorage.getItem("zenda_refresh_token");
+      if (currentToken) localStorage.setItem("zenda_admin_token", currentToken);
+      if (currentRefresh) localStorage.setItem("zenda_admin_refresh_token", currentRefresh);
+
       const response = await adminService.accessBusiness(businessId);
       if (response?.accessToken) {
         const refreshToken = response.refreshToken || "";

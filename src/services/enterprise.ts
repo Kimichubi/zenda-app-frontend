@@ -15,6 +15,9 @@ export const enterpriseService = {
     updateStaffCommission: (id: string, percentage: number) =>
         api.patch<StaffMember>(`/enterprise/staff/${id}/commission`, { percentage }),
 
+    updateStaffProfile: (id: string, data: { avatarPath?: string; bio?: string; phone?: string; instagramUrl?: string }) =>
+        api.patch<StaffMember>(`/enterprise/staff/${id}/profile`, data),
+
     removeStaff: (id: string) =>
         api.delete<void>(`/enterprise/staff/${id}`),
 

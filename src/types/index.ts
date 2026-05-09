@@ -8,8 +8,9 @@ export interface User {
     name: string;
     email: string;
     phone: string;
-    businessName: string;
-    slug: string;
+    businessName?: string | null;
+    slug?: string | null;
+    pixKey?: string | null;
     role: "OWNER" | "MANAGER" | "PROFESSIONAL" | "PLATFORM_ADMIN";
     plan: "ONBOARDING" | "PRO" | "ENTERPRISE";
     createdAt: string;
@@ -90,6 +91,8 @@ export interface Appointment {
     id: string;
     clientId: string;
     clientName: string;
+    professionalId?: string;
+    professionalName?: string;
     serviceId: string;
     serviceName: string;
     date: string;
@@ -104,6 +107,7 @@ export interface AppointmentFormData {
     serviceId: string;
     date: string;
     startTime: string;
+    professionalId?: string;
 }
 
 // --- Payment ---
@@ -148,7 +152,8 @@ export interface PublicBookingData {
     startTime: string;
     clientName: string;
     clientPhone: string;
-    clientEmail: string;
+    clientEmail?: string;
+    professionalId?: string;
 }
 
 export interface TimeSlot {
@@ -156,10 +161,33 @@ export interface TimeSlot {
     available: boolean;
 }
 
+// --- Schedule ---
+export interface Schedule {
+    id: string;
+    businessId: string;
+    professionalId: string;
+    weekday: number;
+    startTime: string;
+    endTime: string;
+    slotDuration: number;
+    isActive: boolean;
+    breakStart: string | null;
+    breakEnd: string | null;
+}
+
+export interface BlockedSlot {
+    id: string;
+    professionalId: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    reason: string;
+}
+
 // --- Site Settings ---
 export interface SiteSettings {
     id: string;
-    userId: string;
+    businessId: string;
     themeColor: string;
     heroTitle: string;
     heroSubtitle: string;
@@ -174,7 +202,7 @@ export interface SiteSettings {
 
 export interface Schedule {
     id: string;
-    userId: string;
+    professionalId: string;
     weekday: number;
     startTime: string;
     endTime: string;
@@ -194,6 +222,10 @@ export interface PublicSiteData {
         id: string;
         name: string;
         role: string;
+        avatarPath: string | null;
+        bio: string | null;
+        phone: string;
+        instagramUrl: string | null;
     }[];
     products: {
         id: string;

@@ -13,7 +13,7 @@ export function AdminHeader() {
       localStorage.removeItem("zenda_token");
       localStorage.removeItem("zenda_refresh_token");
     }
-    router.push("/admin/login");
+    router.push("/login");
   };
 
   return (

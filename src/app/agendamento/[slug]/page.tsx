@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { BookingForm } from "@/features/booking/booking-form";
 import {
   useBookingServices,
@@ -9,30 +9,43 @@ import {
   useCreateBooking,
 } from "@/hooks";
 import { useToast } from "@/components/ui";
+import { usePublicSettings } from "@/hooks/use-site-settings";
 import type { PublicBookingData } from "@/types";
 
-export default function BookingPage() {
+function BookingPageContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
+  const preselectedService = searchParams.get("service") || "";
+  const preselectedProfessional = searchParams.get("professional") || "";
 
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState(preselectedService);
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedProfessional, setSelectedProfessional] = useState(preselectedProfessional);
   const [success, setSuccess] = useState(false);
 
   const { data: services = [], isLoading: loadingServices } =
     useBookingServices(slug);
+  const { data: publicSettings } = usePublicSettings(slug);
+  const staff = publicSettings?.staff ?? [];
+
   const { data: slots = [] } = useAvailableSlots(
     slug,
     selectedDate,
     selectedService,
+    selectedProfessional || undefined,
   );
   const createBooking = useCreateBooking(slug);
   const { showToast } = useToast();
 
   const handleSubmit = (
-    data: Omit<PublicBookingData, "clientEmail"> & { clientEmail: string },
+    data: Omit<PublicBookingData, "clientEmail" | "professionalId"> & { clientEmail?: string },
   ) => {
-    createBooking.mutate(data as PublicBookingData, {
+    const payload: PublicBookingData = {
+      ...data,
+      professionalId: selectedProfessional || undefined,
+    };
+    createBooking.mutate(payload, {
       onSuccess: () => {
         setSuccess(true);
         showToast("Agendamento confirmado!", "success");
@@ -78,15 +91,30 @@ export default function BookingPage() {
           <BookingForm
             services={services}
             slots={slots}
+            staff={staff}
             selectedService={selectedService}
             selectedDate={selectedDate}
+            selectedProfessional={selectedProfessional}
             onServiceSelect={setSelectedService}
             onDateSelect={setSelectedDate}
+            onProfessionalSelect={setSelectedProfessional}
             onSubmit={handleSubmit}
             isLoading={createBooking.isPending}
           />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">Carregando...</p>
+      </div>
+    }>
+      <BookingPageContent />
+    </Suspense>
   );
 }

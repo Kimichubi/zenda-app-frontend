@@ -14,7 +14,7 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     async function check() {
       const token = localStorage.getItem("zenda_token");
       if (!token) {
-        router.replace("/admin/login");
+        router.replace("/login");
         return;
       }
 
@@ -25,10 +25,10 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
         } else {
           localStorage.removeItem("zenda_token");
           localStorage.removeItem("zenda_refresh_token");
-          router.replace("/admin/login");
+          router.replace("/login");
         }
       } catch {
-        router.replace("/admin/login");
+        router.replace("/login");
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen items-center justify-center bg-slate-950">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
-          <p className="text-sm text-slate-400">Verificando credenciais...</p>
+          <p className="text-sm text-slate-400">Verificando credenciais de administrador...</p>
         </div>
       </div>
     );

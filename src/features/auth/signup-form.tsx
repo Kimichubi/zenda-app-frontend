@@ -9,7 +9,7 @@ import { Button, Input } from "@/components/ui";
 import { authService } from "@/services/auth";
 import { isValidPhone } from "@/utils/validations";
 import { AlertCircle, Eye, EyeOff, Check, X } from "lucide-react";
-import { cn } from "@/utils";
+import { cn, maskPhoneInput } from "@/utils";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -101,7 +101,11 @@ export function SignupForm() {
         />
 
         <Input
-          {...register("phone")}
+          {...register("phone", {
+            onChange: (e) => {
+              e.target.value = maskPhoneInput(e.target.value);
+            },
+          })}
           placeholder="(11) 99999-9999"
           label="Telefone"
           error={errors.phone?.message}

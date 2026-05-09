@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { BookingForm } from "@/features/booking/booking-form";
@@ -15,15 +15,20 @@ const mockSlots: TimeSlot[] = [
   { time: "10:00", available: false },
 ];
 
+const defaultProps = {
+  onServiceSelect: vi.fn(),
+  onDateSelect: vi.fn(),
+  onProfessionalSelect: vi.fn(),
+  onSubmit: vi.fn(),
+};
+
 describe("BookingForm", () => {
   it("renders service selection", () => {
     render(
       <BookingForm
         services={mockServices}
         slots={[]}
-        onServiceSelect={vi.fn()}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
+        {...defaultProps}
       />,
     );
     expect(screen.getByText("Corte de cabelo")).toBeInTheDocument();
@@ -35,9 +40,7 @@ describe("BookingForm", () => {
       <BookingForm
         services={mockServices}
         slots={[]}
-        onServiceSelect={vi.fn()}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
+        {...defaultProps}
       />,
     );
     expect(screen.getByLabelText(/data/i)).toBeInTheDocument();
@@ -50,9 +53,7 @@ describe("BookingForm", () => {
         slots={mockSlots}
         selectedService="s1"
         selectedDate="2026-03-15"
-        onServiceSelect={vi.fn()}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
+        {...defaultProps}
       />,
     );
     expect(screen.getByText("09:00")).toBeInTheDocument();
@@ -66,13 +67,11 @@ describe("BookingForm", () => {
         slots={mockSlots}
         selectedService="s1"
         selectedDate="2026-03-15"
-        onServiceSelect={vi.fn()}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
+        {...defaultProps}
       />,
     );
     expect(screen.getByPlaceholderText(/seu nome/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/seu telefone/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/98888-8888/i)).toBeInTheDocument();
   });
 
   it("calls onServiceSelect when a service is clicked", async () => {
@@ -82,9 +81,8 @@ describe("BookingForm", () => {
       <BookingForm
         services={mockServices}
         slots={[]}
+        {...defaultProps}
         onServiceSelect={onServiceSelect}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
       />,
     );
     await user.click(screen.getByText("Corte de cabelo"));
@@ -98,13 +96,11 @@ describe("BookingForm", () => {
         slots={mockSlots}
         selectedService="s1"
         selectedDate="2026-03-15"
-        onServiceSelect={vi.fn()}
-        onDateSelect={vi.fn()}
-        onSubmit={vi.fn()}
+        {...defaultProps}
       />,
     );
     expect(
-      screen.getByRole("button", { name: /confirmar agendamento/i }),
+      screen.getByRole("button", { name: /preencha todos os campos/i }),
     ).toBeInTheDocument();
   });
 });

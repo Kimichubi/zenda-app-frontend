@@ -19,6 +19,10 @@ export interface StaffMember {
     email: string;
     role: "ADMIN" | "MANAGER" | "PROFESSIONAL";
     baseCommission: number;
+    avatarPath: string | null;
+    bio: string | null;
+    phone: string;
+    instagramUrl: string | null;
 }
 
 export interface Product {

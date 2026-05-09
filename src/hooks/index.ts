@@ -15,11 +15,19 @@ export { useAdminUsers, useAdminStats, useUpdateUserPlan, useUserDetail } from "
 export { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 export { useBotSettings, useUpdateBotSettings } from "./use-bot-settings";
 export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
+export {
+    useSchedules,
+    useUpsertSchedule,
+    useBlockedSlots,
+    useBlockSlot,
+    useUnblockSlot,
+} from "./use-schedules";
 export { useWhatsappStatus, useWhatsappQR, useConnectWhatsapp, useLogoutWhatsapp, useChatSessions, useChatLogs, useChatStats, useResetChatSession } from "./use-whatsapp";
 export { 
     useStaff, 
     useAddStaff,
     useRemoveStaff,
+    useUpdateStaffProfile,
     useProducts, 
     useCreateProduct,
     useUpdateProduct,

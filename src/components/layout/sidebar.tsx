@@ -95,7 +95,7 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
       localStorage.setItem("zenda_refresh_token", adminRefresh || "");
       localStorage.removeItem("zenda_admin_token");
       localStorage.removeItem("zenda_admin_refresh_token");
-      window.location.href = "/dashboard";
+      window.location.href = "/admin";
     }
   };
 

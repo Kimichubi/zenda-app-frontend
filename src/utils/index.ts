@@ -20,6 +20,13 @@ export function formatPhone(phone: string): string {
     return phone;
 }
 
+export function maskPhoneInput(value: string): string {
+    const cleaned = value.replace(/\D/g, "").slice(0, 11);
+    if (cleaned.length <= 2) return cleaned;
+    if (cleaned.length <= 7) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+}
+
 export function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString("pt-BR");
 }
@@ -40,5 +47,13 @@ export function getStatusLabel(status: string): string {
         overdue: "Atrasado",
     };
     return labels[status.toLowerCase()] || status;
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+export function getAvatarUrl(path: string | null | undefined): string | null {
+    if (!path) return null;
+    if (path.startsWith("http")) return path;
+    return `${API_BASE_URL}${path}`;
 }
 

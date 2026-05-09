@@ -4,7 +4,7 @@ import { usePublicSettings } from "@/hooks/use-site-settings";
 import { useParams } from "next/navigation";
 import { Loader2, Calendar, MapPin, Instagram, Facebook, MessageCircle, Clock, Users, Scissors, Zap, Star, ArrowRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui";
-import { cn, formatCurrency } from "@/utils";
+import { cn, formatCurrency, getAvatarUrl } from "@/utils";
 import { Logo } from "@/components/layout/logo";
 
 export default function PublicSitePage() {
@@ -210,18 +210,33 @@ export default function PublicSitePage() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {staff.map((member) => (
-                <div key={member.id} className="text-center p-6 rounded-2xl border border-border/40 bg-card/50 hover:shadow-md hover:border-primary/20 transition-all">
-                  <div
-                    className="h-20 w-20 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-3"
-                    style={{ backgroundColor: themeColor }}
-                  >
-                    {member.name.charAt(0)}
-                  </div>
+                <a
+                  key={member.id}
+                  href={`/agendamento/${slug}?professional=${member.id}`}
+                  className="text-center p-6 rounded-2xl border border-border/40 bg-card/50 hover:shadow-md hover:border-primary/20 transition-all group"
+                >
+                  {member.avatarPath ? (
+                    <img
+                      src={getAvatarUrl(member.avatarPath) ?? undefined}
+                      alt={member.name}
+                      className="h-20 w-20 rounded-full object-cover mx-auto mb-3 border-2 border-border group-hover:border-primary/30 transition-colors"
+                    />
+                  ) : (
+                    <div
+                      className="h-20 w-20 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-3"
+                      style={{ backgroundColor: themeColor }}
+                    >
+                      {member.name.charAt(0)}
+                    </div>
+                  )}
                   <p className="font-bold text-sm">{member.name}</p>
+                  {member.bio && (
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{member.bio}</p>
+                  )}
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
                     {member.role === "OWNER" ? "Proprietario" : member.role === "MANAGER" ? "Gerente" : "Profissional"}
                   </p>
-                </div>
+                </a>
               ))}
             </div>
           </section>
