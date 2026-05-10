@@ -63,11 +63,14 @@ export function AgendaPanel({ appointments, onSelectAppointment, selectedAppoint
             const isActive = selectedAppointmentId === appt.id;
 
             return (
-              <button
+              <div
                 key={appt.id}
                 onClick={() => onSelectAppointment(appt)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter") onSelectAppointment(appt); }}
                 className={cn(
-                  "w-full p-3 rounded-xl border text-left transition-all duration-200 group",
+                  "w-full p-3 rounded-xl border text-left transition-all duration-200 group cursor-pointer",
                   isActive
                     ? "border-primary bg-primary/10 shadow-sm shadow-primary/5"
                     : "border-border/20 bg-card/50 hover:border-primary/20 hover:bg-card"
@@ -110,7 +113,7 @@ export function AgendaPanel({ appointments, onSelectAppointment, selectedAppoint
                     )}
                   </div>
                 </div>
-              </button>
+              </div>
             );
           })
         )}
