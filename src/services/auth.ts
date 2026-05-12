@@ -21,6 +21,8 @@ export interface ValidateResponse {
 export interface UpdateProfileData {
     name?: string;
     phone?: string;
+    bio?: string;
+    instagramUrl?: string;
     businessName?: string;
     slug?: string;
     pixKey?: string;
@@ -57,4 +59,8 @@ export const authService = {
             localStorage.removeItem("zenda_refresh_token");
         }
     },
+
+    exitImpersonation: () =>
+        api.post<AuthResponse>("/auth/exit-impersonation"),
+
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -20,11 +20,13 @@ import {
   ChevronDown,
   ArrowLeftRight,
   Search,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
 import { useUser, useAdminUsers } from "@/hooks";
 import { adminService } from "@/services/admin";
+import { authService } from "@/services/auth";
 import { Logo } from "./logo";
 
 const mainNavItems = [
@@ -45,6 +47,7 @@ const enterpriseNavItems = [
 ];
 
 const settingsNavItems = [
+  { href: "/configuracoes", label: "Landing Page", icon: Globe },
   { href: "/configuracoes/whatsapp", label: "WhatsApp", icon: MessageCircle },
   { href: "/perfil", label: "Meu Perfil", icon: Settings },
 ];
@@ -61,11 +64,8 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
   const { data: allUsers = [] } = useAdminUsers();
   const [showSwitchPanel, setShowSwitchPanel] = useState(false);
   const [switchSearch, setSwitchSearch] = useState("");
-  const [isImpersonating, setIsImpersonating] = useState(false);
 
-  useEffect(() => {
-    setIsImpersonating(!!localStorage.getItem("zenda_admin_token"));
-  }, []);
+  const isImpersonating = user?.isImpersonating === true;
 
   const filteredUsers = useMemo(() => {
     if (!switchSearch) return allUsers.filter(u => u.id !== user?.id);
@@ -77,27 +77,23 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
   }, [allUsers, switchSearch, user?.id]);
 
   const handleImpersonate = async (userId: string) => {
-    // Save admin's original tokens before switching
-    const currentToken = localStorage.getItem("zenda_token");
-    const currentRefresh = localStorage.getItem("zenda_refresh_token");
-    if (currentToken) localStorage.setItem("zenda_admin_token", currentToken);
-    if (currentRefresh) localStorage.setItem("zenda_admin_refresh_token", currentRefresh);
-
     const response = await adminService.impersonate(userId);
     localStorage.setItem("zenda_token", response.accessToken);
     localStorage.setItem("zenda_refresh_token", response.refreshToken);
     window.location.href = "/dashboard";
   };
 
-  const handleRestoreAdmin = () => {
-    const adminToken = localStorage.getItem("zenda_admin_token");
-    const adminRefresh = localStorage.getItem("zenda_admin_refresh_token");
-    if (adminToken) {
-      localStorage.setItem("zenda_token", adminToken);
-      localStorage.setItem("zenda_refresh_token", adminRefresh || "");
-      localStorage.removeItem("zenda_admin_token");
-      localStorage.removeItem("zenda_admin_refresh_token");
+  const handleRestoreAdmin = async () => {
+    try {
+      const response = await authService.exitImpersonation();
+      localStorage.setItem("zenda_token", response.accessToken);
+      localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
       window.location.href = "/admin";
+    } catch {
+      // If token is expired, redirect to login
+      localStorage.removeItem("zenda_token");
+      localStorage.removeItem("zenda_refresh_token");
+      window.location.href = "/login";
     }
   };
 
@@ -211,8 +207,8 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
         )}
       </div>
 
-      {/* Admin Account Switcher / Impersonation Restore */}
-      {user?.role === "PLATFORM_ADMIN" && (
+      {/* Admin Account Switcher — only when not impersonating */}
+      {user?.role === "PLATFORM_ADMIN" && !isImpersonating && (
         <div className={cn("border-t border-border/60 bg-muted/5", collapsed ? "p-2" : "p-2")}>
           {showSwitchPanel && !collapsed ? (
             <div className="space-y-2">
@@ -269,8 +265,8 @@ export function Sidebar({ collapsed = false }: SidebarProps) {
         </div>
       )}
 
-      {/* Restore to Admin Account */}
-      {isImpersonating && user?.role !== "PLATFORM_ADMIN" && (
+      {/* Restore to Admin Account — when impersonating */}
+      {isImpersonating && user?.role === "PLATFORM_ADMIN" && (
         <div className={cn("border-t border-border/60 bg-amber-500/5", collapsed ? "p-2" : "p-3")}>
           <Button
             variant="ghost"

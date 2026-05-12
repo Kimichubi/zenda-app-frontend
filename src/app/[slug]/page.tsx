@@ -1,6 +1,7 @@
 "use client";
 
 import { usePublicSettings } from "@/hooks/use-site-settings";
+import { useTodaySlots } from "@/hooks/use-booking";
 import { useParams } from "next/navigation";
 import { Loader2, Calendar, MapPin, Instagram, Facebook, MessageCircle, Clock, Users, Scissors, Zap, Star, ArrowRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui";
@@ -11,6 +12,7 @@ export default function PublicSitePage() {
   const params = useParams();
   const slug = params.slug as string;
   const { data, isLoading, error } = usePublicSettings(slug);
+  const { data: todaySlots = [] } = useTodaySlots(slug);
 
   if (isLoading) {
     return (
@@ -30,7 +32,7 @@ export default function PublicSitePage() {
   }
 
   const { barber, settings, services, staff, products } = data;
-  const themeColor = settings?.themeColor || "#4f46e5";
+  const themeColor = settings?.themeColor && settings.themeColor !== "#000000" ? settings.themeColor : "#4f46e5";
   const heroTitle = settings?.heroTitle || "Agende seu horario";
   const heroSubtitle = settings?.heroSubtitle || "O melhor servico da regiao. Escolha seu servico e reserve seu momento.";
   const whatsappLink = settings?.whatsappUrl || `https://wa.me/${barber.phone.replace(/\D/g, "")}`;
@@ -126,12 +128,19 @@ export default function PublicSitePage() {
               <div className="aspect-square rounded-3xl bg-gradient-to-br from-muted to-muted/20 border border-border/40 p-6 flex flex-col justify-between">
                 <div className="space-y-3">
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Horarios de Hoje</p>
-                  {["09:00   Livre", "10:30   Livre", "14:00   Livre", "16:30   Livre"].map((t, i) => (
-                    <div key={t} className="flex items-center gap-3 p-2.5 rounded-xl bg-background/50 border border-border/20">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: themeColor }} />
-                      <span className="text-sm font-medium">{t}</span>
+                  {todaySlots.length > 0 ? (
+                    todaySlots.map((slot) => (
+                      <div key={slot.time} className="flex items-center gap-3 p-2.5 rounded-xl bg-background/50 border border-border/20">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-sm font-medium">{slot.time}   Livre</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex items-center gap-3 p-2.5 rounded-xl bg-background/50 border border-border/20">
+                      <div className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span className="text-sm font-medium text-muted-foreground">Sem horarios hoje</span>
                     </div>
-                  ))}
+                  )}
                 </div>
                 <Button
                   className="w-full h-12 rounded-xl font-bold text-sm"
@@ -236,6 +245,18 @@ export default function PublicSitePage() {
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
                     {member.role === "OWNER" ? "Proprietario" : member.role === "MANAGER" ? "Gerente" : "Profissional"}
                   </p>
+                  {member.instagramUrl && (
+                    <a
+                      href={member.instagramUrl.startsWith("http") ? member.instagramUrl : `https://instagram.com/${member.instagramUrl.replace("@", "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 mt-2 text-[10px] text-rose-500 hover:text-rose-600 transition-colors font-medium"
+                    >
+                      <Instagram className="h-3 w-3" />
+                      @{member.instagramUrl.replace(/^@/, "").replace(/https?:\/\/(www\.)?instagram\.com\//, "").replace(/\/$/, "")}
+                    </a>
+                  )}
                 </a>
               ))}
             </div>

@@ -38,6 +38,14 @@ export interface PosService {
   price: number;
 }
 
+export interface PosProduct {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  sku: string | null;
+}
+
 export interface PosDailySummary {
   date: string;
   totalRevenue: number;
@@ -74,9 +82,12 @@ export const posService = {
   listServices: () =>
     api.get<PosService[]>("/pos/services"),
 
+  listProducts: () =>
+    api.get<PosProduct[]>("/pos/products"),
+
   createAppointment: (data: {
     professionalId: string;
-    clientId: string;
+    clientId?: string;
     serviceId: string;
     price?: number;
     date?: string;

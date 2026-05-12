@@ -5,13 +5,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, useToast } from "@/components/ui";
-import { Loader2, User, Building, Phone, Globe, Save, CreditCard } from "lucide-react";
+import { Loader2, User, Building, Phone, Globe, Save, CreditCard, Instagram, FileText } from "lucide-react";
 import { useEffect } from "react";
 import { maskPhoneInput } from "@/utils";
 
 const profileSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
   phone: z.string().min(1, "O telefone é obrigatório"),
+  bio: z.string().optional(),
+  instagramUrl: z.string().optional(),
   businessName: z.string().min(1, "O nome do negócio é obrigatório"),
   slug: z.string().min(1, "O link da agenda é obrigatório")
     .regex(/^[a-z0-9-]+$/, "O link deve conter apenas letras minúsculas, números e hífens"),
@@ -39,6 +41,8 @@ export default function PerfilPage() {
       reset({
         name: user.name,
         phone: user.phone,
+        bio: user.bio ?? "",
+        instagramUrl: user.instagramUrl ?? "",
         businessName: user.businessName ?? "",
         slug: user.slug ?? "",
         pixKey: user.pixKey ?? "",
@@ -105,6 +109,24 @@ export default function PerfilPage() {
                     },
                   })}
                   error={errors.phone?.message}
+                />
+                <div>
+                  <label className="text-sm font-medium leading-none flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5" />
+                    Bio / Especialidade
+                  </label>
+                  <textarea
+                    {...register("bio")}
+                    rows={3}
+                    placeholder="Ex: Especialista em cortes modernos e barba..."
+                    className="mt-2 flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+                  />
+                </div>
+                <Input
+                  label="Instagram Pessoal"
+                  placeholder="@seuinstagram"
+                  {...register("instagramUrl")}
+                  error={errors.instagramUrl?.message}
                 />
               </div>
 

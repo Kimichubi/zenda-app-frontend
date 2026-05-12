@@ -6,6 +6,7 @@ import {
   usePosAppointments,
   usePosProfessionals,
   usePosServices,
+  usePosProducts,
   useCreatePosAppointment,
   usePosCheckout,
   usePosUpdateStatus,
@@ -36,13 +37,16 @@ import {
   X,
   Monitor,
   Tablet,
+  Package,
 } from "lucide-react";
 
 interface CartService {
-  serviceId: string;
+  serviceId?: string;
+  productId?: string;
   name: string;
   price: number;
   duration: number;
+  isProduct?: boolean;
 }
 
 export default function PosPage() {
@@ -50,6 +54,7 @@ export default function PosPage() {
   const { data: todayAppointments = [], isLoading: isLoadingAgenda } = usePosAppointments();
   const { data: professionals = [], isLoading: isLoadingProfs } = usePosProfessionals();
   const { data: services = [], isLoading: isLoadingServices } = usePosServices();
+  const { data: products = [], isLoading: isLoadingProducts } = usePosProducts();
   const { data: dailySummary, isLoading: isLoadingSummary } = usePosDailySummary();
   const createAppointment = useCreatePosAppointment();
   const checkout = usePosCheckout();
@@ -71,8 +76,15 @@ export default function PosPage() {
   const [currentAppointmentId, setCurrentAppointmentId] = useState<string | null>(null);
   const [selectedAgendaAppointment, setSelectedAgendaAppointment] = useState<string | undefined>(undefined);
 
-  const addServiceToCart = useCallback((service: { id: string; name: string; price: number; duration: number }) => {
-    setCart((prev) => [...prev, { serviceId: service.id, name: service.name, price: service.price, duration: service.duration }]);
+  const addServiceToCart = useCallback((service: { id: string; name: string; price: number; duration: number; isProduct?: boolean }) => {
+    setCart((prev) => [...prev, {
+      serviceId: service.isProduct ? undefined : service.id,
+      productId: service.isProduct ? service.id : undefined,
+      name: service.name,
+      price: service.price,
+      duration: service.duration,
+      isProduct: service.isProduct,
+    }]);
     showToast(`${service.name} adicionado`, "success");
   }, [showToast]);
 
@@ -152,13 +164,14 @@ export default function PosPage() {
   }, [currentAppointmentId, checkout, showToast, clearCart]);
 
   const handlePixPayment = useCallback(async () => {
-    if (!selectedClient || !selectedProfessional || cart.length === 0) return;
+    if (!selectedProfessional || cart.length === 0) return;
     const firstService = cart[0];
+    if (!firstService.serviceId) return;
     try {
       setCheckoutPaymentMethod("PIX");
       const appt = await createAppointment.mutateAsync({
         professionalId: selectedProfessional.id,
-        clientId: selectedClient.id,
+        clientId: selectedClient?.id,
         serviceId: firstService.serviceId,
         price: cartTotal,
       });
@@ -174,14 +187,15 @@ export default function PosPage() {
   }, [selectedClient, selectedProfessional, cart, cartTotal, createAppointment, showToast]);
 
   const handleDirectPayment = useCallback(async () => {
-    if (!selectedClient || !selectedProfessional || cart.length === 0) return;
+    if (!selectedProfessional || cart.length === 0) return;
     const firstService = cart[0];
+    if (!firstService.serviceId) return;
     const method = checkoutPaymentMethod;
 
     try {
       const appt = await createAppointment.mutateAsync({
         professionalId: selectedProfessional.id,
-        clientId: selectedClient.id,
+        clientId: selectedClient?.id,
         serviceId: firstService.serviceId,
         price: cartTotal,
       });
@@ -205,7 +219,7 @@ export default function PosPage() {
     }
   }, [selectedClient, selectedProfessional, cart, cartTotal, checkoutPaymentMethod, createAppointment, checkout, showToast, clearCart]);
 
-  const canCreate = selectedClient && selectedProfessional && cart.length > 0;
+  const canCreate = selectedProfessional && cart.length > 0;
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -331,6 +345,48 @@ export default function PosPage() {
             selectedServiceId={cart[cart.length - 1]?.serviceId}
             onSelect={addServiceToCart}
           />
+
+          {products.length > 0 && (
+            <div className="space-y-3">
+              <label className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">Produtos (Inventario)</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {products.map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => addServiceToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      duration: 0,
+                      isProduct: true,
+                    })}
+                    className={cn(
+                      "p-4 rounded-2xl border text-left transition-all duration-200 group cursor-pointer",
+                      cart.some(c => c.productId === product.id)
+                        ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                        : "border-border/40 bg-card hover:border-primary/30 hover:bg-primary/[0.03]"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-colors",
+                      cart.some(c => c.productId === product.id)
+                        ? "bg-primary text-white"
+                        : "bg-amber-500/10 text-amber-500 group-hover:bg-amber-500 group-hover:text-white"
+                    )}>
+                      <Package className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-sm font-bold leading-tight line-clamp-1">{product.name}</h3>
+                    <div className="flex items-center gap-3 mt-2 text-[10px] text-muted-foreground font-medium">
+                      <span className="text-primary font-bold text-xs">{formatCurrency(product.price)}</span>
+                      {product.stock > 0 && (
+                        <span className="text-emerald-500 text-[10px]">Est. {product.stock}</span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Cart + Checkout */}
@@ -354,6 +410,12 @@ export default function PosPage() {
                 <button onClick={() => setSelectedClient(null)} className="ml-auto">
                   <X className="h-3 w-3 hover:text-foreground" />
                 </button>
+              </div>
+            )}
+            {!selectedClient && (
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-amber-500/5 border border-amber-500/10 rounded-lg px-3 py-2">
+                <User className="h-3.5 w-3.5 text-amber-500" />
+                <span className="truncate">Avulso (sem cliente)</span>
               </div>
             )}
             {selectedProfessional && (

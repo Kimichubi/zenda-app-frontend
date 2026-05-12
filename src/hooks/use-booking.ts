@@ -12,6 +12,15 @@ export function useBookingServices(slug: string) {
     });
 }
 
+export function useTodaySlots(slug: string) {
+    return useQuery({
+        queryKey: ["booking", slug, "today"],
+        queryFn: () => bookingService.getTodaySlots(slug),
+        enabled: !!slug,
+        refetchInterval: 60000,
+    });
+}
+
 export function useAvailableSlots(slug: string, date: string, serviceId: string, professionalId?: string) {
     return useQuery({
         queryKey: ["booking", slug, "slots", date, serviceId, professionalId],

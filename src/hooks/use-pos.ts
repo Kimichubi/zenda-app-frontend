@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { posService, PosAppointment, PosClient, PosProfessional, PosService, PosDailySummary } from "@/services/pos";
+import { posService, PosAppointment, PosClient, PosProfessional, PosService, PosProduct, PosDailySummary } from "@/services/pos";
 
 export function usePosAppointments() {
   return useQuery({
@@ -48,6 +48,13 @@ export function usePosServices() {
   return useQuery({
     queryKey: ["pos", "services"],
     queryFn: () => posService.listServices(),
+  });
+}
+
+export function usePosProducts() {
+  return useQuery({
+    queryKey: ["pos", "products"],
+    queryFn: () => posService.listProducts(),
   });
 }
 

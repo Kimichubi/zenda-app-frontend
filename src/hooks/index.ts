@@ -14,7 +14,7 @@ export { useServices, useCreateService, useUpdateService, useDeleteService } fro
 export { useAdminUsers, useAdminStats, useUpdateUserPlan, useUserDetail } from "./use-admin";
 export { useSiteSettings, useUpdateSiteSettings } from "./use-site-settings";
 export { useBotSettings, useUpdateBotSettings } from "./use-bot-settings";
-export { useBookingServices, useAvailableSlots, useCreateBooking } from "./use-booking";
+export { useBookingServices, useTodaySlots, useAvailableSlots, useCreateBooking } from "./use-booking";
 export {
     useSchedules,
     useUpsertSchedule,

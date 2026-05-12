@@ -8,11 +8,16 @@ export interface User {
     name: string;
     email: string;
     phone: string;
+    bio?: string | null;
+    instagramUrl?: string | null;
     businessName?: string | null;
     slug?: string | null;
     pixKey?: string | null;
     role: "OWNER" | "MANAGER" | "PROFESSIONAL" | "PLATFORM_ADMIN";
     plan: "ONBOARDING" | "PRO" | "ENTERPRISE";
+    isImpersonating?: boolean;
+    impersonatedBusinessId?: string | null;
+    impersonatedBusinessName?: string | null;
     createdAt: string;
 }
 

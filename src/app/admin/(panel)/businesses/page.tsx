@@ -46,15 +46,11 @@ export default function BusinessesPage() {
 
   const handleAccessBusiness = async (businessId: string) => {
     try {
-      const currentToken = localStorage.getItem("zenda_token");
-      const currentRefresh = localStorage.getItem("zenda_refresh_token");
-      if (currentToken) localStorage.setItem("zenda_admin_token", currentToken);
-      if (currentRefresh) localStorage.setItem("zenda_admin_refresh_token", currentRefresh);
-
       const response = await adminService.accessBusiness(businessId);
       if (response?.accessToken) {
-        const refreshToken = response.refreshToken || "";
-        window.open(`/auth/redirect?token=${encodeURIComponent(response.accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&redirect=/dashboard`, "_blank");
+        localStorage.setItem("zenda_token", response.accessToken);
+        localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
+        window.location.href = "/dashboard";
       }
     } catch {
       showToast("Erro ao acessar negocio", "error");
