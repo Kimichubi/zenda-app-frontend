@@ -9,9 +9,14 @@ import {
   UserPlus,
   CreditCard,
   BarChart3,
+  Users,
+  MessageSquareQuote,
+  Bot,
+  Wallet,
+  ToggleLeft,
   Headphones,
-  ChevronLeft,
   ShieldCheck,
+  ChevronLeft,
 } from "lucide-react";
 
 const navItems = [
@@ -20,26 +25,31 @@ const navItems = [
   { href: "/admin/onboarding", icon: UserPlus, label: "Onboarding" },
   { href: "/admin/subscriptions", icon: CreditCard, label: "Assinaturas" },
   { href: "/admin/monitoring", icon: BarChart3, label: "Monitoramento" },
+  { href: "/admin/usuarios", icon: Users, label: "Usuarios" },
+  { href: "/admin/avaliacoes", icon: MessageSquareQuote, label: "Avaliacoes" },
+  { href: "/admin/conversas", icon: Bot, label: "Conversas Bot" },
+  { href: "/admin/financeiro", icon: Wallet, label: "Financeiro" },
+  { href: "/admin/feature-flags", icon: ToggleLeft, label: "Feature Flags" },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-60 flex-col border-r border-slate-800 bg-slate-950">
-      <div className="flex h-16 items-center gap-3 border-b border-slate-800 px-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600">
-          <ShieldCheck className="h-4 w-4 text-white" />
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-60 flex-col border-r border-border/40 bg-card">
+      <div className="flex h-16 items-center gap-3 border-b border-border/40 px-5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <ShieldCheck className="h-4 w-4 text-primary" />
         </div>
         <div>
-          <p className="text-sm font-bold text-white tracking-tight">Zenda Admin</p>
-          <p className="text-[10px] text-slate-500 font-medium">Platform Control</p>
+          <p className="text-sm font-bold tracking-tight">Zenda Admin</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Platform Control</p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-0.5 px-3 py-4 overflow-y-auto scrollbar-none">
         <div className="px-2 pb-2">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-600">Menu</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Menu</p>
         </div>
         {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
@@ -48,42 +58,47 @@ export function AdminSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                "group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "bg-purple-500/10 text-purple-400"
-                  : "text-slate-400 hover:bg-slate-900 hover:text-slate-200",
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
               )}
             >
-              <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-purple-400" : "text-slate-500 group-hover:text-slate-300")} />
+              {isActive && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r-full" />
+              )}
+              <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
               <span>{item.label}</span>
-              {isActive && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-purple-500" />}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-slate-800 px-3 py-4">
+      <div className="border-t border-border/40 px-3 py-4">
         <div className="px-2 pb-2">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-600">Outros</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/50">Outros</p>
         </div>
         <Link
-          href="/admin/support"
+          href="/admin/suporte"
           className={cn(
-            "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
-            pathname === "/admin/support"
-              ? "bg-purple-500/10 text-purple-400"
-              : "text-slate-400 hover:bg-slate-900 hover:text-slate-200",
+            "group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150",
+            pathname === "/admin/suporte"
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
           )}
         >
-          <Headphones className={cn("h-4 w-4 shrink-0", pathname === "/admin/support" ? "text-purple-400" : "text-slate-500 group-hover:text-slate-300")} />
+          {pathname === "/admin/suporte" && (
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r-full" />
+          )}
+          <Headphones className={cn("h-4 w-4 shrink-0", pathname === "/admin/suporte" ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
           <span>Suporte</span>
         </Link>
       </div>
 
-      <div className="border-t border-slate-800 p-4">
+      <div className="border-t border-border/40 p-4">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="h-3 w-3" />
           Voltar ao Dashboard

@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { ClientTable } from "@/features/clients/client-table";
 import { FilterBar } from "@/features/clients/filter-bar";
 import { ClientForm } from "@/features/clients/client-form";
+import { PageHeader } from "@/components/layout/page-header";
 import { Modal, Button, useToast, Card } from "@/components/ui";
 import {
   useClients,
@@ -29,7 +30,7 @@ export default function ClientesPage() {
     setFilters((prev) => ({
       ...prev,
       ...newFilters,
-      page: 1, // Sempre volta para a primeira página ao filtrar
+      page: 1,
     }));
   }, []);
 
@@ -47,7 +48,7 @@ export default function ClientesPage() {
         setIsModalOpen(false);
         setEditingClient(null);
       },
-      onError: () => showToast("Erro na operação", "error"),
+      onError: () => showToast("Erro na operacao", "error"),
     };
 
     if (editingClient) {
@@ -92,22 +93,26 @@ export default function ClientesPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
+      <PageHeader
+        badge={
           <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
             <Users className="h-3 w-3" />
             Base de Clientes
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-          <p className="text-muted-foreground font-medium text-sm">
+        }
+        title="Clientes"
+        description={
+          <>
             Total de <span className="text-foreground font-bold">{total}</span> clientes cadastrados
-          </p>
-        </div>
-        <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
-          <Plus className="h-4 w-4" />
-          Novo cliente
-        </Button>
-      </header>
+          </>
+        }
+        action={
+          <Button onClick={() => setIsModalOpen(true)} className="h-10 px-6 gap-2 rounded-lg shadow-sm text-xs font-bold uppercase tracking-wider transition-all">
+            <Plus className="h-4 w-4" />
+            Novo cliente
+          </Button>
+        }
+      />
 
       <FilterBar onFilterChange={handleFilterChange} />
 
@@ -122,7 +127,7 @@ export default function ClientesPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-2">
           <p className="text-sm text-muted-foreground font-medium">
-            Página <span className="text-foreground font-bold">{filters.page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
+            Pagina <span className="text-foreground font-bold">{filters.page}</span> de <span className="text-foreground font-bold">{totalPages}</span>
           </p>
           <div className="flex gap-2">
             <Button
@@ -142,7 +147,7 @@ export default function ClientesPage() {
               onClick={() => handlePageChange(filters.page! + 1)}
               className="gap-1 h-9"
             >
-              Próxima
+              Proxima
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

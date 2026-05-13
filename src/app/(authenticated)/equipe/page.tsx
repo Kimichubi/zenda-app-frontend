@@ -13,7 +13,7 @@ const roleConfig: Record<StaffMember["role"], { label: string; variant: "default
   ADMIN: {
     label: "Admin",
     variant: "default",
-    className: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+    className: "bg-foreground/10 text-zinc-600 dark:text-zinc-300 border-foreground/10",
   },
   MANAGER: {
     label: "Gerente",

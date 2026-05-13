@@ -33,10 +33,10 @@ const statusColors: Record<
     indicator: "bg-emerald-500",
   },
   completed: {
-    bg: "bg-indigo-50 dark:bg-indigo-500/10",
-    border: "border-indigo-200 dark:border-indigo-500/20",
-    text: "text-indigo-700 dark:text-indigo-400",
-    indicator: "bg-indigo-500",
+    bg: "bg-zinc-100 dark:bg-zinc-800/30",
+    border: "border-zinc-200 dark:border-zinc-700/50",
+    text: "text-zinc-700 dark:text-zinc-300",
+    indicator: "bg-zinc-600 dark:bg-zinc-400",
   },
   cancelled: {
     bg: "bg-rose-50 dark:bg-rose-500/10",
@@ -67,8 +67,8 @@ function getInitials(name: string): string {
 }
 
 const avatarColors = [
-  "bg-violet-500", "bg-blue-500", "bg-emerald-500", "bg-amber-500",
-  "bg-rose-500", "bg-cyan-500", "bg-pink-500", "bg-indigo-500",
+  "bg-zinc-500", "bg-blue-500", "bg-emerald-500", "bg-amber-500",
+  "bg-rose-500", "bg-cyan-500", "bg-pink-500", "bg-zinc-500",
 ];
 
 function getAvatarColor(name: string): string {

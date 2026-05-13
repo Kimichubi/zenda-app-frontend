@@ -7,7 +7,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminAuthGuard>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen bg-background text-foreground">
         <AdminSidebar />
         <div className="ml-60 flex flex-col min-h-screen">
           <AdminHeader />

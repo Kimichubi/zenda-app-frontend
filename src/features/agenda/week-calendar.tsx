@@ -145,7 +145,7 @@ export function WeekCalendar({
                               size="icon"
                               variant="ghost"
                               onClick={() => onEdit(apt)}
-                              className="h-8 w-8 rounded-xl bg-slate-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all"
+                              className="h-8 w-8 rounded-xl bg-slate-50 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-800 dark:hover:bg-zinc-200 hover:text-white dark:hover:text-zinc-900 transition-all"
                               title="Editar"
                             >
                               <Edit2 className="h-3 w-3" />

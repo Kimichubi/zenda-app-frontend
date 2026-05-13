@@ -63,7 +63,7 @@ export function ClientForm({
         <textarea
           {...register("notes")}
           placeholder="Observações"
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400/30"
           rows={3}
         />
       </div>

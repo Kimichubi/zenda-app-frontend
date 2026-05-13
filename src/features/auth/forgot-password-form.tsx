@@ -39,7 +39,7 @@ export function ForgotPasswordForm() {
         <p className="text-sm text-gray-600">
           Verifique sua caixa de entrada para redefinir sua senha.
         </p>
-        <Link href="/login" className="text-indigo-600 hover:text-indigo-500">
+        <Link href="/login" className="text-foreground hover:text-foreground/70">
           Voltar ao login
         </Link>
       </div>
@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
       </form>
 
       <p className="text-center text-sm">
-        <Link href="/login" className="text-indigo-600 hover:text-indigo-500">
+        <Link href="/login" className="text-foreground hover:text-foreground/70">
           Voltar ao login
         </Link>
       </p>

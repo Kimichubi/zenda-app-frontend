@@ -63,9 +63,9 @@ export function DailySummary({ summary, isLoading, className }: DailySummaryProp
           <p className="text-lg font-black text-blue-600 dark:text-blue-400">{summary.appointments.total}</p>
         </div>
 
-        <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-3">
-          <p className="text-[9px] font-black text-violet-600 dark:text-violet-400 uppercase tracking-wider mb-1">Produtos</p>
-          <p className="text-lg font-black text-violet-600 dark:text-violet-400">{formatCurrency(summary.totalProductsSales)}</p>
+        <div className="bg-foreground/10 border border-foreground/10 rounded-xl p-3">
+          <p className="text-[9px] font-black text-zinc-600 dark:text-zinc-300 uppercase tracking-wider mb-1">Produtos</p>
+          <p className="text-lg font-black text-zinc-600 dark:text-zinc-300">{formatCurrency(summary.totalProductsSales)}</p>
         </div>
       </div>
 

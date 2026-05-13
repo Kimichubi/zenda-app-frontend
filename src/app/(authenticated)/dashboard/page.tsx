@@ -3,6 +3,7 @@
 import { useDashboard } from "@/hooks";
 import { DashboardCards } from "@/features/dashboard/dashboard-cards";
 import { AppointmentList } from "@/features/dashboard/appointment-list";
+import { PageHeader } from "@/components/layout/page-header";
 import { AlertCircle, Loader2, Sparkles } from "lucide-react";
 import type { DashboardData } from "@/types";
 
@@ -25,8 +26,8 @@ export default function DashboardPage() {
           <AlertCircle className="h-8 w-8" />
         </div>
         <div className="text-center space-y-2">
-          <p className="font-black text-2xl tracking-tighter uppercase italic">Erro de Conexão</p>
-          <p className="text-sm text-muted-foreground max-w-xs mx-auto">Não conseguimos carregar suas métricas no momento. Tente atualizar a página.</p>
+          <p className="font-black text-2xl tracking-tighter uppercase italic">Erro de Conexao</p>
+          <p className="text-sm text-muted-foreground max-w-xs mx-auto">Nao conseguimos carregar suas metricas no momento. Tente atualizar a pagina.</p>
         </div>
       </div>
     );
@@ -41,18 +42,20 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <header className="flex items-end justify-between">
-        <div className="space-y-1">
+      <PageHeader
+        badge={
           <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest">
             <Sparkles className="h-3 w-3 fill-primary" />
             Insights em Tempo Real
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Visão Geral</h1>
-          <p className="text-muted-foreground font-medium text-sm">
-            Sua performance de hoje está <span className="text-primary font-semibold">acima da média</span>.
-          </p>
-        </div>
-      </header>
+        }
+        title="Visao Geral"
+        description={
+          <>
+            Sua performance de hoje esta <span className="text-primary font-semibold">acima da media</span>.
+          </>
+        }
+      />
 
       <DashboardCards
         todayRevenue={todayRevenue}
@@ -62,14 +65,8 @@ export default function DashboardPage() {
       />
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-start">
-        <AppointmentList
-          title="Hoje"
-          appointments={data.todayAppointments}
-        />
-        <AppointmentList
-          title="Próximos"
-          appointments={data.upcomingAppointments}
-        />
+        <AppointmentList title="Hoje" appointments={data.todayAppointments} />
+        <AppointmentList title="Proximos" appointments={data.upcomingAppointments} />
       </div>
     </div>
   );

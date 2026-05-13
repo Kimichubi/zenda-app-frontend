@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAdminStats, useAdminBusinesses } from "@/hooks/use-admin";
+import { useAdminStats, useAdminMonitoring } from "@/hooks/use-admin";
 import { Card, CardContent, Badge } from "@/components/ui";
 import {
   Building2,
@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
   if (statsLoading || monitoringLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -36,8 +36,8 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Dashboard</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Visao geral da plataforma</p>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Visao geral da plataforma</p>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
           value={monitoring?.activeBusinesses ?? 0}
           sub={`de ${monitoring?.totalBusinesses ?? 0} total`}
           icon={Building2}
-          color="purple"
+          color="zinc"
         />
         <MetricCard
           label="Receita (mes)"
@@ -80,9 +80,9 @@ export default function AdminDashboardPage() {
 
       {/* Plan Distribution + Status Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl overflow-hidden">
-          <div className="border-b border-slate-200 dark:border-slate-800 px-6 py-4">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Distribuicao de Planos</h3>
+        <Card className="border-border/50 bg-card rounded-xl overflow-hidden">
+          <div className="border-b border-border/40 px-6 py-4">
+            <h3 className="text-sm font-bold">Distribuicao de Planos</h3>
           </div>
           <CardContent className="p-6 space-y-4">
             {monitoring?.planDistribution && Object.entries(monitoring.planDistribution).map(([plan, count]) => {
@@ -91,14 +91,14 @@ export default function AdminDashboardPage() {
               return (
                 <div key={plan} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700 dark:text-slate-300">{plan}</span>
-                    <span className="text-slate-500">{c} ({Math.round(pct)}%)</span>
+                    <span className="font-medium">{plan}</span>
+                    <span className="text-muted-foreground">{c} ({Math.round(pct)}%)</span>
                   </div>
-                  <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-700",
-                        plan === "PRO" ? "bg-emerald-500" : "bg-purple-500",
+                        plan === "PRO" ? "bg-emerald-500" : "bg-foreground",
                       )}
                       style={{ width: `${Math.max(pct, 2)}%` }}
                     />
@@ -109,9 +109,9 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl overflow-hidden">
-          <div className="border-b border-slate-200 dark:border-slate-800 px-6 py-4">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Status dos Negocios</h3>
+        <Card className="border-border/50 bg-card rounded-xl overflow-hidden">
+          <div className="border-b border-border/40 px-6 py-4">
+            <h3 className="text-sm font-bold">Status dos Negocios</h3>
           </div>
           <CardContent className="p-6">
             <div className="grid grid-cols-3 gap-4">
@@ -124,26 +124,26 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl overflow-hidden">
-        <div className="border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Atividade Recente</h3>
-          <Badge variant="outline" className="text-[10px] text-slate-500">Ultimos 10 agendamentos</Badge>
+      <Card className="border-border/50 bg-card rounded-xl overflow-hidden">
+        <div className="border-b border-border/40 px-6 py-4 flex items-center justify-between">
+          <h3 className="text-sm font-bold">Atividade Recente</h3>
+          <Badge variant="outline" className="text-[10px] text-muted-foreground">Ultimos 10 agendamentos</Badge>
         </div>
         <CardContent className="p-0">
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-border/40">
             {monitoring?.recentActivity?.map((activity: any) => (
-              <div key={activity.id} className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <div className="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
-                  <Calendar className="h-3.5 w-3.5 text-purple-500" />
+              <div key={activity.id} className="flex items-center gap-4 px-6 py-3 hover:bg-muted/30 transition-colors">
+                <div className="h-8 w-8 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
+                  <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{activity.description}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{formatDate(activity.date)}</p>
+                  <p className="text-sm truncate">{activity.description}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{formatDate(activity.date)}</p>
                 </div>
               </div>
             ))}
             {(!monitoring?.recentActivity || monitoring.recentActivity.length === 0) && (
-              <div className="px-6 py-8 text-center text-sm text-slate-400">Nenhuma atividade recente.</div>
+              <div className="px-6 py-8 text-center text-sm text-muted-foreground">Nenhuma atividade recente.</div>
             )}
           </div>
         </CardContent>
@@ -157,26 +157,26 @@ function MetricCard({ label, value, sub, icon: Icon, color }: {
   value: string | number;
   sub: string | React.ReactNode;
   icon: React.ElementType;
-  color: "purple" | "emerald" | "amber" | "blue";
+  color: "zinc" | "emerald" | "amber" | "blue";
 }) {
   const colors = {
-    purple: "bg-purple-500/10 text-purple-500",
+    zinc: "bg-foreground/10 text-foreground",
     emerald: "bg-emerald-500/10 text-emerald-500",
     amber: "bg-amber-500/10 text-amber-500",
     blue: "bg-blue-500/10 text-blue-500",
   };
 
   return (
-    <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl">
+    <Card className="border-border/50 bg-card rounded-xl">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
           <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center", colors[color])}>
             <Icon className="h-4 w-4" />
           </div>
         </div>
-        <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
-        <div className="mt-1 text-[11px] font-medium text-slate-400">{sub}</div>
+        <p className="text-2xl font-bold">{value}</p>
+        <div className="mt-1 text-[11px] font-medium text-muted-foreground">{sub}</div>
       </CardContent>
     </Card>
   );
@@ -195,20 +195,4 @@ function StatusCard({ label, value, color }: { label: string; value: number; col
       <p className="text-[11px] font-medium mt-1">{label}</p>
     </div>
   );
-}
-
-function useAdminMonitoring() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    import("@/services/admin").then(({ adminService }) => {
-      adminService.getMonitoring().then((d) => {
-        setData(d);
-        setLoading(false);
-      }).catch(() => setLoading(false));
-    });
-  }, []);
-
-  return { data, isLoading: loading };
 }

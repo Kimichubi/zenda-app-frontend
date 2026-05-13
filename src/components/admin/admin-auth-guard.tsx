@@ -39,10 +39,10 @@ export function AdminAuthGuard({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="flex h-screen items-center justify-center bg-background text-foreground">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
-          <p className="text-sm text-slate-400">Verificando credenciais de administrador...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Verificando credenciais de administrador...</p>
         </div>
       </div>
     );

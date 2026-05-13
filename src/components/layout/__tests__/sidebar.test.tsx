@@ -26,7 +26,7 @@ describe("Sidebar", () => {
   it("highlights the active link", () => {
     render(<Sidebar />);
     const dashboardLink = screen.getByText("Dashboard").closest("a");
-    expect(dashboardLink?.className).toContain("bg-indigo");
+    expect(dashboardLink?.className).toContain("bg-foreground");
   });
 
   it("renders logout button", () => {

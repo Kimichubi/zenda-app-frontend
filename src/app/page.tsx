@@ -197,8 +197,8 @@ export default function LandingPage() {
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] bg-primary/15 rounded-full blur-3xl" />
-          <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-purple-500/8 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-600/5 rounded-full blur-3xl" />
+           <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-zinc-500/8 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-zinc-600/5 rounded-full blur-3xl" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-transparent to-background" />
         </div>
 
@@ -213,7 +213,7 @@ export default function LandingPage() {
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08]">
               Pare de perder clientes por{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-violet-300">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 via-zinc-500 to-zinc-300 dark:from-zinc-200 dark:via-zinc-400 dark:to-zinc-500">
                 desorganização
               </span>
             </h1>
@@ -252,7 +252,7 @@ export default function LandingPage() {
             <SectionBadge>Plataforma</SectionBadge>
             <SectionHeading>
               Tudo que sua barbearia precisa em{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">um só lugar</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">um só lugar</span>
             </SectionHeading>
             <p className="text-lg text-muted-foreground">
               Um painel completo para gerenciar cada aspecto da sua operação diária.
@@ -261,7 +261,7 @@ export default function LandingPage() {
 
           {/* Dashboard Mockup */}
           <div className="relative max-w-5xl mx-auto">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/10 to-primary/20 rounded-2xl blur-lg opacity-70" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-zinc-500/10 to-primary/20 rounded-2xl blur-lg opacity-70" />
             <div className="relative rounded-2xl border border-border/50 bg-card/90 backdrop-blur-sm shadow-2xl shadow-primary/5 overflow-hidden">
               {/* Title Bar */}
               <div className="p-3 bg-muted/40 border-b border-border/40 flex items-center gap-2">
@@ -295,7 +295,7 @@ export default function LandingPage() {
                   {[
                     { label: "Receita Hoje", value: "R$ 480,00", color: "text-emerald-400", trend: "+12%" },
                     { label: "Agendamentos", value: "12", color: "text-primary", trend: "hoje" },
-                    { label: "Novos Clientes", value: "5", color: "text-violet-400", trend: "esta semana" },
+                    { label: "Novos Clientes", value: "5", color: "text-zinc-400", trend: "esta semana" },
                     { label: "Comparecimento", value: "94%", color: "text-amber-400", trend: "+3%" },
                   ].map((stat) => (
                     <div key={stat.label} className="p-4 rounded-xl bg-card border border-border/40">
@@ -410,7 +410,7 @@ export default function LandingPage() {
             <SectionBadge>Problema</SectionBadge>
             <SectionHeading>
               Desorganização custa{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">caro</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">caro</span>
             </SectionHeading>
             <p className="text-lg text-muted-foreground">
               Esses são os problemas que tiram o sono de quem gerencia barbearias e salões.
@@ -443,7 +443,7 @@ export default function LandingPage() {
             <SectionBadge>Solução</SectionBadge>
             <SectionHeading>
               Como a Zenda{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">resolve</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">resolve</span>
             </SectionHeading>
             <p className="text-lg text-muted-foreground">
               Cada funcionalidade foi pensada para resolver um problema real do dia a dia.
@@ -474,7 +474,7 @@ export default function LandingPage() {
             <SectionBadge>Onboarding</SectionBadge>
             <SectionHeading>
               Você não está{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">sozinho</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">sozinho</span>
             </SectionHeading>
             <p className="text-lg text-muted-foreground">
               Nosso time configura tudo para você. Onboarding assistido e personalizado conforme
@@ -526,7 +526,7 @@ export default function LandingPage() {
             <SectionBadge>Benefícios</SectionBadge>
             <SectionHeading>
               Sua operação no{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">controle</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">controle</span>
             </SectionHeading>
             <p className="text-lg text-muted-foreground">
               Resultados reais que uma gestão organizada traz para o dia a dia.
@@ -559,13 +559,13 @@ export default function LandingPage() {
       {/* Final CTA */}
       <section className="py-24 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-violet-600/5" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-zinc-500/5 to-zinc-600/5" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl" />
         </div>
 
         <div className="mx-auto max-w-7xl px-6">
           <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-purple-600 to-violet-700 opacity-90" />
+            <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-600 dark:from-zinc-200 dark:via-zinc-300 dark:to-zinc-400 opacity-90" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
 
             <div className="relative z-10 px-6 py-16 md:px-16 md:py-24 text-center max-w-2xl mx-auto space-y-6">
