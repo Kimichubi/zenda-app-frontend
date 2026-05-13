@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat curl
 WORKDIR /app
-RUN corepack enable && npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
