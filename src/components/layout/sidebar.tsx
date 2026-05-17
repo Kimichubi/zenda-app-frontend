@@ -139,7 +139,7 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
               {group.items.map((item) => {
                 const isActive =
                   pathname === item.href ||
-                  (item.href !== "/dashboard" && pathname.startsWith(item.href + "/")) ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href + "/") && !group.items.some((i) => i.href !== item.href && pathname.startsWith(i.href + "/"))) ||
                   pathname === item.href;
                 return (
                   <Link

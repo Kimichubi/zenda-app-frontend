@@ -9,11 +9,16 @@ import { Loader2, UserPlus, Mail, Percent, User, Trash2, Check, X, ShieldCheck, 
 import { cn, getAvatarUrl } from "@/utils";
 import type { StaffMember } from "@/types/enterprise";
 
-const roleConfig: Record<StaffMember["role"], { label: string; variant: "default" | "success" | "warning"; className: string }> = {
+const roleConfig: Record<StaffMember["role"] | "OWNER", { label: string; variant: "default" | "success" | "warning"; className: string }> = {
   ADMIN: {
     label: "Admin",
     variant: "default",
     className: "bg-foreground/10 text-zinc-600 dark:text-zinc-300 border-foreground/10",
+  },
+  OWNER: {
+    label: "Dono",
+    variant: "default",
+    className: "bg-primary/10 text-primary border-primary/10",
   },
   MANAGER: {
     label: "Gerente",

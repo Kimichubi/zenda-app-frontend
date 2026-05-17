@@ -151,7 +151,7 @@ export const adminService = {
         api.patch<any>(`/admin/businesses/${encodeURIComponent(id)}`, data),
 
     linkUserToBusiness: (businessId: string, userId: string) =>
-        api.post<any>(`/admin/businesses/${encodeURIComponent(businessId)}/link-user`, { userId }),
+        api.post<any>(`/admin/link-user`, { userId, businessId }),
 
     // Monitoring
     getMonitoring: () => api.get<any>("/admin/monitoring"),
@@ -229,4 +229,11 @@ export const adminService = {
 
     updateSupportTicket: (id: string, data: { status?: string; priority?: string; assigneeId?: string; internalNotes?: string }) =>
         api.patch<SupportTicket>(`/admin/support-tickets/${encodeURIComponent(id)}`, data),
+
+    // Verification codes
+    getVerificationCodes: (email?: string) => {
+        const qs = new URLSearchParams();
+        if (email) qs.set("email", email);
+        return api.get<any[]>(`/admin/verification-codes?${qs.toString()}`);
+    },
 };

@@ -196,3 +196,10 @@ export function useUpdateSupportTicket() {
         onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "support-tickets"] }),
     });
 }
+
+export function useVerificationCodes(email?: string) {
+    return useQuery({
+        queryKey: ["admin", "verification-codes", email],
+        queryFn: () => adminService.getVerificationCodes(email),
+    });
+}

@@ -564,32 +564,32 @@ export default function LandingPage() {
         </div>
 
         <div className="mx-auto max-w-7xl px-6">
-          <div className="relative rounded-3xl overflow-hidden bg-card border border-primary/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-600 dark:from-zinc-200 dark:via-zinc-300 dark:to-zinc-400 opacity-90" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
+          <div className="relative rounded-3xl overflow-hidden border border-primary/10 bg-zinc-900 dark:bg-zinc-100">
+            <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-600 dark:from-zinc-200 dark:via-zinc-300 dark:to-zinc-400" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent dark:from-black/5" />
 
             <div className="relative z-10 px-6 py-16 md:px-16 md:py-24 text-center max-w-2xl mx-auto space-y-6">
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white">
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white dark:text-zinc-900">
                 Pronto para organizar o seu negócio?
               </h2>
-              <p className="text-lg text-white/70">
+              <p className="text-lg text-white/80 dark:text-zinc-800/80">
                 Cadastre-se e nossa equipe entra em contato para configurar tudo conforme
                 a sua necessidade. Sem compromisso, sem custo inicial.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <Link href="/signup">
-                  <Button size="lg" className="h-14 px-10 text-base font-bold rounded-xl bg-white text-primary hover:bg-white/90 shadow-xl">
+                  <Button size="lg" className="h-14 px-10 text-base font-bold rounded-xl bg-white text-zinc-900 hover:bg-white/90 shadow-xl dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">
                     Solicitar onboarding
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <a href="mailto:contato@zenda.com">
-                  <Button variant="outline" size="lg" className="h-14 px-8 text-base font-bold rounded-xl border-white/20 text-white hover:bg-white/10 bg-transparent">
+                  <Button variant="outline" size="lg" className="h-14 px-8 text-base font-bold rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent dark:border-zinc-900/30 dark:text-zinc-900 dark:hover:bg-zinc-900/10">
                     Falar com suporte
                   </Button>
                 </a>
               </div>
-              <p className="text-xs text-white/40 pt-2">
+              <p className="text-xs text-white/50 dark:text-zinc-900/50 pt-2">
                 Planos personalizados. Ativação manual pela nossa equipe.
               </p>
             </div>
