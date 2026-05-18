@@ -20,6 +20,7 @@ import {
   ArrowLeftRight,
   ChevronLeft,
   ChevronRight,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Button } from "@/components/ui";
@@ -42,6 +43,7 @@ const navGroups = [
       { href: "/clientes", label: "Clientes", icon: Users },
       { href: "/servicos", label: "Serviços", icon: Scissors },
       { href: "/pagamentos", label: "Pagamentos", icon: CreditCard },
+      { href: "/membros", label: "Membros", icon: Users },
     ],
   },
   {
@@ -57,6 +59,7 @@ const navGroups = [
     label: "Configurações",
     items: [
       { href: "/configuracoes", label: "Landing Page", icon: LayoutDashboard },
+      { href: "/configuracoes/membership", label: "Planos", icon: FileText },
       { href: "/configuracoes/whatsapp", label: "WhatsApp", icon: MessageCircle },
       { href: "/perfil", label: "Meu Perfil", icon: Settings },
     ],
@@ -137,10 +140,18 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
             )}
             <nav className="space-y-0.5">
               {group.items.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/dashboard" && pathname.startsWith(item.href + "/") && !group.items.some((i) => i.href !== item.href && pathname.startsWith(i.href + "/"))) ||
-                  pathname === item.href;
+                const isActive = (() => {
+                  const a = pathname.split("/").filter(Boolean);
+                  const b = item.href.split("/").filter(Boolean);
+                  if (a.join("/") === b.join("/")) return true;
+                  if (a.length <= b.length) return false;
+                  if (!b.every((p, i) => p === a[i])) return false;
+                  return !group.items.some((o) => {
+                    if (o.href === item.href) return false;
+                    const c = o.href.split("/").filter(Boolean);
+                    return c.length > b.length && c.every((p, i) => p === a[i]);
+                  });
+                })();
                 return (
                   <Link
                     key={item.href}

@@ -12,18 +12,84 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function tryRefreshToken(): Promise<boolean> {
+      const refreshToken = localStorage.getItem("zenda_refresh_token");
+      if (!refreshToken) return false;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/auth/refresh`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          },
+        );
+        if (!res.ok) return false;
+        const data = await res.json();
+        localStorage.setItem("zenda_token", data.accessToken);
+        localStorage.setItem("zenda_refresh_token", data.refreshToken);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
     async function validate() {
-      const token = localStorage.getItem("zenda_token");
+      let token = localStorage.getItem("zenda_token");
 
       if (!token) {
-        router.replace("/login");
-        return;
+        const refreshed = await tryRefreshToken();
+        if (!refreshed) {
+          if (!cancelled) router.replace("/login");
+          return;
+        }
+        token = localStorage.getItem("zenda_token");
+        if (!token) {
+          if (!cancelled) router.replace("/login");
+          return;
+        }
       }
 
       try {
         const response = await authService.validateToken();
 
-        // Onboarding users can ONLY access /onboarding — hard block everything else
+        if (!response.valid) {
+          const refreshed = await tryRefreshToken();
+          if (!refreshed) {
+            if (!cancelled) router.replace("/login");
+            return;
+          }
+          const retry = await authService.validateToken();
+          if (!retry.valid) {
+            if (!cancelled) router.replace("/login");
+            return;
+          }
+          if (cancelled) return;
+
+          if (retry.needsOnboarding) {
+            if (pathname !== "/onboarding") {
+              router.replace("/onboarding");
+              return;
+            }
+            setIsAuthorized(true);
+            setIsLoading(false);
+            return;
+          }
+
+          if (pathname === "/onboarding") {
+            router.replace("/dashboard");
+            return;
+          }
+
+          setIsAuthorized(true);
+          setIsLoading(false);
+          return;
+        }
+
         if (response.needsOnboarding) {
           if (pathname !== "/onboarding") {
             router.replace("/onboarding");
@@ -34,21 +100,28 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        // Users who are done onboarding can't access /onboarding
         if (pathname === "/onboarding") {
           router.replace("/dashboard");
           return;
         }
 
         setIsAuthorized(true);
-      } catch (err) {
-        console.error("Token validation failed", err);
+      } catch {
+        const refreshed = await tryRefreshToken();
+        if (refreshed) {
+          if (!cancelled) {
+            window.location.reload();
+          }
+          return;
+        }
+        if (!cancelled) router.replace("/login");
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     validate();
+    return () => { cancelled = true; };
   }, [pathname, router]);
 
   if (isLoading) {
