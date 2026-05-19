@@ -100,17 +100,13 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-border/40 px-4 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
-          <Logo height={28} iconOnly />
-          {!collapsed && (
-            <span className="text-sm font-bold tracking-tight whitespace-nowrap">
-              Zenda
-            </span>
-          )}
+          <Logo iconOnly />
+          {!collapsed && <Logo />}
         </Link>
         <Button
           variant="ghost"
           size="icon"
-          className={cn("ml-auto h-7 w-7 shrink-0", collapsed ? "hidden" : "hidden md:flex")}
+          className={cn("ml-auto h-7 w-7 shrink-0 text-muted-foreground/40 hover:text-foreground", collapsed ? "hidden" : "hidden md:flex")}
           onClick={onCollapse}
           aria-label="Recolher menu"
         >
@@ -120,7 +116,7 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="mx-auto h-7 w-7 shrink-0 hidden md:flex"
+            className="mx-auto h-7 w-7 shrink-0 text-muted-foreground/40 hover:text-foreground hidden md:flex"
             onClick={onCollapse}
             aria-label="Expandir menu"
           >
@@ -158,15 +154,15 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
                     href={item.href}
                     title={collapsed ? item.label : undefined}
                     className={cn(
-                      "group relative flex items-center gap-3 rounded-lg py-2 text-sm font-medium transition-all duration-150",
+                      "group relative flex items-center gap-3 rounded-xl py-2 text-sm font-medium transition-all duration-200",
                       collapsed ? "justify-center px-2" : "px-3",
                       isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        ? "bg-primary/10 text-primary shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
                     )}
                   >
                     {isActive && !collapsed && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full shadow-sm shadow-primary/30" />
                     )}
                     <item.icon
                       className={cn(

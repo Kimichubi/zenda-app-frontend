@@ -1,8 +1,3 @@
-"use client";
-
-import Image from "next/image";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { cn } from "@/utils";
 
 interface LogoProps {
@@ -11,31 +6,27 @@ interface LogoProps {
   iconOnly?: boolean;
 }
 
-export function Logo({ height = 32, className, iconOnly = false }: LogoProps) {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div className={cn("bg-primary rounded-lg", className)} style={{ width: height, height }} />;
+export function Logo({ className, iconOnly = false }: LogoProps) {
+  if (iconOnly) {
+    return (
+      <div className={cn(
+        "flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/60 shadow-lg shadow-primary/20",
+        className
+      )}>
+        <span className="text-xs font-black text-primary-foreground tracking-tight">Z</span>
+      </div>
+    );
   }
 
-  const isDark = resolvedTheme === "dark";
-  const src = iconOnly
-    ? isDark ? "/zenda-logo/logo_zenda_dark_icon.png" : "/zenda-logo/logo_zenda_light_icon.png"
-    : isDark ? "/zenda-logo/logo_zenda_dark.png" : "/zenda-logo/logo_zenda_light.png";
-
   return (
-    <Image
-      src={src}
-      alt="Zenda"
-      width={iconOnly ? height : height * 4}
-      height={height}
-      className={cn("object-contain", className)}
-      priority
-    />
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/60 shadow-lg shadow-primary/20">
+        <span className="text-xs font-black text-primary-foreground tracking-tight">Z</span>
+      </div>
+      <div className="flex items-baseline gap-0.5">
+        <span className="text-lg font-black tracking-tight text-foreground">Zenda</span>
+        <span className="text-[10px] font-bold text-muted-foreground/50 tracking-[0.2em] uppercase hidden sm:inline">App</span>
+      </div>
+    </div>
   );
 }
