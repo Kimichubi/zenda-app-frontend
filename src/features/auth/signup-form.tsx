@@ -13,6 +13,7 @@ import { cn, maskPhoneInput } from "@/utils";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  businessName: z.string().min(2, "Nome do negócio deve ter pelo menos 2 caracteres"),
   phone: z.string().min(10, "Telefone deve ter DDD + numero (11 digitos)")
     .refine((v) => isValidPhone(v), { message: "Formato invalido. Use (XX) XXXXX-XXXX" }),
   email: z.string().min(1, "Email invalido").email("Email invalido"),
@@ -70,10 +71,11 @@ export function SignupForm() {
         email: data.email,
         password: data.password,
         phone: data.phone,
+        businessName: data.businessName,
       });
       localStorage.setItem("zenda_token", response.accessToken);
       localStorage.setItem("zenda_refresh_token", response.refreshToken || "");
-      router.push("/onboarding");
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao criar conta");
     }
@@ -98,6 +100,15 @@ export function SignupForm() {
           error={errors.name?.message}
           className="h-12 rounded-xl"
           autoComplete="name"
+        />
+
+        <Input
+          {...register("businessName")}
+          placeholder="Barbearia do João"
+          label="Nome do Negócio"
+          error={errors.businessName?.message}
+          className="h-12 rounded-xl"
+          autoComplete="organization"
         />
 
         <Input

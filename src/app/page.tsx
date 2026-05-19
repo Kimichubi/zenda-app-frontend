@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Shield,
   Layers,
-  Phone,
   CheckCircle2,
   AlertTriangle,
   BarChart3,
@@ -95,28 +94,6 @@ const zendaSolutions = [
   },
 ];
 
-const onboardingSteps = [
-  {
-    step: "01",
-    title: "Cadastro simples",
-    description: "Preencha informações básicas sobre você e seu negócio. Leva menos de 2 minutos.",
-  },
-  {
-    step: "02",
-    title: "Suporte entra em contato",
-    description: "Nossa equipe analisa suas necessidades e entra em contato para entender seu negócio de perto.",
-  },
-  {
-    step: "03",
-    title: "Configuração personalizada",
-    description: "Montamos seu ambiente do zero: serviços, preços, horários, profissionais. Tudo adaptado à sua operação.",
-  },
-  {
-    step: "04",
-    title: "Seu negócio ativado",
-    description: "Plano ativado, equipe treinada, sistema funcionando. Você começa a operar com tudo organizado.",
-  },
-];
 
 const benefits = [
   {
@@ -172,9 +149,6 @@ export default function LandingPage() {
               <a href="#recursos" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Funcionalidades
               </a>
-              <a href="#onboarding" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Onboarding
-              </a>
               <a href="#beneficios" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                 Benefícios
               </a>
@@ -186,7 +160,7 @@ export default function LandingPage() {
                 <Button variant="ghost" className="text-sm font-semibold">Entrar</Button>
               </Link>
               <Link href="/signup" className="hidden sm:block">
-                <Button className="text-sm font-semibold h-9 rounded-lg">Solicitar acesso</Button>
+                <Button className="text-sm font-semibold h-9 rounded-lg">Criar conta</Button>
               </Link>
             </div>
           </div>
@@ -207,7 +181,7 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-                Onboarding assistido e personalizado
+                Gestão inteligente para sua barbearia
               </span>
             </div>
 
@@ -220,26 +194,25 @@ export default function LandingPage() {
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Gerencie sua barbearia ou salão em um só lugar. Agenda, clientes, pagamentos,
-              equipe e lembretes automáticos — com onboarding personalizado para o seu negócio.
+              equipe e lembretes automáticos — tudo que você precisa para crescer.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link href="/signup">
                 <Button size="lg" className="h-12 px-10 text-base font-bold rounded-xl shadow-lg shadow-primary/25">
-                  Solicitar acesso
+                  Começar agora
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="#onboarding">
+              <Link href="/login">
                 <Button variant="outline" size="lg" className="h-12 px-8 text-base font-bold rounded-xl">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Como funciona
+                  Já tenho conta
                 </Button>
               </Link>
             </div>
 
             <p className="text-xs text-muted-foreground pt-2">
-              Planos personalizados conforme a necessidade do seu negócio
+              Grátis para começar. Sem compromisso, sem cartão de crédito.
             </p>
           </div>
         </div>
@@ -467,57 +440,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Assisted Onboarding Section */}
-      <section id="onboarding" className="py-24 md:py-32">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <SectionBadge>Onboarding</SectionBadge>
-            <SectionHeading>
-              Você não está{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">sozinho</span>
-            </SectionHeading>
-            <p className="text-lg text-muted-foreground">
-              Nosso time configura tudo para você. Onboarding assistido e personalizado conforme
-              a realidade do seu negócio.
-            </p>
-          </div>
 
-          {/* Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-16">
-            {onboardingSteps.map((item, idx) => (
-              <div key={item.step} className="relative group">
-                {idx < onboardingSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-px bg-border/60 -z-10">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-transparent" />
-                  </div>
-                )}
-                <div className="p-6 rounded-2xl border border-border/30 bg-card/40 hover:border-primary/20 hover:bg-card transition-all duration-300 h-full">
-                  <span className="text-sm font-black text-primary/30 mb-3 block">{item.step}</span>
-                  <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Info Card */}
-          <div className="max-w-3xl mx-auto p-8 rounded-2xl border border-primary/15 bg-primary/5">
-            <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <Phone className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Atendimento humano, do início ao fim</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Nada de formulários infinitos ou configurações complicadas. Você se cadastra,
-                  nosso time entra em contato, entende seu negócio e prepara tudo para você.
-                  Cada barbearia tem suas particularidades — e nosso processo respeita isso.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Benefits Section */}
       <section id="beneficios" className="py-24 md:py-32 bg-muted/10 border-y border-border/40">
@@ -573,24 +496,24 @@ export default function LandingPage() {
                 Pronto para organizar o seu negócio?
               </h2>
               <p className="text-lg text-white/80 dark:text-zinc-800/80">
-                Cadastre-se e nossa equipe entra em contato para configurar tudo conforme
-                a sua necessidade. Sem compromisso, sem custo inicial.
+                Crie sua conta em segundos e comece a gerenciar seu negócio hoje mesmo.
+                Sem complicação, sem burocracia.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <Link href="/signup">
                   <Button size="lg" className="h-14 px-10 text-base font-bold rounded-xl bg-white text-zinc-900 hover:bg-white/90 shadow-xl dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800">
-                    Solicitar onboarding
+                    Começar agora
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-                <a href="mailto:contato@zenda.com">
+                <Link href="/login">
                   <Button variant="outline" size="lg" className="h-14 px-8 text-base font-bold rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent dark:border-zinc-900/30 dark:text-zinc-900 dark:hover:bg-zinc-900/10">
-                    Falar com suporte
+                    Já tenho conta
                   </Button>
-                </a>
+                </Link>
               </div>
               <p className="text-xs text-white/50 dark:text-zinc-900/50 pt-2">
-                Planos personalizados. Ativação manual pela nossa equipe.
+                Grátis para começar. Planos a partir de R$ 49/mês.
               </p>
             </div>
           </div>
@@ -605,9 +528,6 @@ export default function LandingPage() {
             <div className="flex items-center gap-6">
               <a href="#recursos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Funcionalidades
-              </a>
-              <a href="#onboarding" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Onboarding
               </a>
               <a href="#beneficios" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Benefícios

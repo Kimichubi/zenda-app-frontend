@@ -34,7 +34,7 @@ export default function SignupPage() {
               Comece a transformar seu negócio hoje
             </h1>
             <p className="text-lg text-slate-400 leading-relaxed">
-              Crie sua conta e nossa equipe te ajudará a configurar tudo.
+              Crie sua conta em segundos e comece a gerenciar seu negócio.
             </p>
           </div>
 
@@ -71,7 +71,7 @@ export default function SignupPage() {
           <div className="mb-8 space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Crie sua conta</h2>
             <p className="text-sm text-muted-foreground">
-              Após o cadastro, nossa equipe irá auxiliar na configuração do seu negócio.
+              Comece a usar imediatamente. Cadastre sua barbearia e organize tudo em poucos minutos.
             </p>
           </div>
 

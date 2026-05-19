@@ -53,8 +53,6 @@ export function LoginForm() {
 
         if (response.user.role === "PLATFORM_ADMIN") {
           router.push("/admin");
-        } else if (response.user.plan === "ONBOARDING") {
-          router.push("/onboarding");
         } else {
           router.push("/dashboard");
         }
@@ -84,8 +82,6 @@ export function LoginForm() {
 
         if (response.user.role === "PLATFORM_ADMIN") {
           router.push("/admin");
-        } else if (response.user.plan === "ONBOARDING") {
-          router.push("/onboarding");
         } else {
           router.push("/dashboard");
         }

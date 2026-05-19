@@ -75,6 +75,14 @@ export const forgotPasswordSchema = z.object({
     email: z.string().min(1, "Email inválido").email("Email inválido"),
 });
 
+export const resetPasswordSchema = z.object({
+    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+    confirmPassword: z.string().min(6, "Confirme sua senha"),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Senhas não conferem",
+    path: ["confirmPassword"],
+});
+
 export const verifyCodeSchema = z.object({
     code: z.string().length(6, "Código deve ter 6 dígitos"),
 });

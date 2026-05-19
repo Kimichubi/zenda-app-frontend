@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth";
 import { Loader2 } from "lucide-react";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,41 +67,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
             if (!cancelled) router.replace("/login");
             return;
           }
-          if (cancelled) return;
-
-          if (retry.needsOnboarding) {
-            if (pathname !== "/onboarding") {
-              router.replace("/onboarding");
-              return;
-            }
-            setIsAuthorized(true);
-            setIsLoading(false);
-            return;
-          }
-
-          if (pathname === "/onboarding") {
-            router.replace("/dashboard");
-            return;
-          }
-
-          setIsAuthorized(true);
-          setIsLoading(false);
-          return;
-        }
-
-        if (response.needsOnboarding) {
-          if (pathname !== "/onboarding") {
-            router.replace("/onboarding");
-            return;
-          }
-          setIsAuthorized(true);
-          setIsLoading(false);
-          return;
-        }
-
-        if (pathname === "/onboarding") {
-          router.replace("/dashboard");
-          return;
         }
 
         setIsAuthorized(true);
@@ -122,7 +86,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     validate();
     return () => { cancelled = true; };
-  }, [pathname, router]);
+  }, [router]);
 
   if (isLoading) {
     return (
