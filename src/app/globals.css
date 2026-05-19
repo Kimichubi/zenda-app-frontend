@@ -80,6 +80,8 @@
   }
 }
 
+@utility font-heading { font-family: var(--font-sora), var(--font-geist-sans), sans-serif; }
+
 @utility animate-stagger-1 { animation-delay: 50ms; }
 @utility animate-stagger-2 { animation-delay: 100ms; }
 @utility animate-stagger-3 { animation-delay: 150ms; }

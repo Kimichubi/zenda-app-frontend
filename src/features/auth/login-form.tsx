@@ -38,7 +38,7 @@ export function LoginForm() {
   const onSubmitCredentials = async (data: LoginFormData) => {
     try {
       setError("");
-      const response = await authService.login({ ...data, rememberMe } as any);
+      const response = await authService.login({ ...data, rememberMe });
 
       if ("requires2FA" in response && response.requires2FA) {
         setMaskedEmail(response.email);

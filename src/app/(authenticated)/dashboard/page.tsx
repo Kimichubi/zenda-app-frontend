@@ -57,14 +57,16 @@ export default function DashboardPage() {
         }
       />
 
-      <DashboardCards
-        todayRevenue={todayRevenue}
-        todayAppointmentsCount={todayAppointments.length}
-        upcomingCount={upcomingAppointments.length}
-        noShowCount={noShowClients.length}
-      />
+      <div className="animate-fade-in-up opacity-0" style={{ animationDelay: "100ms" }}>
+        <DashboardCards
+          todayRevenue={todayRevenue}
+          todayAppointmentsCount={todayAppointments.length}
+          upcomingCount={upcomingAppointments.length}
+          noShowCount={noShowClients.length}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-start">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 items-start animate-fade-in-up opacity-0" style={{ animationDelay: "200ms" }}>
         <AppointmentList title="Hoje" appointments={data.todayAppointments} />
         <AppointmentList title="Proximos" appointments={data.upcomingAppointments} />
       </div>

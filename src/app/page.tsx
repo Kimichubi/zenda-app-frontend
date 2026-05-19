@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Logo } from "@/components/layout/logo";
+import { cn } from "@/utils";
 import {
   Calendar,
   Users,
@@ -22,17 +23,25 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 
-function SectionBadge({ children }: { children: React.ReactNode }) {
+function SectionBadge({ children, delay }: { children: React.ReactNode; delay?: string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-widest">
+    <span className={cn(
+      "inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-widest",
+      "animate-fade-in-up opacity-0",
+      delay ?? "animate-stagger-1",
+    )}>
       {children}
     </span>
   );
 }
 
-function SectionHeading({ children }: { children: React.ReactNode }) {
+function SectionHeading({ children, delay }: { children: React.ReactNode; delay?: string }) {
   return (
-    <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
+    <h2 className={cn(
+      "text-3xl md:text-5xl font-black tracking-tight text-foreground font-heading",
+      "animate-fade-in-up opacity-0",
+      delay ?? "animate-stagger-2",
+    )}>
       {children}
     </h2>
   );
@@ -178,28 +187,28 @@ export default function LandingPage() {
 
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center max-w-4xl mx-auto space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 animate-fade-in-up opacity-0 animate-stagger-1">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span className="text-xs font-semibold text-primary uppercase tracking-wider">
                 Gestão inteligente para sua barbearia
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08]">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] font-heading animate-fade-in-up opacity-0 animate-stagger-2">
               Pare de perder clientes por{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 via-zinc-500 to-zinc-300 dark:from-zinc-200 dark:via-zinc-400 dark:to-zinc-500">
                 desorganização
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-fade-in-up opacity-0 animate-stagger-3">
               Gerencie sua barbearia ou salão em um só lugar. Agenda, clientes, pagamentos,
               equipe e lembretes automáticos — tudo que você precisa para crescer.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-in-up opacity-0 animate-stagger-4">
               <Link href="/signup">
-                <Button size="lg" className="h-12 px-10 text-base font-bold rounded-xl shadow-lg shadow-primary/25">
+                <Button size="lg" className="h-12 px-10 text-base font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
                   Começar agora
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -211,7 +220,7 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <p className="text-xs text-muted-foreground pt-2">
+            <p className="text-xs text-muted-foreground pt-2 animate-fade-in-up opacity-0 animate-stagger-5">
               Grátis para começar. Sem compromisso, sem cartão de crédito.
             </p>
           </div>
@@ -223,7 +232,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
             <SectionBadge>Plataforma</SectionBadge>
-            <SectionHeading>
+            <SectionHeading delay="animate-stagger-3">
               Tudo que sua barbearia precisa em{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-200 dark:to-zinc-400">um só lugar</span>
             </SectionHeading>
@@ -391,10 +400,11 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {painPoints.map((item) => (
+            {painPoints.map((item, i) => (
               <div
                 key={item.title}
-                className="group flex gap-4 p-6 rounded-2xl border border-border/30 bg-card/40 hover:border-red-500/10 hover:bg-card transition-all duration-300"
+                className="group flex gap-4 p-6 rounded-2xl border border-border/30 bg-card/40 hover:border-red-500/10 hover:bg-card transition-all duration-300 animate-fade-in-up opacity-0"
+                style={{ animationDelay: `${75 + i * 75}ms` }}
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-400 group-hover:bg-red-500/15 transition-colors">
                   <item.icon className="h-5 w-5" />
@@ -424,10 +434,11 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {zendaSolutions.map((item) => (
+            {zendaSolutions.map((item, i) => (
               <div
                 key={item.title}
-                className="group p-6 rounded-2xl border border-border/30 bg-card/40 hover:border-primary/20 hover:bg-card hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                className="group p-6 rounded-2xl border border-border/30 bg-card/40 hover:border-primary/20 hover:bg-card hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 animate-fade-in-up opacity-0"
+                style={{ animationDelay: `${75 + i * 75}ms` }}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <item.icon className="h-6 w-6" />
@@ -460,13 +471,14 @@ export default function LandingPage() {
             {benefits.map((item, idx) => (
               <div
                 key={item.title}
-                className={`group p-6 rounded-2xl border transition-all duration-300 hover:border-primary/20 hover:bg-card hover:shadow-lg hover:shadow-primary/5 ${
+                className={`group p-6 rounded-2xl border transition-all duration-300 hover:border-primary/20 hover:bg-card hover:shadow-lg hover:shadow-primary/5 animate-fade-in-up opacity-0 ${
                   idx === 0 || idx === 3
                     ? "bg-card/60 border-border/40"
                     : idx === 1 || idx === 4
                       ? "bg-card/40 border-border/30"
                       : "bg-card/20 border-border/20"
                 }`}
+                style={{ animationDelay: `${75 + idx * 75}ms` }}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <item.icon className="h-6 w-6" />

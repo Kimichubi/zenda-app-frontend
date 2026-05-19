@@ -22,8 +22,8 @@ import {
 const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/businesses", icon: Building2, label: "Negocios" },
-  { href: "/admin/onboarding", icon: UserPlus, label: "Onboarding" },
-  { href: "/admin/subscriptions", icon: CreditCard, label: "Assinaturas" },
+  { href: "/admin/billing", icon: CreditCard, label: "Faturamento" },
+  { href: "/admin/subscriptions", icon: UserPlus, label: "Assinaturas" },
   { href: "/admin/monitoring", icon: BarChart3, label: "Monitoramento" },
   { href: "/admin/usuarios", icon: Users, label: "Usuarios" },
   { href: "/admin/avaliacoes", icon: MessageSquareQuote, label: "Avaliacoes" },

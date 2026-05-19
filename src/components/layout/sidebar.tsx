@@ -53,13 +53,14 @@ const navGroups = [
       { href: "/inventario", label: "Inventário", icon: Package },
       { href: "/equipe", label: "Equipe", icon: Users2 },
       { href: "/comissoes", label: "Comissões", icon: Wallet },
+      { href: "/faturamento", label: "Faturamento", icon: CreditCard },
+      { href: "/configuracoes/membership", label: "Planos", icon: FileText },
     ],
   },
   {
     label: "Configurações",
     items: [
       { href: "/configuracoes", label: "Landing Page", icon: LayoutDashboard },
-      { href: "/configuracoes/membership", label: "Planos", icon: FileText },
       { href: "/configuracoes/whatsapp", label: "WhatsApp", icon: MessageCircle },
       { href: "/perfil", label: "Meu Perfil", icon: Settings },
     ],
@@ -100,8 +101,7 @@ export function Sidebar({ collapsed = false, onCollapse }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-border/40 px-4 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
-          <Logo iconOnly />
-          {!collapsed && <Logo />}
+          {collapsed ? <Logo iconOnly /> : <Logo />}
         </Link>
         <Button
           variant="ghost"

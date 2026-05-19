@@ -59,7 +59,7 @@ export default function MembershipPlansPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Planos de Assinatura</h1>
+          <h1 className="text-3xl font-bold tracking-tight font-heading">Planos de Assinatura</h1>
           <p className="text-muted-foreground font-medium mt-1">
             Crie e gerencie planos de assinatura para seus clientes.
           </p>
@@ -108,13 +108,16 @@ export default function MembershipPlansPage() {
         open={showForm}
         onClose={() => { setShowForm(false); setEditingPlan(null); }}
         title={editingPlan ? "Editar Plano" : "Novo Plano de Assinatura"}
+        className="max-w-3xl"
       >
-        <PlanForm
-          plan={editingPlan ?? undefined}
-          onSubmit={handleSubmit}
-          onCancel={() => { setShowForm(false); setEditingPlan(null); }}
-          isPending={createPlan.isPending || updatePlan.isPending}
-        />
+        <div className="max-h-[70vh] overflow-y-auto">
+          <PlanForm
+            plan={editingPlan ?? undefined}
+            onSubmit={handleSubmit}
+            onCancel={() => { setShowForm(false); setEditingPlan(null); }}
+            isPending={createPlan.isPending || updatePlan.isPending}
+          />
+        </div>
       </Modal>
     </div>
   );
