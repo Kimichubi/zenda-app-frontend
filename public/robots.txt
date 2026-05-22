@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/redirect
+
+Sitemap: https://zenda.lazasof.com.br/sitemap.xml

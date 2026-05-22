@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Logo } from "@/components/layout/logo";
 import { cn } from "@/utils";
@@ -22,6 +23,15 @@ import {
   BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+
+export const metadata: Metadata = {
+  title: "Zenda — Gestão inteligente para barbearias e salões",
+  description:
+    "Gerencie sua barbearia ou salão em um só lugar. Agenda, clientes, pagamentos, equipe e lembretes automáticos. Comece grátis.",
+  alternates: {
+    canonical: "https://zenda.com.br",
+  },
+};
 
 function SectionBadge({ children, delay }: { children: React.ReactNode; delay?: string }) {
   return (
@@ -145,9 +155,35 @@ const dashboardTabs = [
   { id: "lembretes", label: "Lembretes", icon: Bell },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Zenda",
+  description:
+    "Software de gestão inteligente para barbearias e salões de beleza. Agenda, clientes, pagamentos e equipe em um só lugar.",
+  url: "https://zenda.com.br",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "BRL",
+    description: "Plano gratuito para começar",
+  },
+  author: {
+    "@type": "Organization",
+    name: "Zenda",
+    url: "https://zenda.com.br",
+  },
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-6">
